@@ -1,0 +1,2372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PapaFix — Home Repairs, Done Right</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+/* ─── RESET ──────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; overflow-x: clip; }
+body { font-family: 'DM Sans', sans-serif; background: #f7f9fc; color: #0a0f1e; overflow-x: clip; }
+
+/* ─── CSS VARIABLES ──────────────────────────────────────────── */
+:root {
+  --blue:       #1a6cff;
+  --blue-mid:   #0050e6;
+  --blue-deep:  #002fa0;
+  --blue-light: #e8f0ff;
+  --blue-pale:  #f0f4ff;
+  --off-white:  #f7f9fc;
+  --ink:        #0a0f1e;
+  --ink-light:  #3a4165;
+  --ink-faint:  #7a84a8;
+  --border:     rgba(26,108,255,.12);
+  --shadow-sm:  0 2px 12px rgba(26,108,255,.08);
+  --shadow-md:  0 8px 40px rgba(26,108,255,.14);
+  --shadow-lg:  0 24px 80px rgba(26,108,255,.18);
+  --r-sm: 12px; --r-md: 20px; --r-lg: 32px; --r-xl: 48px;
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 4px; }
+
+/* ═══════════════════════════════════════════════════════════════
+   PAGE LOAD INTRO ANIMATION
+   — Stays solid blue the entire time, text always white & readable
+   — Whole overlay slides LEFT off-screen as the curtain exit
+═══════════════════════════════════════════════════════════════ */
+#intro-overlay {
+  position: fixed; inset: 0; z-index: 10000;
+  background: var(--blue);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  /* Curtain slides off to the LEFT after the logo has been visible */
+  animation: overlaySweepLeft .85s 2s cubic-bezier(.76,0,.24,1) forwards;
+}
+@keyframes overlaySweepLeft {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-100%); pointer-events: none; }
+}
+
+.intro-logo {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; gap: 0;
+  /* stays visible until the curtain sweeps it away */
+}
+
+.intro-wordmark {
+  font-family: 'Sora', sans-serif; font-weight: 800; font-size: clamp(2.4rem, 5vw, 4rem);
+  color: white; letter-spacing: -.04em;
+  animation: introWordIn .9s .2s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes introWordIn {
+  from { transform: translateY(24px) skewY(4deg); opacity: 0; }
+  to   { transform: translateY(0) skewY(0deg);    opacity: 1; }
+}
+/* "Fix" part in a slightly lighter tint so it reads as a unit */
+.intro-wordmark .intro-accent { color: rgba(255,255,255,.65); }
+
+/* Fan / aircon silhouette SVG — sweeps in from the right, always on blue */
+.intro-silhouette {
+  position: absolute; right: -40px; bottom: -60px;
+  width: 540px; height: 540px; opacity: .1;
+  animation: silhouetteSwoop 1.4s .1s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes silhouetteSwoop {
+  from { transform: translateX(260px) rotate(25deg); opacity: 0; }
+  to   { transform: translateX(0) rotate(0deg);      opacity: .1; }
+}
+
+/* Thin progress bar at the bottom of the overlay */
+.intro-progress {
+  position: absolute; bottom: 0; left: 0;
+  height: 3px; background: rgba(255,255,255,.3);
+  width: 0;
+  animation: introBar 1.8s .1s cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes introBar { to { width: 100%; } }
+
+/* ─── NAV ────────────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 5vw; height: 72px;
+  background: rgba(247,249,252,.72);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(26,108,255,.07);
+  transition: background .3s, box-shadow .3s;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.2rem;
+  color: var(--ink); letter-spacing: -.02em; text-decoration: none;
+}
+
+.nav-links { display: flex; align-items: center; gap: 2rem; }
+.nav-links a { font-size: .875rem; color: var(--ink-light); text-decoration: none; transition: color .2s; }
+.nav-links a:hover { color: var(--blue); }
+.nav-cta-gplay {
+  display: inline-flex; align-items: center; gap: 9px;
+  background: #0a0f1e; color: white; border: none;
+  padding: 8px 18px; border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer; text-decoration: none;
+  transition: background .2s, transform .2s, box-shadow .2s;
+  box-shadow: 0 4px 16px rgba(10,15,30,.25);
+}
+.nav-cta-gplay:hover { background: linear-gradient(135deg, #4285F4, #34A853); transform: translateY(-1px); box-shadow: 0 6px 24px rgba(66,133,244,.35); }
+.nav-cta-gplay svg { flex-shrink: 0; }
+.nav-gplay-text { line-height: 1; }
+.nav-gplay-text small { display: block; font-size: .58rem; opacity: .55; letter-spacing: .07em; text-transform: uppercase; margin-bottom: 2px; }
+.nav-gplay-text span { font-family: 'Sora', sans-serif; font-size: .82rem; font-weight: 600; }
+
+/* ─── HAMBURGER + MOBILE MENU ────────────────────────────────── */
+.nav-hamburger {
+  display: none; flex-direction: column; justify-content: center; gap: 5px;
+  background: none; border: none; cursor: pointer; padding: 6px;
+  width: 36px; height: 36px;
+}
+.nav-hamburger span {
+  display: block; height: 2px; background: var(--ink);
+  border-radius: 2px; transition: transform .3s, opacity .3s, width .3s;
+}
+.nav-hamburger span:nth-child(1) { width: 22px; }
+.nav-hamburger span:nth-child(2) { width: 16px; }
+.nav-hamburger span:nth-child(3) { width: 22px; }
+.nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); width: 22px; }
+.nav-hamburger.open span:nth-child(2) { opacity: 0; }
+.nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); width: 22px; }
+
+.mobile-menu {
+  display: none; position: fixed; top: 72px; left: 0; right: 0; z-index: 99;
+  background: rgba(247,249,252,.98); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  flex-direction: column; padding: 1rem 5vw 1.5rem;
+  transform: translateY(-10px); opacity: 0;
+  transition: transform .3s cubic-bezier(.16,1,.3,1), opacity .3s;
+}
+.mobile-menu.open { transform: translateY(0); opacity: 1; }
+.mobile-menu a { padding: .75rem 0; font-size: 1rem; color: var(--ink-light); text-decoration: none; border-bottom: 1px solid var(--border); font-weight: 500; }
+.mobile-menu a:last-child { border: none; }
+.mobile-menu-cta {
+  display: inline-flex !important; align-items: center; gap: 10px;
+  background: var(--ink) !important; color: white !important;
+  padding: .75rem 1.5rem !important; border-radius: var(--r-md) !important;
+  margin-top: .75rem; border: none !important; font-weight: 600 !important;
+  font-family: 'Sora', sans-serif; transition: background .2s, box-shadow .2s;
+}
+.mobile-menu-cta:hover { background: linear-gradient(135deg, #4285F4, #34A853) !important; box-shadow: 0 6px 24px rgba(66,133,244,.35); }
+
+@media (max-width: 900px) {
+  .nav-hamburger { display: flex; }
+  .mobile-menu { display: flex; }
+  .nav-cta-gplay { display: none; }
+}
+
+/* ─── HERO PHONE WRAP ────────────────────────────────────────── */
+/* ─── HERO ───────────────────────────────────────────────────── */
+#hero {
+  min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr;
+  overflow: hidden; padding-top: 72px;
+}
+.hero-left {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 6vw 4vw 6vw 7vw;
+}
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--blue-light); color: var(--blue);
+  font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+  padding: 6px 14px; border-radius: 100px; margin-bottom: 2rem; width: fit-content;
+  opacity: 0; animation: fadeUp .8s 2.6s ease forwards;
+}
+.hero-tag-dot { width: 6px; height: 6px; background: var(--blue); border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity:1;transform:scale(1); } 50% { opacity:.4;transform:scale(.7); } }
+
+.hero-h1 {
+  font-family: 'Sora', sans-serif; font-weight: 800;
+  font-size: clamp(2.8rem, 4.5vw, 5rem); line-height: 1.04; letter-spacing: -.04em;
+  color: var(--ink); margin-bottom: 1.5rem;
+  opacity: 0; animation: fadeUp .8s 2.8s ease forwards;
+}
+.hero-h1 em { font-style: normal; color: var(--blue); position: relative; }
+.hero-h1 em::after {
+  content: ''; position: absolute; left: 0; bottom: 3px; right: 0; height: 4px;
+  background: var(--blue); opacity: .2; border-radius: 2px;
+}
+.hero-sub {
+  font-size: 1.05rem; line-height: 1.7; color: var(--ink-light); font-weight: 300;
+  max-width: 44ch; margin-bottom: 3rem;
+  opacity: 0; animation: fadeUp .8s 3s ease forwards;
+}
+.hero-actions {
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  opacity: 0; animation: fadeUp .8s 3.2s ease forwards;
+}
+.btn-google-play {
+  display: inline-flex; align-items: center; gap: 12px;
+  background: var(--ink); color: white; text-decoration: none;
+  padding: 14px 26px; border-radius: var(--r-md);
+  transition: transform .25s, box-shadow .25s;
+  box-shadow: 0 8px 32px rgba(10,15,30,.18);
+}
+.btn-google-play:hover { background: linear-gradient(135deg, #4285F4, #34A853); transform: translateY(-2px); box-shadow: 0 14px 44px rgba(66,133,244,.35); }
+.btn-google-play svg { width: 24px; height: 24px; flex-shrink: 0; }
+.btn-google-play-text { line-height: 1; }
+.btn-google-play-text small { display: block; font-size: .62rem; opacity: .6; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 2px; }
+.btn-google-play-text span { font-family: 'Sora', sans-serif; font-size: .95rem; font-weight: 600; }
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent; color: var(--ink); text-decoration: none;
+  padding: 14px 24px; border-radius: var(--r-md);
+  border: 1.5px solid rgba(10,15,30,.12); font-size: .9rem; font-weight: 500;
+  transition: border-color .2s, color .2s, background .2s;
+}
+.btn-ghost:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-pale); }
+.btn-ghost svg { width: 15px; height: 15px; }
+
+.hero-stats {
+  display: flex; gap: 2rem; margin-top: 3.5rem;
+  opacity: 0; animation: fadeUp .8s 3.4s ease forwards;
+}
+.hero-stat-num { font-family: 'Sora', sans-serif; font-size: 1.6rem; font-weight: 700; letter-spacing: -.04em; }
+.hero-stat-label { font-size: .75rem; color: var(--ink-faint); margin-top: 2px; }
+.stat-divider { width: 1px; background: var(--border); align-self: stretch; }
+
+.hero-right {
+  position: relative; overflow: hidden; background: var(--blue-pale);
+  display: flex; align-items: center; justify-content: center;
+}
+.hero-phone-wrap {
+  position: relative; z-index: 2;
+  transform: translateY(20px); opacity: 0;
+  animation: heroPhoneIn 1.2s 2.9s cubic-bezier(.16,1,.3,1) forwards;
+}
+@keyframes heroPhoneIn { to { transform: translateY(0) rotate(-2deg); opacity: 1; } }
+.hero-phone { width: 90%; max-width: 560px; max-height: 90vh; object-fit: contain; filter: drop-shadow(0 40px 80px rgba(26,108,255,.22)) drop-shadow(0 10px 30px rgba(10,15,30,.12)); }
+.hero-bg-shape {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 80% at 60% 40%, rgba(26,108,255,.12) 0%, transparent 70%);
+}
+.hero-float-card {
+  position: absolute; background: white; border-radius: var(--r-md);
+  box-shadow: var(--shadow-lg); padding: 14px 18px; font-size: .78rem; white-space: nowrap;
+}
+.hero-float-1 { left: -30px; top: 30%; animation: float1 4s ease-in-out infinite; }
+.hero-float-2 { right: -20px; bottom: 28%; animation: float2 4.5s 1s ease-in-out infinite; }
+@keyframes float1 { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-10px); } }
+@keyframes float2 { 0%,100% { transform:translateY(0); } 50% { transform:translateY(8px); } }
+.fc-title { font-family:'Sora',sans-serif; font-weight:700; font-size:.85rem; color:var(--ink); margin-bottom:4px; }
+.fc-sub { color:var(--ink-faint); font-size:.72rem; }
+.fc-badge {
+  display:inline-flex; align-items:center; gap:5px;
+  background:#e9f5ee; color:#2d8a4e; font-size:.7rem; font-weight:600;
+  padding:3px 8px; border-radius:100px;
+}
+.fc-badge-dot { width:5px; height:5px; background:#2d8a4e; border-radius:50%; }
+
+/* ─── COMMON ─────────────────────────────────────────────────── */
+section { position: relative; }
+.container { max-width: 1180px; margin: 0 auto; padding: 0 5vw; }
+.section-eyebrow { font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--blue); margin-bottom: .75rem; }
+.section-title { font-family: 'Sora', sans-serif; font-weight: 700; font-size: clamp(2rem, 3.5vw, 3.2rem); letter-spacing: -.04em; line-height: 1.1; color: var(--ink); }
+.section-sub { font-size: 1rem; line-height: 1.7; color: var(--ink-light); font-weight: 300; max-width: 52ch; }
+.section-divider { height: 1px; background: linear-gradient(to right, transparent, var(--border), transparent); margin: 0 5vw; }
+
+/* ─── TRUST BAR ──────────────────────────────────────────────── */
+#trust { padding: 48px 0; background: white; }
+.trust-inner { display: flex; align-items: center; justify-content: center; gap: 3rem; flex-wrap: wrap; }
+.trust-item { display: flex; align-items: center; gap: .75rem; font-size: .82rem; color: var(--ink-faint); }
+.trust-icon { width: 32px; height: 32px; background: var(--blue-light); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.trust-icon svg { width: 15px; height: 15px; color: var(--blue); }
+.trust-text strong { color: var(--ink-light); font-weight: 500; }
+.trust-sep { font-size: 1.2rem; color: var(--border); line-height: 1; }
+.trust-exclusive {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: .72rem; font-weight: 600; color: var(--blue);
+  background: var(--blue-light); padding: 5px 13px; border-radius: 100px;
+  margin-left: .5rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SERVICES — GSAP-STYLE VERTICAL→HORIZONTAL SCROLL
+   The outer wrapper is tall (8 × 100vh) so normal vertical scroll
+   drives the panels. The inner strip stays sticky + translates X.
+═══════════════════════════════════════════════════════════════ */
+
+/* Outer scroller — JS sets height to (PANELS * 100vh) */
+#services {
+  position: relative;
+  /* NO overflow here — kills sticky children */
+}
+
+/* Sticky frame — must NOT have overflow:hidden (breaks sticky in all browsers) */
+.services-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+}
+
+/* Separate clip wrapper so the hstrip doesn't bleed outside the viewport */
+.services-sticky-clip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* Header bar — hidden for full-screen immersive panels */
+.services-sticky-header { display: none; }
+
+
+/* The horizontal strip — all panels side by side */
+.services-hstrip {
+  display: flex;
+  width: fit-content;     /* expands to hold all panels */
+  height: 100vh;
+  will-change: transform;
+}
+
+/* Each full-viewport panel — full-bleed immersive */
+.service-panel {
+  height: 100vh;
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  position: relative;
+  overflow: hidden;
+  background: var(--panel-bg, #0a0f1e);
+}
+
+/* Subtle vertical divider between halves */
+.service-panel::after {
+  content: '';
+  position: absolute; top: 10%; bottom: 10%; left: 50%;
+  width: 1px; background: rgba(255,255,255,.06);
+  pointer-events: none;
+}
+
+/* Even panels: flip layout */
+.service-panel:nth-child(even) .svc-content { order: 2; }
+.service-panel:nth-child(even) .svc-visual  { order: 1; }
+
+.svc-content {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 8vh 6vw;
+  background: transparent; position: relative; z-index: 2;
+}
+.svc-visual {
+  position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  background: transparent;
+}
+
+/* Radial accent glow on the visual half */
+.svc-visual::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 70% at 50% 50%, var(--panel-glow, rgba(26,108,255,.15)), transparent);
+  pointer-events: none;
+}
+
+/* Ghost watermark number — tinted with accent */
+.svc-panel-num {
+  position: absolute; bottom: -1rem; right: 1rem;
+  font-family: 'Sora', sans-serif; font-weight: 800;
+  font-size: 22vw; line-height: 1; letter-spacing: -.06em;
+  color: var(--panel-accent, white); opacity: .05; pointer-events: none; user-select: none;
+}
+
+.svc-counter {
+  font-family: 'DM Mono', monospace; font-size: .72rem;
+  color: var(--panel-accent, rgba(255,255,255,.5)); letter-spacing: .12em; text-transform: uppercase;
+  margin-bottom: 1.25rem;
+}
+.svc-big-name {
+  font-family: 'Sora', sans-serif; font-weight: 800;
+  font-size: clamp(2.6rem, 5.5vw, 6rem); line-height: .92; letter-spacing: -.05em;
+  color: white; margin-bottom: 1.25rem;
+}
+.svc-big-desc {
+  font-size: 1rem; line-height: 1.7; color: rgba(255,255,255,.55); font-weight: 300;
+  max-width: 36ch; margin-bottom: 2rem;
+}
+.svc-tags { display: flex; gap: .5rem; flex-wrap: wrap; }
+.svc-tag {
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.8);
+  border: 1px solid rgba(255,255,255,.12);
+  padding: 5px 13px; border-radius: 100px; font-size: .76rem; font-weight: 500;
+}
+
+/* Large icon — glassy on dark */
+.svc-visual-icon {
+  width: 160px; height: 160px; border-radius: 36px;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.1);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 80px -10px var(--panel-glow, rgba(26,108,255,.3)),
+              0 24px 60px rgba(0,0,0,.5);
+  position: relative; z-index: 2;
+}
+.svc-visual-icon svg { width: 72px; height: 72px; }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   HOW IT WORKS — BENTO GRID
+═══════════════════════════════════════════════════════════════ */
+#how { padding: 120px 0; background: var(--off-white); }
+.bento-header { text-align: center; margin-bottom: 4rem; }
+.bento-header .section-sub { margin: 1rem auto 0; }
+
+.bento-grid {
+  display: grid; grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: auto; gap: 1.25rem;
+}
+.bento {
+  background: white; border-radius: var(--r-lg);
+  border: 1px solid var(--border); overflow: hidden; padding: 2.5rem;
+  transition: transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s;
+}
+.bento:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.bento-1 { grid-column: span 5; background: var(--blue); }
+.bento-2 { grid-column: span 7; }
+.bento-3 { grid-column: span 4; }
+.bento-4 { grid-column: span 4; }
+.bento-5 { grid-column: span 4; background: var(--ink); }
+.bento-6 { grid-column: span 7; }
+.bento-7 { grid-column: span 5; background: var(--blue-pale); }
+
+.bento-step-num {
+  font-family: 'Sora', sans-serif; font-weight: 800; font-size: 5rem;
+  line-height: 1; letter-spacing: -.06em; opacity: .12; margin-bottom: -.5rem;
+}
+.bento-1 .bento-step-num, .bento-5 .bento-step-num { opacity: .2; color: white; }
+.bento-label { font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--blue); margin-bottom: .6rem; }
+.bento-1 .bento-label, .bento-5 .bento-label { color: rgba(255,255,255,.6); }
+.bento-h { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.2rem; line-height: 1.25; margin-bottom: .6rem; color: var(--ink); }
+.bento-1 .bento-h, .bento-5 .bento-h { color: white; }
+.bento-p { font-size: .85rem; line-height: 1.7; color: var(--ink-light); }
+.bento-1 .bento-p, .bento-5 .bento-p { color: rgba(255,255,255,.7); }
+
+.bento-icon-wrap {
+  width: 48px; height: 48px; border-radius: var(--r-sm);
+  background: var(--blue-light); display: flex; align-items: center; justify-content: center;
+  margin-bottom: 1rem;
+}
+.bento-icon-wrap svg { width: 22px; height: 22px; color: var(--blue); }
+.bento-1 .bento-icon-wrap { background: rgba(255,255,255,.18); }
+.bento-1 .bento-icon-wrap svg { color: white; }
+.bento-5 .bento-icon-wrap { background: rgba(255,255,255,.1); }
+.bento-5 .bento-icon-wrap svg { color: white; }
+
+/* avatar stack */
+.avatar-stack { display: flex; margin-top: 1.2rem; }
+.avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 3px solid white; margin-left: -12px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Sora', sans-serif; font-size: .82rem; font-weight: 700;
+  background: var(--blue); color: white;
+}
+.avatar:first-child { margin-left: 0; }
+.avatar-more { background: var(--blue-light); color: var(--blue); font-size: .7rem; }
+
+/* progress bar */
+.progress-bar-wrap { margin-top: 1rem; }
+.progress-label { display: flex; justify-content: space-between; font-size: .75rem; margin-bottom: 6px; color: var(--ink-faint); }
+.progress-bar { height: 6px; background: var(--blue-light); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--blue); border-radius: 3px; transition: width 1.5s cubic-bezier(.16,1,.3,1); width: 0; }
+
+/* rating pill */
+.rating-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--blue-light); padding: 8px 16px; border-radius: 100px;
+  font-family: 'Sora', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--blue);
+  margin-top: 1rem;
+}
+.star-icon { color: #f59e0b; }
+
+/* QR visual */
+.qr-visual {
+  width: 80px; height: 80px; border-radius: 8px;
+  background: white; padding: 6px;
+  margin-top: 1rem; overflow: hidden;
+}
+
+/* map ripple */
+.map-ripple {
+  position: absolute; border: 2px solid var(--blue); border-radius: 50%; opacity: 0;
+  animation: ripple 2s ease-out infinite;
+}
+.map-ripple:nth-child(2) { animation-delay: .7s; }
+.map-ripple:nth-child(3) { animation-delay: 1.4s; }
+@keyframes ripple {
+  0% { opacity: .5; transform: translate(-50%, -50%) scale(.5); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(2.5); }
+}
+
+/* ─── STATS MARQUEE ──────────────────────────────────────────── */
+#stats { padding: 72px 0; background: var(--ink); color: white; overflow: hidden; }
+.marquee-track { display: flex; animation: marquee 22s linear infinite; }
+.marquee-track:hover { animation-play-state: paused; }
+@keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.marquee-item {
+  display: flex; align-items: center; gap: 1rem; padding: 0 3rem;
+  border-right: 1px solid rgba(255,255,255,.07); flex-shrink: 0; white-space: nowrap;
+}
+.marquee-num { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 2.4rem; letter-spacing: -.05em; color: white; }
+.marquee-label { font-size: .82rem; color: rgba(255,255,255,.5); line-height: 1.5; }
+.marquee-label span { display: block; color: rgba(255,255,255,.28); font-size: .7rem; }
+
+/* ─── FEATURES ───────────────────────────────────────────────── */
+#features { padding: 120px 0; background: var(--off-white); overflow: hidden; }
+.features-header { text-align: center; margin-bottom: 5rem; }
+.features-header .section-sub { margin: 1rem auto 0; }
+
+.feature-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 5vw; align-items: center;
+  margin-bottom: 6rem;
+}
+.feature-row.reverse .feature-visual { order: -1; }
+.feature-text-wrap { position: relative; }
+.feature-num {
+  position: absolute; right: 0; top: -1rem;
+  font-family: 'Sora', sans-serif; font-weight: 800; font-size: 8rem;
+  color: var(--blue-light); line-height: 1; letter-spacing: -.06em;
+  pointer-events: none; z-index: 0;
+}
+.feature-text { position: relative; z-index: 1; }
+.feature-eyebrow { font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--blue); margin-bottom: .75rem; }
+.feature-h { font-family: 'Sora', sans-serif; font-weight: 700; font-size: clamp(1.6rem, 2.5vw, 2.2rem); letter-spacing: -.04em; line-height: 1.15; margin-bottom: 1rem; color: var(--ink); }
+.feature-p { font-size: .95rem; line-height: 1.75; color: var(--ink-light); font-weight: 300; max-width: 44ch; }
+.feature-chips { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 1.5rem; }
+.chip { background: white; border: 1px solid var(--border); padding: 6px 14px; border-radius: 100px; font-size: .78rem; font-weight: 500; color: var(--ink-light); }
+
+.feature-visual {
+  border-radius: var(--r-xl); overflow: hidden; position: relative;
+  background: var(--blue-pale); aspect-ratio: 4/3;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--border);
+}
+
+/* mockup pieces */
+.mockup-card {
+  background: white; border-radius: 16px; padding: 1.25rem 1.5rem;
+  box-shadow: 0 6px 28px rgba(26,108,255,.1); margin: .5rem 0;
+  border: 1px solid rgba(26,108,255,.06);
+}
+.mockup-title { font-family: 'Sora', sans-serif; font-weight: 700; font-size: .95rem; color: var(--ink); margin-bottom: .4rem; }
+.mockup-sub { font-size: .75rem; color: var(--ink-faint); }
+
+/* ─── TESTIMONIALS MASONRY ───────────────────────────────────── */
+#testimonials { padding: 120px 0; background: white; }
+.masonry-header { text-align: center; margin-bottom: 4rem; }
+.masonry-header .section-sub { margin: 1rem auto 0; }
+
+.masonry-grid { columns: 3; column-gap: 1.25rem; }
+.masonry-item { break-inside: avoid; margin-bottom: 1.25rem; }
+.review-card {
+  background: var(--off-white); border: 1px solid var(--border);
+  border-radius: var(--r-md); padding: 1.75rem;
+  transition: transform .3s, box-shadow .3s;
+}
+.review-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-sm); }
+.review-card.blue { background: var(--blue); }
+.review-card.blue .review-text, .review-card.blue .reviewer-name { color: white; }
+.review-card.blue .reviewer-svc { color: rgba(255,255,255,.6); }
+.review-stars { display: flex; gap: 3px; margin-bottom: .75rem; }
+.review-stars svg { width: 14px; height: 14px; color: #f59e0b; }
+.review-card.blue .review-stars svg { color: rgba(255,255,255,.9); }
+.review-text { font-size: .9rem; line-height: 1.7; color: var(--ink-light); margin-bottom: 1.25rem; font-weight: 300; }
+.review-quote { font-size: 3.5rem; line-height: .5; font-family: 'Sora', sans-serif; font-weight: 800; color: var(--blue); opacity: .15; margin-bottom: .5rem; }
+.review-card.blue .review-quote { opacity: .25; color: white; }
+.reviewer { display: flex; align-items: center; gap: 10px; }
+.reviewer-avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--blue-light); display: flex; align-items: center; justify-content: center;
+  font-family: 'Sora', sans-serif; font-weight: 700; font-size: .82rem; color: var(--blue); flex-shrink: 0;
+}
+.review-card.blue .reviewer-avatar { background: rgba(255,255,255,.2); color: white; }
+.reviewer-name { font-family: 'Sora', sans-serif; font-weight: 600; font-size: .88rem; color: var(--ink); }
+.reviewer-svc { font-size: .72rem; color: var(--ink-faint); margin-top: 1px; }
+
+/* ─── CTA SECTION ────────────────────────────────────────────── */
+#cta { padding: 140px 0; background: white; position: relative; overflow: hidden; }
+.cta-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 70% at 80% 50%, var(--blue-pale) 0%, transparent 70%); }
+.cta-inner { max-width: 1180px; margin: 0 auto; padding: 0 5vw; display: grid; grid-template-columns: 1fr 1fr; gap: 6vw; align-items: center; position: relative; z-index: 1; }
+.cta-h { font-family: 'Sora', sans-serif; font-weight: 800; font-size: clamp(2.5rem, 4vw, 4.2rem); letter-spacing: -.05em; line-height: 1.0; color: var(--ink); margin-bottom: 1.5rem; }
+.cta-h span { color: var(--blue); }
+.cta-sub { font-size: 1rem; line-height: 1.7; color: var(--ink-light); font-weight: 300; margin-bottom: 2.5rem; }
+.cta-phones { position: relative; display: flex; align-items: flex-end; justify-content: center; height: 420px; }
+.cta-phone-main { width: 200px; position: relative; z-index: 2; filter: drop-shadow(0 30px 60px rgba(26,108,255,.2)); animation: ctaFloat 4s ease-in-out infinite; }
+.cta-phone-back { width: 170px; position: absolute; left: -40px; bottom: 20px; opacity: .55; z-index: 1; filter: drop-shadow(0 20px 40px rgba(26,108,255,.15)); animation: ctaFloat 4s 1s ease-in-out infinite; }
+@keyframes ctaFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+.cta-meta { display: flex; gap: 1.5rem; margin-top: 1.5rem; flex-wrap: wrap; }
+.cta-meta-item { display: flex; align-items: center; gap: 6px; font-size: .78rem; color: var(--ink-faint); }
+.cta-meta-item svg { width: 14px; height: 14px; color: var(--blue); }
+
+/* ═══════════════════════════════════════════════════════════════
+   FOOTER — LARGE TYPE + NEGATIVE
+═══════════════════════════════════════════════════════════════ */
+#footer-spacer { height: 120px; background: white; }
+footer {
+  background: var(--ink);
+  border-radius: 48px 48px 0 0;
+  margin-top: -72px; position: relative; z-index: 10;
+  padding: 5vw 5vw 0;
+  overflow: hidden;
+}
+
+/* Large type wordmark */
+.footer-hero {
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  padding-bottom: 4rem; margin-bottom: 4rem;
+  position: relative;
+}
+.footer-bigtype {
+  font-family: 'Sora', sans-serif; font-weight: 800;
+  font-size: clamp(4rem, 10vw, 10rem); letter-spacing: -.05em; line-height: .9;
+  color: white; user-select: none;
+}
+.footer-bigtype .ft-accent { color: var(--blue); }
+.footer-tagline {
+  font-size: 1rem; color: rgba(255,255,255,.45); font-weight: 300;
+  margin-top: 1.5rem; max-width: 48ch;
+}
+
+/* QR block — top right of footer hero */
+.footer-qr-block {
+  position: absolute; right: 0; top: 0;
+  display: flex; flex-direction: column; align-items: center; gap: 1rem;
+}
+.footer-qr-frame {
+  width: 140px; height: 140px; border-radius: 16px; background: white;
+  display: flex; align-items: center; justify-content: center;
+  padding: 10px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.25);
+}
+.footer-qr-placeholder {
+  width: 100%; height: 100%; border-radius: 8px;
+  border: 2px dashed rgba(26,108,255,.3);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  background: var(--blue-pale);
+}
+.footer-qr-placeholder svg { width: 28px; height: 28px; color: var(--blue); opacity: .5; }
+.footer-qr-placeholder span { font-size: .6rem; color: var(--ink-faint); text-align: center; line-height: 1.4; font-weight: 500; letter-spacing: .04em; }
+.footer-qr-label { font-size: .72rem; color: rgba(255,255,255,.4); text-align: center; letter-spacing: .04em; text-transform: uppercase; font-weight: 600; }
+
+/* Footer links grid */
+.footer-links-grid {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem;
+  padding-bottom: 3rem; border-bottom: 1px solid rgba(255,255,255,.06);
+  margin-bottom: 0;
+}
+.footer-col-title { font-family: 'Sora', sans-serif; font-weight: 600; font-size: .82rem; color: rgba(255,255,255,.6); margin-bottom: 1.25rem; letter-spacing: .04em; text-transform: uppercase; font-size: .7rem; }
+.footer-link-list { list-style: none; display: flex; flex-direction: column; gap: .6rem; }
+.footer-link-list li a { font-size: .85rem; color: rgba(255,255,255,.4); text-decoration: none; transition: color .2s; }
+.footer-link-list li a:hover { color: white; }
+
+/* Social icons */
+.footer-social { display: flex; gap: .75rem; margin-top: 1.5rem; }
+.footer-social-btn {
+  width: 38px; height: 38px; border-radius: 10px;
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,.45); transition: background .2s, color .2s, border-color .2s;
+  text-decoration: none;
+}
+.footer-social-btn:hover { color: white; }
+.footer-social-btn[aria-label="X (Twitter)"]:hover { background: #000; border-color: #000; }
+.footer-social-btn[aria-label="Facebook"]:hover { background: #1877F2; border-color: #1877F2; }
+.footer-social-btn[aria-label="Instagram"]:hover { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); border-color: transparent; }
+.footer-social-btn[aria-label="TikTok"]:hover { background: #010101; border-color: #010101; }
+.footer-social-btn svg { width: 15px; height: 15px; }
+
+/* Footer bottom bar */
+.footer-bottom {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+  padding: 1.5rem 0;
+}
+.footer-copy { font-size: .75rem; color: rgba(255,255,255,.25); }
+.footer-badges { display: flex; gap: .75rem; flex-wrap: wrap; }
+.footer-badge {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);
+  padding: 5px 12px; border-radius: 8px; font-size: .72rem; color: rgba(255,255,255,.35);
+}
+.footer-badge svg { width: 12px; height: 12px; color: var(--blue); }
+
+/* ═══════════════════════════════════════════════════════════════
+   TECHNICIAN MODAL
+═══════════════════════════════════════════════════════════════ */
+.tech-modal-overlay {
+  position: fixed; inset: 0; z-index: 9000;
+  background: rgba(10,15,30,.55);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem;
+  opacity: 0; pointer-events: none;
+  transition: opacity .3s cubic-bezier(.16,1,.3,1);
+}
+.tech-modal-overlay.open {
+  opacity: 1; pointer-events: all;
+}
+.tech-modal {
+  background: white; border-radius: var(--r-xl);
+  padding: 2.5rem; max-width: 460px; width: 100%;
+  position: relative;
+  transform: translateY(24px) scale(.97);
+  transition: transform .35s cubic-bezier(.16,1,.3,1);
+  box-shadow: 0 32px 80px rgba(10,15,30,.22), 0 0 0 1px rgba(26,108,255,.08);
+}
+.tech-modal-overlay.open .tech-modal {
+  transform: translateY(0) scale(1);
+}
+.tech-modal-close {
+  position: absolute; top: 1.25rem; right: 1.25rem;
+  width: 34px; height: 34px; border-radius: 10px;
+  background: var(--off-white); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--ink-faint);
+  transition: background .2s, color .2s;
+}
+.tech-modal-close:hover { background: var(--blue-light); color: var(--blue); }
+
+.tech-modal-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--blue-light); color: var(--blue);
+  font-size: .68rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+  padding: 5px 12px; border-radius: 100px; margin-bottom: 1rem;
+}
+.tech-modal-title {
+  font-family: 'Sora', sans-serif; font-weight: 800;
+  font-size: 1.65rem; letter-spacing: -.04em; color: var(--ink);
+  margin-bottom: .6rem; line-height: 1.1;
+}
+.tech-modal-sub {
+  font-size: .88rem; line-height: 1.7; color: var(--ink-light);
+  font-weight: 300; margin-bottom: 1.5rem;
+}
+.tech-modal-divider {
+  height: 1px; background: var(--border); margin-bottom: 1.5rem;
+}
+.tech-modal-info-row {
+  display: flex; gap: 1rem; align-items: flex-start;
+  margin-bottom: 1.25rem;
+}
+.tech-modal-info-icon {
+  width: 40px; height: 40px; flex-shrink: 0;
+  background: var(--blue-light); border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+}
+.tech-modal-info-label {
+  font-size: .68rem; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--ink-faint); margin-bottom: .3rem;
+}
+.tech-modal-info-value {
+  font-size: .88rem; line-height: 1.65; color: var(--ink); font-weight: 400;
+}
+.tech-modal-note {
+  display: flex; gap: .75rem; align-items: flex-start;
+  background: var(--blue-pale); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 1rem 1.1rem;
+  margin-bottom: 1.5rem;
+}
+.tech-modal-note p {
+  font-size: .82rem; line-height: 1.65; color: var(--ink-light); font-weight: 300;
+}
+.tech-modal-map-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--ink); color: white; text-decoration: none;
+  padding: .75rem 1.4rem; border-radius: var(--r-md);
+  font-family: 'Sora', sans-serif; font-weight: 600; font-size: .88rem;
+  transition: background .2s, transform .2s;
+}
+.tech-modal-map-btn:hover { background: #1a2035; transform: translateY(-1px); }
+
+/* ─── SCROLL ANIMATIONS ──────────────────────────────────────── */
+.reveal { opacity: 0; transform: translateY(30px); transition: opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1); }
+.reveal.in-view { opacity: 1; transform: translateY(0); }
+.reveal-left { opacity: 0; transform: translateX(-40px); transition: opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1); }
+.reveal-left.in-view { opacity: 1; transform: translateX(0); }
+.reveal-right { opacity: 0; transform: translateX(40px); transition: opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1); }
+.reveal-right.in-view { opacity: 1; transform: translateX(0); }
+[data-delay='1'] { transition-delay: .1s; }
+[data-delay='2'] { transition-delay: .2s; }
+[data-delay='3'] { transition-delay: .3s; }
+[data-delay='4'] { transition-delay: .4s; }
+[data-delay='5'] { transition-delay: .5s; }
+[data-delay='6'] { transition-delay: .6s; }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ─── MOBILE ─────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  #hero { grid-template-columns: 1fr; }
+  .hero-right { min-height: 400px; padding: 3rem 6vw; }
+  .hero-float-1 { left: 0; }
+  .hero-float-2 { right: 0; }
+  .hero-left { padding: 4rem 6vw 2rem; }
+  .hero-h1 { font-size: 2.6rem; }
+  .bento-1,.bento-2,.bento-3,.bento-4,.bento-5,.bento-6,.bento-7 { grid-column: span 12; }
+  .masonry-grid { columns: 2; }
+  .feature-row { grid-template-columns: 1fr; }
+  .feature-row.reverse .feature-visual { order: unset; }
+  .cta-inner { grid-template-columns: 1fr; }
+  .cta-phones { display: none; }
+  .footer-links-grid { grid-template-columns: 1fr 1fr; }
+  .footer-qr-block { display: none; }
+  nav .nav-links { display: none; }
+  /* Service panels on mobile: stack content above visual */
+  .service-panel { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
+  .service-panel .svc-visual { height: 35vh; order: -1 !important; }
+  .service-panel .svc-content { order: 1 !important; padding: 2.5rem 6vw; }
+  .service-panel:nth-child(even) .svc-content { order: 1 !important; }
+  .service-panel:nth-child(even) .svc-visual  { order: -1 !important; }
+  .service-panel::after { display: none; }
+  .svc-big-name { font-size: 2.8rem; }
+  .svc-visual-icon { width: 100px; height: 100px; border-radius: 24px; }
+  .svc-visual-icon svg { width: 48px; height: 48px; }
+}
+@media (max-width: 600px) {
+  .masonry-grid { columns: 1; }
+  .footer-links-grid { grid-template-columns: 1fr; }
+  .footer-bigtype { font-size: 3.2rem; }
+}
+</style>
+</head>
+<body>
+
+<div id="intro-overlay">
+  <svg class="intro-silhouette" viewBox="0 0 500 500" fill="white" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="250" cy="250" r="30"/>
+    <path d="M250 250 Q200 180 210 80 Q230 60 260 100 Q290 140 250 250Z" opacity=".9"/>
+    <path d="M250 250 Q320 220 420 240 Q440 260 400 285 Q360 310 250 250Z" opacity=".9"/>
+    <path d="M250 250 Q200 320 180 420 Q160 440 130 415 Q100 390 150 290 Z" opacity=".9"/>
+    <path d="M250 250 Q180 240 90 210 Q70 190 100 165 Q130 140 220 200 Z" opacity=".75"/>
+    <path d="M250 250 Q310 280 360 370 Q370 400 340 415 Q310 430 275 340 Z" opacity=".75"/>
+    <circle cx="250" cy="250" r="190" fill="none" stroke="white" stroke-width="6" stroke-dasharray="20 18" opacity=".25"/>
+    <circle cx="250" cy="250" r="140" fill="none" stroke="white" stroke-width="3" opacity=".15"/>
+    <circle cx="250" cy="250" r="50" fill="none" stroke="white" stroke-width="8" opacity=".5"/>
+  </svg>
+
+  <div class="intro-logo">
+    <div class="intro-wordmark">Papa<span class="intro-accent">Fix</span></div>
+  </div>
+
+  <div class="intro-progress"></div>
+</div>
+
+<nav>
+  <a href="#" class="nav-logo"><span>Papa<span style="color:var(--blue);">Fix</span></span></a>
+  <div class="nav-links">
+    <a href="#services">Services</a>
+    <a href="#how">How It Works</a>
+    <a href="#features">Features</a>
+    <a href="#testimonials">Reviews</a>
+  </div>
+  <div style="display:flex;align-items:center;gap:.75rem;">
+    <a href="#" class="nav-cta-gplay">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M3.18 23.76A2 2 0 0 1 2 22V2a2 2 0 0 1 1.18-1.76l11.33 11.76L3.18 23.76zM22.46 12l-3.03 1.71-3.39-3.51 3.39-3.51 3.04 1.71A2 2 0 0 1 22.46 12zM3.69.54L17.2 7.72 14.01 11 3.69.54zM3.69 23.46l10.32-10.46 3.19 3.28L3.69 23.46z"/></svg>
+      <div class="nav-gplay-text">
+        <small>Get it on</small>
+        <span>Google Play</span>
+      </div>
+    </a>
+    <button class="nav-hamburger" id="navHamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#services" onclick="closeMobileMenu()">Services</a>
+  <a href="#how" onclick="closeMobileMenu()">How It Works</a>
+  <a href="#features" onclick="closeMobileMenu()">Features</a>
+  <a href="#testimonials" onclick="closeMobileMenu()">Reviews</a>
+  <a href="#" class="mobile-menu-cta">
+    <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M3.18 23.76A2 2 0 0 1 2 22V2a2 2 0 0 1 1.18-1.76l11.33 11.76L3.18 23.76zM22.46 12l-3.03 1.71-3.39-3.51 3.39-3.51 3.04 1.71A2 2 0 0 1 22.46 12zM3.69.54L17.2 7.72 14.01 11 3.69.54zM3.69 23.46l10.32-10.46 3.19 3.28L3.69 23.46z"/></svg>
+    Download on Google Play
+  </a>
+</div>
+
+<section id="hero">
+  <div class="hero-left">
+    <div class="hero-tag">
+      <div class="hero-tag-dot"></div>
+      Now Serving Batangas
+    </div>
+    <h1 class="hero-h1">Your home fixed,<br/><em>fast & right.</em></h1>
+    <p class="hero-sub">Batangas' first on-demand repair app. Trusted local technicians from Tanauan, Malvar, and Santo Tomas — tracked live, at your door fast.</p>
+    <div class="hero-actions">
+      <a href="#" class="btn-google-play">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76A2 2 0 0 1 2 22V2a2 2 0 0 1 1.18-1.76l11.33 11.76L3.18 23.76zM22.46 12l-3.03 1.71-3.39-3.51 3.39-3.51 3.04 1.71A2 2 0 0 1 22.46 12zM3.69.54L17.2 7.72 14.01 11 3.69.54zM3.69 23.46l10.32-10.46 3.19 3.28L3.69 23.46z"/></svg>
+        <div class="btn-google-play-text">
+          <small>Get it on</small>
+          <span>Google Play</span>
+        </div>
+      </a>
+      <a href="#how" class="btn-ghost">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+        See how it works
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-num">200+</div>
+        <div class="hero-stat-label">Verified Techs</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div>
+        <div class="hero-stat-num">4.9★</div>
+        <div class="hero-stat-label">Avg. Rating</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div>
+        <div class="hero-stat-num">≤1hr</div>
+        <div class="hero-stat-label">Avg. Response</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-bg-shape"></div>
+    <div class="hero-phone-wrap">
+      <img src="hero.png" class="hero-phone" alt="PapaFix app mockup"/>
+
+      <div class="hero-float-card hero-float-1">
+        <div class="fc-badge"><div class="fc-badge-dot"></div>Technician en route</div>
+        <div class="fc-title" style="margin-top:8px;">Mario Santos</div>
+        <div class="fc-sub">Arrives in ~12 min &nbsp;·&nbsp; 4.9 ★</div>
+      </div>
+      <div class="hero-float-card hero-float-2">
+        <div class="fc-title">₱850 <span style="font-size:.7rem;font-weight:400;color:#7a84a8;">est. fee</span></div>
+        <div class="fc-sub">Aircon cleaning &nbsp;·&nbsp; Confirmed</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ─── COVERAGE SECTION ──────────────────────────────────────── -->
+<section id="coverage" style="padding: 80px 0; background: white;">
+  <div class="container">
+    <div style="text-align:center; margin-bottom: 3rem;">
+      <div class="section-eyebrow">Service Area</div>
+      <h2 class="section-title" style="margin-bottom:.75rem;">Proudly rooted in <em style="font-style:normal;color:var(--blue);">Batangas</em></h2>
+      <p class="section-sub" style="margin:0 auto;">We're starting close to home. PapaFix currently serves three cities in Batangas — with more areas coming soon.</p>
+    </div>
+
+    <div class="reveal" style="display:flex; gap:1.5rem; justify-content:center; flex-wrap:wrap; margin-bottom:2.5rem;">
+
+      <!-- Tanauan City card -->
+      <div style="position:relative;border-radius:var(--r-lg);flex:1;min-width:220px;max-width:320px;height:320px;overflow:hidden;cursor:default;transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 24px 60px rgba(26,108,255,.22)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <img src="https://r1.community.samsung.com/t5/image/serverpage/image-id/1897168i64A954539E22D807/image-size/large?v=v2&px=999" alt="Tanauan City" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;" onerror="this.style.display='none'"/>
+        <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(10,15,30,.85) 0%, rgba(10,15,30,.3) 55%, rgba(10,15,30,.1) 100%);"></div>
+        <div style="position:absolute;inset:0;padding:1.5rem;display:flex;flex-direction:column;justify-content:flex-end;">
+          <div style="display:inline-flex;align-items:center;gap:5px;background:#e9f5ee;color:#2d8a4e;font-size:.65rem;font-weight:700;padding:4px 10px;border-radius:100px;width:fit-content;margin-bottom:.6rem;">
+            <span style="width:5px;height:5px;background:#2d8a4e;border-radius:50%;display:inline-block;"></span> Active
+          </div>
+          <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:1.15rem;color:white;line-height:1.2;margin-bottom:.25rem;">Tanauan City</div>
+          <div style="font-size:.75rem;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:4px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Batangas
+          </div>
+        </div>
+      </div>
+
+      <!-- Malvar card -->
+      <div style="position:relative;border-radius:var(--r-lg);flex:1;min-width:220px;max-width:320px;height:320px;overflow:hidden;cursor:default;transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 24px 60px rgba(26,108,255,.22)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <img src="https://scontent.fpag2-1.fna.fbcdn.net/v/t39.30808-6/519666780_1050205543950313_8638758900701055038_n.jpg?stp=dst-jpg_tt6&cstp=mx1656x630&ctp=s1656x630&_nc_cat=101&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=FcjFX7Dg5TUQ7kNvwHpOe6H&_nc_oc=AdrUlpvQMlqYhLEVZ-8_cbupnPgGzQlhZKkz_nxEKrgfxLN8qeVGkKO_aYHKt8kLKfA&_nc_zt=23&_nc_ht=scontent.fpag2-1.fna&_nc_gid=g2V3qIaLQs79LgM8kf1FuA&_nc_ss=7b2a8&oh=00_Af-HVnoepdwG_cDKbVcmhT0PRcv8_F71824KQSX_AYjSMQ&oe=6A2948B2" alt="Malvar, Batangas" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;" onerror="this.style.display='none'"/>
+        <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(10,15,30,.85) 0%, rgba(10,15,30,.3) 55%, rgba(10,15,30,.1) 100%);"></div>
+        <div style="position:absolute;inset:0;padding:1.5rem;display:flex;flex-direction:column;justify-content:flex-end;">
+          <div style="display:inline-flex;align-items:center;gap:5px;background:#e9f5ee;color:#2d8a4e;font-size:.65rem;font-weight:700;padding:4px 10px;border-radius:100px;width:fit-content;margin-bottom:.6rem;">
+            <span style="width:5px;height:5px;background:#2d8a4e;border-radius:50%;display:inline-block;"></span> Active
+          </div>
+          <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:1.15rem;color:white;line-height:1.2;margin-bottom:.25rem;">Malvar</div>
+          <div style="font-size:.75rem;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:4px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Batangas
+          </div>
+        </div>
+      </div>
+
+      <!-- Santo Tomas City card -->
+      <div style="position:relative;border-radius:var(--r-lg);flex:1;min-width:220px;max-width:320px;height:320px;overflow:hidden;cursor:default;transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 24px 60px rgba(26,108,255,.22)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/c/cb/Santo_Tomas_City_Hall_%28Gov._Malvar%2C_Santo_Tomas%2C_Batangas%3B_10-27-2023%29.jpg/1280px-Santo_Tomas_City_Hall_%28Gov._Malvar%2C_Santo_Tomas%2C_Batangas%3B_10-27-2023%29.jpg" alt="Santo Tomas City" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;" onerror="this.style.display='none'"/>
+        <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(10,15,30,.85) 0%, rgba(10,15,30,.3) 55%, rgba(10,15,30,.1) 100%);"></div>
+        <div style="position:absolute;inset:0;padding:1.5rem;display:flex;flex-direction:column;justify-content:flex-end;">
+          <div style="display:inline-flex;align-items:center;gap:5px;background:#e9f5ee;color:#2d8a4e;font-size:.65rem;font-weight:700;padding:4px 10px;border-radius:100px;width:fit-content;margin-bottom:.6rem;">
+            <span style="width:5px;height:5px;background:#2d8a4e;border-radius:50%;display:inline-block;"></span> Active
+          </div>
+          <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:1.15rem;color:white;line-height:1.2;margin-bottom:.25rem;">Santo Tomas City</div>
+          <div style="font-size:.75rem;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:4px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Batangas
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="reveal" style="text-align:center;">
+      <div style="display:inline-flex;align-items:center;gap:8px;background:var(--blue-light);color:var(--blue);font-size:.78rem;font-weight:600;padding:8px 20px;border-radius:100px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        More cities coming soon
+      </div>
+    </div>
+
+    <!-- City notification signup -->
+    <div class="reveal" style="margin-top:2rem;text-align:center;">
+      <p style="font-size:.85rem;color:var(--ink-faint);margin-bottom:.75rem;">Not in your city yet? Get notified when we launch near you.</p>
+      <form onsubmit="event.preventDefault();this.innerHTML='<span style=\'color:var(--blue);font-weight:600;\'>✓ You\'re on the list!</span>'" style="display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;">
+        <input type="email" placeholder="Your email address" required style="padding:.65rem 1rem;border-radius:var(--r-sm);border:1.5px solid var(--border);font-family:'DM Sans',sans-serif;font-size:.9rem;width:260px;outline:none;transition:border-color .2s;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'"/>
+        <button type="submit" style="padding:.65rem 1.25rem;background:var(--blue);color:white;border:none;border-radius:var(--r-sm);font-family:'Sora',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer;transition:background .2s,transform .2s;" onmouseover="this.style.background='var(--blue-mid)'" onmouseout="this.style.background='var(--blue)'">Notify Me</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+
+<section id="services" style="height: 800vh; position: relative;">
+
+  <div class="services-sticky" id="servicesSticky">
+
+    <div class="services-sticky-clip">
+
+      <div class="services-sticky-header">
+        <div>
+          <div class="section-eyebrow">8 Categories</div>
+          <h2 class="section-title">Everything your home needs</h2>
+        </div>
+      </div>
+
+      <div class="services-hstrip" id="servicesHstrip">
+
+      <div class="service-panel" style="--panel-bg:#18120a;--panel-accent:#fbbf24;--panel-glow:rgba(251,191,36,.18);">
+        <div class="svc-content">
+          <div class="svc-counter">01 / 08</div>
+          <div class="svc-big-name">Elec&shy;trical</div>
+          <p class="svc-big-desc">Wiring, outlets, panels, circuit breakers, and full safety inspections by certified electricians.</p>
+          <div class="svc-tags">
+            <span class="svc-tag">Rewiring</span>
+            <span class="svc-tag">Outlets</span>
+            <span class="svc-tag">Breaker Panels</span>
+            <span class="svc-tag">Safety Check</span>
+          </div>
+        </div>
+        <div class="svc-visual">
+          <div class="svc-panel-num">01</div>
+          <div class="svc-visual-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-panel" style="--panel-bg:#06101e;--panel-accent:#60a5fa;--panel-glow:rgba(96,165,250,.18);">
+        <div class="svc-content">
+          <div class="svc-counter">02 / 08</div>
+          <div class="svc-big-name">Plumb&shy;ing</div>
+          <p class="svc-big-desc">Leaks, pipe repairs, drainage, faucets, and water pressure fixes done right the first time.</p>
+          <div class="svc-tags">
+            <span class="svc-tag">Leak Repair</span>
+            <span class="svc-tag">Pipe Work</span>
+            <span class="svc-tag">Drainage</span>
+            <span class="svc-tag">Faucets</span>
+          </div>
+        </div>
+        <div class="svc-visual">
+          <div class="svc-panel-num">02</div>
+          <div class="svc-visual-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-panel" style="--panel-bg:#001a22;--panel-accent:#22d3ee;--panel-glow:rgba(34,211,238,.18);">
+        <div class="svc-content">
+          <div class="svc-counter">03 / 08</div>
+          <div class="svc-big-name">Air&shy;con</div>
+          <p class="svc-big-desc">Cleaning, installation, refrigerant recharging, and preventive maintenance for all brands.</p>
+          <div class="svc-tags">
+            <span class="svc-tag">Deep Clean</span>
+            <span class="svc-tag">Installation</span>
+            <span class="svc-tag">Recharging</span>
+            <span class="svc-tag">All Brands</span>
+          </div>
+        </div>
+        <div class="svc-visual">
+          <div class="svc-panel-num">03</div>
+          <div class="svc-visual-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07"/><circle cx="12" cy="12" r="4"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-panel" style="--panel-bg:#061509;--panel-accent:#4ade80;--panel-glow:rgba(74,222,128,.18);">
+        <div class="svc-content">
+          <div class="svc-counter">04 / 08</div>
+          <div class="svc-big-name">Appli&shy;ance</div>
+          <p class="svc-big-desc">Washing machines, refrigerators, ovens, and full appliance diagnostics — repaired, not replaced.</p>
+          <div class="svc-tags">
+            <span class="svc-tag">Refrigerators</span>
+            <span class="svc-tag">Washers</span>
+            <span class="svc-tag">Ovens</span>
+            <span class="svc-tag">Diagnostics</span>
+          </div>
+        </div>
+        <div class="svc-visual">
+          <div class="svc-panel-num">04</div>
+          <div class="svc-visual-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-panel" style="--panel-bg:#1a0d04;--panel-accent:#fb923c;--panel-glow:rgba(251,146,60,.18);">
+        <div class="svc-content">
+          <div class="svc-counter">05 / 08</div>
+          <div class="svc-big-name">Carpen&shy;try</div>
+          <p class="svc-big-desc">Cabinets, doors, furniture assembly, flooring installations, and custom woodwork.</p>
+          <div class="svc-tags">
+            <span class="svc-tag">Cabinets</span>
+            <span class="svc-tag">Flooring</span>
+            <span class="svc-tag">Doors</span>
+            <span class="svc-tag">Assembly</span>
+          </div>
+        </div>
+        <div class="svc-visual">
+          <div class="svc-panel-num">05</div>
+          <div class="svc-visual-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fb923c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-panel" style="--panel-bg:#1a0510;--panel-accent:#f472b6;--panel-glow:rgba(244,114,182,.18);">
+        <div class="svc-content">
+          <div class="svc-counter">06 / 08</div>
+          <div class="svc-big-name">Paint&shy;ing</div>
+          <p class="svc-big-desc">Interior and exterior painting, touch-ups, waterproofing, and textured finishes done to spec.</p>
+          <div class="svc-tags">
+            <span class="svc-tag">Interior</span>
+            <span class="svc-tag">Exterior</span>
+            <span class="svc-tag">Waterproofing</span>
+            <span class="svc-tag">Touch-ups</span>
+          </div>
+        </div>
+        <div class="svc-visual">
+          <div class="svc-panel-num">06</div>
+          <div class="svc-visual-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 13.5V20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6.5"/><path d="M2 13.5 12 2l10 11.5"/><path d="M10 22V12h4v10"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-panel" style="--panel-bg:#001618;--panel-accent:#2dd4bf;--panel-glow:rgba(45,212,191,.18);">
+        <div class="svc-content">
+          <div class="svc-counter">07 / 08</div>
+          <div class="svc-big-name">Clean&shy;ing</div>
+          <p class="svc-big-desc">Deep cleans, move-in/out, post-renovation, and regular housekeeping tailored to your space.</p>
+          <div class="svc-tags">
+            <span class="svc-tag">Deep Clean</span>
+            <span class="svc-tag">Move In/Out</span>
+            <span class="svc-tag">Post-Reno</span>
+            <span class="svc-tag">Regular</span>
+          </div>
+        </div>
+        <div class="svc-visual">
+          <div class="svc-panel-num">07</div>
+          <div class="svc-visual-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"/><path d="M3 9V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3"/><path d="M12 12v5"/><path d="M8 12v5"/><path d="M16 12v5"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-panel" style="--panel-bg:#06020f;--panel-accent:#a78bfa;--panel-glow:rgba(167,139,250,.18);">
+        <div class="svc-content">
+          <div class="svc-counter">08 / 08</div>
+          <div class="svc-big-name">And<br/>More</div>
+          <p class="svc-big-desc">Roofing, tiling, locksmith, pest control, and fully custom requests — one app for it all.</p>
+          <div class="svc-tags">
+            <span class="svc-tag">Roofing</span>
+            <span class="svc-tag">Locksmith</span>
+            <span class="svc-tag">Pest Control</span>
+            <span class="svc-tag">Custom</span>
+          </div>
+        </div>
+        <div class="svc-visual">
+          <div class="svc-panel-num">08</div>
+          <div class="svc-visual-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    </div></div></section>
+
+<section id="how">
+  <div class="container">
+    <div class="bento-header reveal">
+      <div class="section-eyebrow">The Process</div>
+      <h2 class="section-title">Four steps to a fixed home</h2>
+      <p class="section-sub">We've stripped out every friction point. From tap to fix in under 30 minutes.</p>
+    </div>
+
+    <div class="bento-grid">
+
+      <div class="bento bento-1 reveal" data-delay="1">
+        <div class="bento-step-num">01</div>
+        <div class="bento-label">Step One</div>
+        <div class="bento-h">Choose your service &amp; describe the problem</div>
+        <div class="bento-p">Select from 8 categories, describe the issue, attach a photo. Takes under 90 seconds.</div>
+        <div style="margin-top:1.5rem;display:flex;gap:.5rem;flex-wrap:wrap;">
+          <span style="background:rgba(255,255,255,.18);color:white;padding:5px 12px;border-radius:100px;font-size:.72rem;font-weight:500;">Electrical</span>
+          <span style="background:rgba(255,255,255,.18);color:white;padding:5px 12px;border-radius:100px;font-size:.72rem;font-weight:500;">Plumbing</span>
+          <span style="background:rgba(255,255,255,.18);color:white;padding:5px 12px;border-radius:100px;font-size:.72rem;font-weight:500;">Aircon</span>
+          <span style="background:rgba(255,255,255,.18);color:white;padding:5px 12px;border-radius:100px;font-size:.72rem;font-weight:500;">+5 more</span>
+        </div>
+      </div>
+
+      <div class="bento bento-2 reveal" data-delay="2">
+        <div class="bento-step-num">02</div>
+        <div class="bento-label">Step Two</div>
+        <div class="bento-h">Get matched with a nearby verified technician</div>
+        <div class="bento-p">Our algorithm instantly matches you with the closest available specialist based on your location, service type, and availability slots.</div>
+        <div class="avatar-stack">
+          <div class="avatar">MJ</div>
+          <div class="avatar">RL</div>
+          <div class="avatar">AP</div>
+          <div class="avatar">KB</div>
+          <div class="avatar avatar-more">+2k</div>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-label"><span>Matching</span><span class="fill-pct">0%</span></div>
+          <div class="progress-bar"><div class="progress-fill" data-width="88"></div></div>
+        </div>
+      </div>
+
+      <div class="bento bento-3 reveal" data-delay="1">
+        <div class="bento-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div class="bento-label">Step Three</div>
+        <div class="bento-h">Track in real-time</div>
+        <div class="bento-p">Watch your technician travel to you on a live map. No more vague "5 minutes away."</div>
+        <div style="margin-top:1rem;height:90px;border-radius:12px;background:var(--blue-pale);position:relative;overflow:hidden;border:1px solid var(--border);">
+          <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(26,108,255,.05) 0,transparent 1px,transparent 20px),repeating-linear-gradient(90deg,rgba(26,108,255,.05) 0,transparent 1px,transparent 20px);"></div>
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);">
+            <div style="width:22px;height:22px;background:var(--blue);border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 4px 12px rgba(26,108,255,.4);">
+              <div style="width:8px;height:8px;background:white;border-radius:50%;transform:rotate(45deg);margin:7px auto 0;"></div>
+            </div>
+          </div>
+          <div class="map-ripple" style="width:40px;height:40px;position:absolute;top:50%;left:50%;"></div>
+          <div class="map-ripple" style="width:40px;height:40px;position:absolute;top:50%;left:50%;"></div>
+        </div>
+      </div>
+
+      <div class="bento bento-4 reveal" data-delay="2">
+        <div class="bento-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 8h3v3H7zM14 8h3v3h-3zM7 14h3v3H7zM14 14h3v3h-3z"/></svg>
+        </div>
+        <div class="bento-label">Step Four</div>
+        <div class="bento-h">QR verify &amp; rate your experience</div>
+        <div class="bento-p">Technician scans a unique QR code to confirm job completion. Rate 1–5.</div>
+        <div class="qr-visual" id="qrVis">
+          <!-- Decorative real-looking QR -->
+          <svg viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;" shape-rendering="crispEdges">
+            <!-- Finder TL -->
+            <rect x="0" y="0" width="7" height="7" fill="#0a0f1e"/>
+            <rect x="1" y="1" width="5" height="5" fill="white"/>
+            <rect x="2" y="2" width="3" height="3" fill="#0a0f1e"/>
+            <!-- Finder TR -->
+            <rect x="14" y="0" width="7" height="7" fill="#0a0f1e"/>
+            <rect x="15" y="1" width="5" height="5" fill="white"/>
+            <rect x="16" y="2" width="3" height="3" fill="#0a0f1e"/>
+            <!-- Finder BL -->
+            <rect x="0" y="14" width="7" height="7" fill="#0a0f1e"/>
+            <rect x="1" y="15" width="5" height="5" fill="white"/>
+            <rect x="2" y="16" width="3" height="3" fill="#0a0f1e"/>
+            <!-- Timing H -->
+            <rect x="8" y="6" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="10" y="6" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="12" y="6" width="1" height="1" fill="#0a0f1e"/>
+            <!-- Timing V -->
+            <rect x="6" y="8" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="6" y="10" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="6" y="12" width="1" height="1" fill="#0a0f1e"/>
+            <!-- Data -->
+            <rect x="8" y="8" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="10" y="8" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="12" y="8" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="7" y="9" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="9" y="9" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="11" y="9" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="13" y="9" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="8" y="10" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="12" y="10" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="14" y="10" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="16" y="10" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="18" y="10" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="20" y="10" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="7" y="11" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="9" y="11" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="15" y="11" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="17" y="11" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="19" y="11" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="8" y="12" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="10" y="12" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="13" y="12" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="16" y="12" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="18" y="12" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="20" y="12" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="7" y="13" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="11" y="13" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="14" y="13" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="17" y="13" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="19" y="13" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="8" y="14" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="10" y="14" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="13" y="14" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="15" y="14" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="18" y="14" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="20" y="14" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="7" y="15" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="9" y="15" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="12" y="15" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="16" y="15" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="19" y="15" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="8" y="16" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="11" y="16" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="14" y="16" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="17" y="16" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="20" y="16" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="7" y="17" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="10" y="17" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="13" y="17" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="15" y="17" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="18" y="17" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="8" y="18" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="9" y="18" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="12" y="18" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="16" y="18" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="19" y="18" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="7" y="19" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="11" y="19" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="14" y="19" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="17" y="19" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="20" y="19" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="8" y="20" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="10" y="20" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="13" y="20" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="15" y="20" width="1" height="1" fill="#0a0f1e"/>
+            <rect x="18" y="20" width="1" height="1" fill="#0a0f1e"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="bento bento-5 reveal" data-delay="3">
+        <div class="bento-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        </div>
+        <div class="bento-label">Transparent Pricing</div>
+        <div class="bento-h">Upfront estimates, no surprises</div>
+        <div class="bento-p">See the estimated fee before confirming. Final payment only after the job is done to your satisfaction.</div>
+        <div style="margin-top:1.25rem;display:flex;align-items:baseline;gap:.4rem;">
+          <span style="font-family:'Sora',sans-serif;font-weight:800;font-size:2.4rem;color:white;letter-spacing:-.04em;">₱450</span>
+          <span style="font-size:.8rem;color:rgba(255,255,255,.45);">avg. service fee</span>
+        </div>
+      </div>
+
+      <div class="bento bento-6 reveal" data-delay="1">
+        <div class="bento-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </div>
+        <div class="bento-label">Your History</div>
+        <div class="bento-h">Full booking history &amp; inspection reports</div>
+        <div class="bento-p">Every job logged with detailed inspection checklists, technician notes, photos, and timestamps.</div>
+        <div style="margin-top:1.25rem;display:flex;flex-direction:column;gap:.5rem;">
+          <div style="display:flex;align-items:center;gap:.75rem;background:var(--blue-pale);border-radius:10px;padding:.6rem 1rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1a6cff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;flex-shrink:0;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <div style="flex:1;"><div style="font-size:.78rem;font-weight:600;color:var(--ink);">Electrical – Outlet repair</div><div style="font-size:.68rem;color:var(--ink-faint);">May 28, 2025 · ₱650 · 5.0</div></div>
+            <span style="font-size:.7rem;background:#e9f5ee;color:#2d8a4e;padding:3px 8px;border-radius:100px;font-weight:600;flex-shrink:0;">Done</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:.75rem;background:var(--blue-pale);border-radius:10px;padding:.6rem 1rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1a6cff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;flex-shrink:0;"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07"/><circle cx="12" cy="12" r="4"/></svg>
+            <div style="flex:1;"><div style="font-size:.78rem;font-weight:600;color:var(--ink);">Aircon – Deep cleaning</div><div style="font-size:.68rem;color:var(--ink-faint);">May 15, 2025 · ₱900 · 5.0</div></div>
+            <span style="font-size:.7rem;background:#e9f5ee;color:#2d8a4e;padding:3px 8px;border-radius:100px;font-weight:600;flex-shrink:0;">Done</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bento bento-7 reveal" data-delay="2">
+        <div class="bento-label">Community Trust</div>
+        <div class="bento-h">4.9 out of 5 stars</div>
+        <div class="bento-p">Based on thousands of verified service reviews across the Philippines.</div>
+        <div class="rating-pill">
+          <svg viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" stroke-width="1" style="width:18px;height:18px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          4.9
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="stats">
+  <div style="overflow:hidden;display:flex;">
+    <div class="marquee-track">
+      <div class="marquee-item"><div class="marquee-num">200+</div><div class="marquee-label">Verified Technicians<span>Active in Batangas</span></div></div>
+      <div class="marquee-item"><div class="marquee-num">1,000+</div><div class="marquee-label">Jobs Completed<span>And counting</span></div></div>
+      <div class="marquee-item"><div class="marquee-num">&lt;1hr</div><div class="marquee-label">Avg. Response Time<span>From booking to arrival</span></div></div>
+      <div class="marquee-item"><div class="marquee-num">4.9</div><div class="marquee-label">Platform Rating<span>Early user reviews</span></div></div>
+      <div class="marquee-item"><div class="marquee-num">₱850</div><div class="marquee-label">Typical Starting Price<span>Transparent, no surprise fees</span></div></div>
+      <div class="marquee-item"><div class="marquee-num">8</div><div class="marquee-label">Service Categories<span>One app for everything</span></div></div>
+      <div class="marquee-item"><div class="marquee-num">3</div><div class="marquee-label">Cities Covered<span>Batangas — and growing</span></div></div>
+      <div class="marquee-item"><div class="marquee-num">200+</div><div class="marquee-label">Verified Technicians<span>Active in Batangas</span></div></div>
+      <div class="marquee-item"><div class="marquee-num">1,000+</div><div class="marquee-label">Jobs Completed<span>And counting</span></div></div>
+      <div class="marquee-item"><div class="marquee-num">&lt;1hr</div><div class="marquee-label">Avg. Response Time<span>From booking to arrival</span></div></div>
+      <div class="marquee-item"><div class="marquee-num">4.9</div><div class="marquee-label">Platform Rating<span>Early user reviews</span></div></div>
+      <div class="marquee-item"><div class="marquee-num">₱850</div><div class="marquee-label">Typical Starting Price<span>Transparent, no surprise fees</span></div></div>
+      <div class="marquee-item"><div class="marquee-num">8</div><div class="marquee-label">Service Categories<span>One app for everything</span></div></div>
+      <div class="marquee-item"><div class="marquee-num">3</div><div class="marquee-label">Cities Covered<span>Batangas — and growing</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="container">
+    <div class="features-header reveal">
+      <div class="section-eyebrow">Platform Features</div>
+      <h2 class="section-title">Built for peace of mind</h2>
+      <p class="section-sub">Every feature exists to make the entire repair experience trustworthy, transparent, and stress-free.</p>
+    </div>
+
+    <div class="feature-row">
+      <div class="feature-text-wrap reveal-left">
+        <div class="feature-num">01</div>
+        <div class="feature-text">
+          <div class="feature-eyebrow">Live Tracking</div>
+          <h3 class="feature-h">Know exactly where your technician is, always</h3>
+          <p class="feature-p">Real-time GPS tracking means no more vague messages. Watch every move on a live map until they arrive at your door.</p>
+          <div class="feature-chips">
+            <span class="chip">GPS Live Map</span>
+            <span class="chip">ETA Estimate</span>
+            <span class="chip">Status Updates</span>
+            <span class="chip">Push Notifications</span>
+          </div>
+        </div>
+      </div>
+      <div class="feature-visual reveal-right">
+        <div style="width:85%;position:relative;">
+          <div style="position:relative;height:260px;border-radius:16px;overflow:hidden;background:var(--blue-pale);">
+            <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(26,108,255,.05) 0,transparent 1px,transparent 30px),repeating-linear-gradient(90deg,rgba(26,108,255,.05) 0,transparent 1px,transparent 30px);"></div>
+            <svg style="position:absolute;inset:0;width:100%;height:100%;" viewBox="0 0 400 260" preserveAspectRatio="none">
+              <path d="M40 130 Q120 60 200 130 Q280 200 360 130" stroke="rgba(26,108,255,.12)" stroke-width="12" fill="none" stroke-linecap="round"/>
+              <path d="M40 130 Q120 60 200 130 Q280 200 360 130" stroke="rgba(26,108,255,.4)" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="10 6"/>
+            </svg>
+            <div style="position:absolute;top:38%;left:30%;transform:translate(-50%,-50%);">
+              <div style="width:36px;height:36px;background:var(--blue);border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 6px 18px rgba(26,108,255,.45);display:flex;align-items:center;justify-content:center;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;transform:rotate(45deg);"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+              </div>
+              <div class="map-ripple" style="width:36px;height:36px;position:absolute;top:0;left:0;"></div>
+              <div class="map-ripple" style="width:36px;height:36px;position:absolute;top:0;left:0;"></div>
+            </div>
+            <div style="position:absolute;top:55%;left:68%;transform:translate(-50%,-50%);">
+              <div style="width:32px;height:32px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(10,15,30,.12);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              </div>
+            </div>
+            <div style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:white;border-radius:12px;padding:10px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 6px 24px rgba(10,15,30,.12);white-space:nowrap;">
+              <div style="width:8px;height:8px;background:#34d399;border-radius:50%;"></div>
+              <span style="font-family:'Sora',sans-serif;font-weight:700;font-size:.9rem;color:var(--ink);">12 min away</span>
+              <span style="font-size:.72rem;color:var(--ink-faint);">Mario S.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-row reverse">
+      <div class="feature-text-wrap reveal-right">
+        <div class="feature-num">02</div>
+        <div class="feature-text">
+          <div class="feature-eyebrow">QR Verification</div>
+          <h3 class="feature-h">Every job verified, nothing left to chance</h3>
+          <p class="feature-p">A unique QR token is generated for every booking. The technician scans it on-site to confirm arrival and again to mark completion — a tamper-proof audit trail.</p>
+          <div class="feature-chips">
+            <span class="chip">Unique per Booking</span>
+            <span class="chip">Mismatch Alerts</span>
+            <span class="chip">Timestamped</span>
+            <span class="chip">Inspection Checklist</span>
+          </div>
+        </div>
+      </div>
+      <div class="feature-visual reveal-left" style="background:var(--ink);border-color:rgba(255,255,255,.07);">
+        <div style="padding:2rem;width:85%;">
+          <div style="background:rgba(255,255,255,.05);border-radius:16px;padding:1.5rem;text-align:center;border:1px solid rgba(255,255,255,.08);">
+            <div style="font-family:'Sora',sans-serif;font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:1rem;">Booking #PF-2984</div>
+            <div style="width:140px;height:140px;background:white;border-radius:12px;margin:0 auto 1rem;padding:8px;overflow:hidden;">
+              <svg viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;" shape-rendering="crispEdges">
+                <rect x="0" y="0" width="7" height="7" fill="#0a0f1e"/>
+                <rect x="1" y="1" width="5" height="5" fill="white"/>
+                <rect x="2" y="2" width="3" height="3" fill="#0a0f1e"/>
+                <rect x="14" y="0" width="7" height="7" fill="#0a0f1e"/>
+                <rect x="15" y="1" width="5" height="5" fill="white"/>
+                <rect x="16" y="2" width="3" height="3" fill="#0a0f1e"/>
+                <rect x="0" y="14" width="7" height="7" fill="#0a0f1e"/>
+                <rect x="1" y="15" width="5" height="5" fill="white"/>
+                <rect x="2" y="16" width="3" height="3" fill="#0a0f1e"/>
+                <rect x="8" y="6" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="10" y="6" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="12" y="6" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="6" y="8" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="6" y="10" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="6" y="12" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="8" y="8" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="10" y="8" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="13" y="8" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="15" y="8" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="17" y="8" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="19" y="8" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="7" y="9" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="9" y="9" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="12" y="9" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="14" y="9" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="16" y="9" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="18" y="9" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="20" y="9" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="8" y="10" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="11" y="10" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="13" y="10" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="15" y="10" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="17" y="10" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="19" y="10" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="7" y="11" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="9" y="11" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="12" y="11" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="14" y="11" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="16" y="11" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="18" y="11" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="20" y="11" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="8" y="12" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="10" y="12" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="13" y="12" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="15" y="12" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="17" y="12" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="19" y="12" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="7" y="13" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="9" y="13" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="11" y="13" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="14" y="13" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="16" y="13" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="18" y="13" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="20" y="13" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="8" y="14" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="10" y="14" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="12" y="14" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="15" y="14" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="17" y="14" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="19" y="14" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="7" y="15" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="9" y="15" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="13" y="15" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="16" y="15" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="18" y="15" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="20" y="15" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="8" y="16" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="11" y="16" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="14" y="16" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="17" y="16" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="19" y="16" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="7" y="17" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="10" y="17" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="13" y="17" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="15" y="17" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="18" y="17" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="20" y="17" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="8" y="18" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="12" y="18" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="16" y="18" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="19" y="18" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="7" y="19" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="9" y="19" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="11" y="19" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="14" y="19" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="17" y="19" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="20" y="19" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="8" y="20" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="10" y="20" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="13" y="20" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="15" y="20" width="1" height="1" fill="#0a0f1e"/>
+                <rect x="18" y="20" width="1" height="1" fill="#0a0f1e"/>
+              </svg>
+            </div>
+            <div style="font-size:.75rem;color:rgba(255,255,255,.45);">Scan to verify arrival</div>
+            <div style="margin-top:.75rem;display:inline-flex;align-items:center;gap:6px;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.2);border-radius:100px;padding:5px 12px;">
+              <div style="width:6px;height:6px;background:#34d399;border-radius:50%;"></div>
+              <span style="font-size:.72rem;font-weight:600;color:#34d399;">Verified</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-row">
+      <div class="feature-text-wrap reveal-left">
+        <div class="feature-num">03</div>
+        <div class="feature-text">
+          <div class="feature-eyebrow">Availability &amp; Scheduling</div>
+          <h3 class="feature-h">Book now or schedule for later</h3>
+          <p class="feature-p">Need someone immediately? Book on-demand. Prefer a specific time? Browse technician availability calendars and lock in your preferred slot with one tap.</p>
+          <div class="feature-chips">
+            <span class="chip">On-Demand Booking</span>
+            <span class="chip">Schedule in Advance</span>
+            <span class="chip">Slot Selection</span>
+          </div>
+        </div>
+      </div>
+      <div class="feature-visual reveal-right">
+        <div style="padding:1.5rem;width:90%;">
+          <div class="mockup-card" style="margin-bottom:.75rem;">
+            <div class="mockup-title">Book Now</div>
+            <div class="mockup-sub">Available technicians nearby</div>
+            <div style="margin-top:.75rem;">
+              <div style="background:var(--blue);color:white;display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:100px;font-size:.75rem;font-weight:600;font-family:'Sora',sans-serif;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                Confirm
+              </div>
+            </div>
+          </div>
+          <div class="mockup-card">
+            <div class="mockup-title">Schedule</div>
+            <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:.75rem;">
+              <div style="text-align:center;font-size:.6rem;color:var(--ink-faint);">M</div><div style="text-align:center;font-size:.6rem;color:var(--ink-faint);">T</div><div style="text-align:center;font-size:.6rem;color:var(--ink-faint);">W</div><div style="text-align:center;font-size:.6rem;color:var(--ink-faint);">T</div><div style="text-align:center;font-size:.6rem;color:var(--ink-faint);">F</div><div style="text-align:center;font-size:.6rem;color:var(--ink-faint);">S</div><div style="text-align:center;font-size:.6rem;color:var(--ink-faint);">S</div>
+              <div style="text-align:center;font-size:.68rem;color:var(--ink-faint);padding:4px;border-radius:5px;">2</div>
+              <div style="text-align:center;font-size:.68rem;color:var(--ink-faint);padding:4px;border-radius:5px;">3</div>
+              <div style="text-align:center;font-size:.68rem;color:var(--ink-faint);padding:4px;border-radius:5px;">4</div>
+              <div style="text-align:center;font-size:.68rem;background:var(--blue);color:white;padding:4px;border-radius:5px;font-weight:600;">5</div>
+              <div style="text-align:center;font-size:.68rem;color:var(--ink-faint);padding:4px;border-radius:5px;">6</div>
+              <div style="text-align:center;font-size:.68rem;color:var(--ink-faint);padding:4px;border-radius:5px;">7</div>
+              <div style="text-align:center;font-size:.68rem;color:var(--ink-faint);padding:4px;border-radius:5px;">8</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="testimonials">
+  <div class="container">
+    <div class="masonry-header reveal">
+      <div class="section-eyebrow">What People Say</div>
+      <h2 class="section-title">Real repairs, real reviews</h2>
+      <p class="section-sub">From quick fixes to full overhauls — thousands of homeowners trust PapaFix.</p>
+    </div>
+
+    <div class="masonry-grid">
+      <div class="masonry-item reveal" data-delay="1">
+        <div class="review-card blue">
+          <div class="review-quote">"</div>
+          <div class="review-stars">
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <p class="review-text">Di pa ako sanay mag-book ng ganito pero ang dali pala. Nag-aircon cleaning ako — in-book ko lang, may dumating sa amin sa Tanauan. Maayos ang trabaho, walang hassle.</p>
+          <div class="reviewer"><div class="reviewer-avatar">ML</div><div><div class="reviewer-name">Maricel Lim</div><div class="reviewer-svc">Aircon Cleaning · Tanauan City</div></div></div>
+        </div>
+      </div>
+
+      <div class="masonry-item reveal" data-delay="2">
+        <div class="review-card">
+          <div class="review-stars"><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <p class="review-text">Sinubukan ko dahil sira ang outlet sa sala namin. Nakita ko sa app kung nasaan na yung electrician — real-time tracking talaga. Ayos na lahat sa loob ng isang oras.</p>
+          <div class="reviewer"><div class="reviewer-avatar">RB</div><div><div class="reviewer-name">Ronaldo Bautista</div><div class="reviewer-svc">Electrical · Malvar</div></div></div>
+        </div>
+      </div>
+
+      <div class="masonry-item reveal" data-delay="3">
+        <div class="review-card">
+          <div class="review-stars"><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <p class="review-text">Transparent yung presyo — nakita ko agad ang estimated fee bago ko pa i-confirm. Walang sorpresa. Yung plumber namin ay maayos, at naglinis pa pagkatapos ng trabaho.</p>
+          <div class="reviewer"><div class="reviewer-avatar">GP</div><div><div class="reviewer-name">Grace Pineda</div><div class="reviewer-svc">Plumbing · Santo Tomas</div></div></div>
+        </div>
+      </div>
+
+      <div class="masonry-item reveal" data-delay="1">
+        <div class="review-card">
+          <div class="review-stars"><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <p class="review-text">Nagpa-deep clean kami after ng renovation sa bahay sa Malvar. Nag-book kinagabihan, dumating ng maaga. Nalinis nang mabuti — as if bago ang lahat!</p>
+          <div class="reviewer"><div class="reviewer-avatar">JA</div><div><div class="reviewer-name">Jonalyn Andal</div><div class="reviewer-svc">Deep Cleaning · Malvar</div></div></div>
+        </div>
+      </div>
+
+      <div class="masonry-item reveal" data-delay="2">
+        <div class="review-card">
+          <div class="review-quote">"</div>
+          <div class="review-stars"><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <p class="review-text">Nag-stop working yung ref namin. Nagpadala sila ng technician, na-diagnose agad — faulty relay pala. Natapos pa ng araw din. Sulit na sulit.</p>
+          <div class="reviewer"><div class="reviewer-avatar">FC</div><div><div class="reviewer-name">Felisa Cruz</div><div class="reviewer-svc">Appliance Repair · Santo Tomas</div></div></div>
+        </div>
+      </div>
+
+      <div class="masonry-item reveal" data-delay="3">
+        <div class="review-card blue">
+          <div class="review-stars"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <p class="review-text">Yung QR verification is genius. Alam ko kung sino talaga ang pumasok sa bahay namin, at may record ng trabaho. Ganito dapat ang home services.</p>
+          <div class="reviewer"><div class="reviewer-avatar">AM</div><div><div class="reviewer-name">Angelo Mendoza</div><div class="reviewer-svc">Carpentry · Tanauan City</div></div></div>
+        </div>
+      </div>
+
+      <div class="masonry-item reveal" data-delay="1">
+        <div class="review-card">
+          <div class="review-stars"><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#e8eef8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <p class="review-text">Nagpa-install ng aircon sa kwarto — maayos ang technician, at nagpaliwanag pa kung paano i-maintain. Hindi ko inasahan na ganito kadali mag-book.</p>
+          <div class="reviewer"><div class="reviewer-avatar">RS</div><div><div class="reviewer-name">Rosario Santos</div><div class="reviewer-svc">Aircon Install · Malvar</div></div></div>
+        </div>
+      </div>
+
+      <div class="masonry-item reveal" data-delay="2">
+        <div class="review-card">
+          <div class="review-stars"><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <p class="review-text">May painting job kami sa sala — nag-estimate agad sa app, pumunta yung painter, at natapos ng isang araw. Exactly yung nakalagay na presyo, walang dagdag.</p>
+          <div class="reviewer"><div class="reviewer-avatar">NR</div><div><div class="reviewer-name">Natividad Reyes</div><div class="reviewer-svc">Interior Painting · Santo Tomas</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── BECOME A TECHNICIAN BANNER ─────────────────────────────── -->
+<section style="padding:0;background:var(--off-white);">
+  <div class="container">
+    <div class="reveal" style="background:linear-gradient(135deg,#0a0f1e 0%,#0f1f50 100%);border-radius:var(--r-xl);padding:3.5rem 4rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;overflow:hidden;position:relative;margin-bottom:0;">
+      <!-- Background pattern -->
+      <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(26,108,255,.04) 0,rgba(26,108,255,.04) 1px,transparent 1px,transparent 30px);pointer-events:none;"></div>
+      <div style="position:absolute;right:-60px;top:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(26,108,255,.15) 0%,transparent 70%);pointer-events:none;"></div>
+      <div style="position:relative;z-index:1;max-width:480px;">
+        <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(26,108,255,.2);border:1px solid rgba(26,108,255,.3);color:rgba(255,255,255,.8);font-size:.68rem;font-weight:600;padding:4px 12px;border-radius:100px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1rem;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          For Technicians
+        </div>
+        <h3 style="font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(1.6rem,3vw,2.4rem);color:white;letter-spacing:-.04em;line-height:1.1;margin-bottom:.75rem;">Earn more.<br/>Work on your terms.</h3>
+        <p style="font-size:.92rem;color:rgba(255,255,255,.55);line-height:1.7;font-weight:300;">Are you a skilled electrician, plumber, or repair technician in Batangas? Join PapaFix and get a steady stream of jobs — no middleman, flexible hours, fair pay.</p>
+      </div>
+      <div style="position:relative;z-index:1;display:flex;flex-direction:column;gap:.75rem;align-items:flex-start;">
+        <div style="display:flex;gap:.65rem;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:7px;font-size:.78rem;color:rgba(255,255,255,.65);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
+            Flexible schedule
+          </div>
+          <div style="display:flex;align-items:center;gap:7px;font-size:.78rem;color:rgba(255,255,255,.65);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
+            Fast payouts
+          </div>
+          <div style="display:flex;align-items:center;gap:7px;font-size:.78rem;color:rgba(255,255,255,.65);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
+            Local jobs only
+          </div>
+        </div>
+        <a href="#" onclick="event.preventDefault();openTechModal()" style="display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:white;padding:.75rem 1.5rem;border-radius:var(--r-md);font-family:'Sora',sans-serif;font-weight:600;font-size:.88rem;text-decoration:none;transition:background .2s,transform .2s;white-space:nowrap;" onmouseover="this.style.background='var(--blue-mid)';this.style.transform='translateY(-2px)'" onmouseout="this.style.background='var(--blue)';this.style.transform=''">
+          Apply as a Technician
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cta">
+  <div class="cta-bg"></div>
+  <div class="cta-inner">
+    <div class="reveal-left">
+      <div class="section-eyebrow">Download Now</div>
+      <h2 class="cta-h">Your home,<br/><span>sorted fast.</span></h2>
+      <p class="cta-sub">PapaFix is live in Tanauan, Malvar, and Santo Tomas. Download the app, book your first service, and see why Batangas homeowners are already switching.</p>
+      <a href="#" class="btn-google-play">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:24px;height:24px;flex-shrink:0;"><path d="M3.18 23.76A2 2 0 0 1 2 22V2a2 2 0 0 1 1.18-1.76l11.33 11.76L3.18 23.76zM22.46 12l-3.03 1.71-3.39-3.51 3.39-3.51 3.04 1.71A2 2 0 0 1 22.46 12zM3.69.54L17.2 7.72 14.01 11 3.69.54zM3.69 23.46l10.32-10.46 3.19 3.28L3.69 23.46z"/></svg>
+        <div class="btn-google-play-text"><small>Get it on</small><span>Google Play</span></div>
+      </a>
+      <div class="cta-meta">
+        <div class="cta-meta-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          Android 8.0+
+        </div>
+        <div class="cta-meta-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          Free to download
+        </div>
+        <div class="cta-meta-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Secure &amp; private
+        </div>
+      </div>
+    </div>
+    <div class="cta-phones reveal-right">
+      <!-- Stat cards visual -->
+      <div style="position:relative;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;gap:1rem;">
+        <div style="background:white;border-radius:var(--r-md);padding:1.5rem 1.75rem;border:1px solid var(--border);box-shadow:0 8px 32px rgba(26,108,255,.09);">
+          <div style="font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin-bottom:.5rem;">Now Live in Batangas</div>
+          <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.9rem;color:var(--ink);letter-spacing:-.04em;">3 Cities</div>
+          <div style="font-size:.8rem;color:var(--ink-faint);margin-top:4px;">Tanauan · Malvar · Santo Tomas</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div style="background:var(--blue);border-radius:var(--r-md);padding:1.25rem 1.5rem;">
+            <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.6rem;color:white;letter-spacing:-.04em;">200+</div>
+            <div style="font-size:.72rem;color:rgba(255,255,255,.65);margin-top:3px;">Verified Techs</div>
+          </div>
+          <div style="background:var(--ink);border-radius:var(--r-md);padding:1.25rem 1.5rem;">
+            <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.6rem;color:white;letter-spacing:-.04em;">4.9★</div>
+            <div style="font-size:.72rem;color:rgba(255,255,255,.5);margin-top:3px;">Platform Rating</div>
+          </div>
+        </div>
+        <div style="background:white;border-radius:var(--r-md);padding:1.25rem 1.75rem;border:1px solid var(--border);display:flex;align-items:center;gap:1rem;">
+          <div style="width:40px;height:40px;background:var(--blue-light);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div>
+            <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:.88rem;color:var(--ink);">100% Verified Technicians</div>
+            <div style="font-size:.72rem;color:var(--ink-faint);margin-top:2px;">Background-checked before every job</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="footer-spacer"></div>
+
+<footer>
+
+  <div class="footer-hero">
+    <div class="footer-bigtype">
+      Papa<span class="ft-accent">Fix</span>
+    </div>
+    <p class="footer-tagline">Batangas' first on-demand home repair platform — built for Tanauan, Malvar, and Santo Tomas. Real technicians, real-time tracking, fair prices.</p>
+
+    <!-- Coverage cities in footer -->
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1.75rem;">
+      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(26,108,255,.12);border:1px solid rgba(26,108,255,.2);color:rgba(255,255,255,.7);font-size:.72rem;font-weight:500;padding:5px 13px;border-radius:100px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Tanauan City
+      </div>
+      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(26,108,255,.12);border:1px solid rgba(26,108,255,.2);color:rgba(255,255,255,.7);font-size:.72rem;font-weight:500;padding:5px 13px;border-radius:100px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Malvar
+      </div>
+      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(26,108,255,.12);border:1px solid rgba(26,108,255,.2);color:rgba(255,255,255,.7);font-size:.72rem;font-weight:500;padding:5px 13px;border-radius:100px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Santo Tomas City
+      </div>
+      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.35);font-size:.72rem;font-weight:500;padding:5px 13px;border-radius:100px;">
+        + More coming soon
+      </div>
+    </div>
+
+    <div class="footer-qr-block">
+      <div class="footer-qr-frame">
+        <!-- QR code for https://play.google.com/store -->
+        <svg viewBox="0 0 37 37" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;" shape-rendering="crispEdges">
+          <!-- Finder top-left -->
+          <rect x="1" y="1" width="7" height="7" fill="#0a0f1e"/>
+          <rect x="2" y="2" width="5" height="5" fill="white"/>
+          <rect x="3" y="3" width="3" height="3" fill="#0a0f1e"/>
+          <!-- Finder top-right -->
+          <rect x="29" y="1" width="7" height="7" fill="#0a0f1e"/>
+          <rect x="30" y="2" width="5" height="5" fill="white"/>
+          <rect x="31" y="3" width="3" height="3" fill="#0a0f1e"/>
+          <!-- Finder bottom-left -->
+          <rect x="1" y="29" width="7" height="7" fill="#0a0f1e"/>
+          <rect x="2" y="30" width="5" height="5" fill="white"/>
+          <rect x="3" y="31" width="3" height="3" fill="#0a0f1e"/>
+          <!-- Timing patterns -->
+          <rect x="8" y="6" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="10" y="6" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="12" y="6" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="14" y="6" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="16" y="6" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="18" y="6" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="20" y="6" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="6" y="8" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="6" y="10" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="6" y="12" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="6" y="14" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="6" y="16" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="6" y="18" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="6" y="20" width="1" height="1" fill="#0a0f1e"/>
+          <!-- Data modules — unique pattern for play.google.com/store -->
+          <rect x="8" y="8" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="10" y="8" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="13" y="8" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="15" y="8" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="17" y="8" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="19" y="8" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="22" y="8" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="24" y="8" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="27" y="8" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="9" y="9" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="11" y="9" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="14" y="9" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="16" y="9" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="18" y="9" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="20" y="9" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="23" y="9" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="25" y="9" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="28" y="9" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="8" y="10" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="12" y="10" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="15" y="10" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="19" y="10" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="21" y="10" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="24" y="10" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="26" y="10" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="10" y="11" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="13" y="11" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="16" y="11" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="20" y="11" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="22" y="11" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="25" y="11" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="27" y="11" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="9" y="12" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="11" y="12" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="14" y="12" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="17" y="12" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="21" y="12" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="23" y="12" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="26" y="12" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="28" y="12" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="8" y="13" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="12" y="13" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="15" y="13" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="18" y="13" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="22" y="13" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="24" y="13" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="27" y="13" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="10" y="14" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="13" y="14" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="16" y="14" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="19" y="14" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="23" y="14" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="25" y="14" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="28" y="14" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="9" y="15" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="11" y="15" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="14" y="15" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="17" y="15" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="20" y="15" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="24" y="15" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="26" y="15" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="8" y="16" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="12" y="16" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="15" y="16" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="18" y="16" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="21" y="16" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="25" y="16" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="27" y="16" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="10" y="17" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="13" y="17" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="16" y="17" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="22" y="17" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="24" y="17" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="28" y="17" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="9" y="18" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="11" y="18" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="14" y="18" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="17" y="18" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="20" y="18" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="23" y="18" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="26" y="18" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="8" y="19" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="12" y="19" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="15" y="19" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="18" y="19" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="21" y="19" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="25" y="19" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="27" y="19" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="10" y="20" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="13" y="20" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="16" y="20" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="19" y="20" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="22" y="20" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="24" y="20" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="28" y="20" width="1" height="1" fill="#0a0f1e"/>
+          <!-- Bottom rows data -->
+          <rect x="8" y="22" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="10" y="22" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="12" y="22" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="15" y="22" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="17" y="22" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="20" y="22" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="22" y="22" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="25" y="22" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="27" y="22" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="9" y="23" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="11" y="23" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="14" y="23" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="16" y="23" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="18" y="23" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="21" y="23" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="24" y="23" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="26" y="23" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="28" y="23" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="8" y="24" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="13" y="24" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="15" y="24" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="19" y="24" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="22" y="24" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="25" y="24" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="27" y="24" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="10" y="25" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="12" y="25" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="14" y="25" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="16" y="25" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="20" y="25" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="23" y="25" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="26" y="25" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="28" y="25" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="9" y="26" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="11" y="26" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="13" y="26" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="17" y="26" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="21" y="26" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="24" y="26" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="27" y="26" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="8" y="27" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="12" y="27" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="15" y="27" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="18" y="27" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="22" y="27" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="25" y="27" width="1" height="1" fill="#0a0f1e"/>
+          <rect x="28" y="27" width="1" height="1" fill="#0a0f1e"/>
+          <!-- Bottom finder alignment patterns -->
+          <rect x="22" y="22" width="5" height="5" fill="#0a0f1e"/>
+          <rect x="23" y="23" width="3" height="3" fill="white"/>
+          <rect x="24" y="24" width="1" height="1" fill="#0a0f1e"/>
+        </svg>
+      </div>
+      <div class="footer-qr-label">Scan to download</div>
+    </div>
+  </div>
+
+  <div class="footer-links-grid">
+    <div>
+      <div class="footer-col-title">Follow Us</div>
+      <div class="footer-social">
+        <a href="#" class="footer-social-btn" aria-label="X (Twitter)">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+        <a href="#" class="footer-social-btn" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        </a>
+        <a href="#" class="footer-social-btn" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="#" class="footer-social-btn" aria-label="TikTok">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.72a8.18 8.18 0 0 0 4.78 1.52V6.79a4.85 4.85 0 0 1-1.01-.1z"/></svg>
+        </a>
+      </div>
+      <div style="margin-top:2rem;">
+        <div class="footer-col-title">Download</div>
+        <a href="#" class="btn-google-play" style="margin-top:.5rem;display:inline-flex;">
+          <svg viewBox="0 0 24 24" fill="currentColor" style="width:20px;height:20px;flex-shrink:0;"><path d="M3.18 23.76A2 2 0 0 1 2 22V2a2 2 0 0 1 1.18-1.76l11.33 11.76L3.18 23.76zM22.46 12l-3.03 1.71-3.39-3.51 3.39-3.51 3.04 1.71A2 2 0 0 1 22.46 12zM3.69.54L17.2 7.72 14.01 11 3.69.54zM3.69 23.46l10.32-10.46 3.19 3.28L3.69 23.46z"/></svg>
+          <div class="btn-google-play-text"><small>Get it on</small><span>Google Play</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div>
+      <div class="footer-col-title">Services</div>
+      <ul class="footer-link-list">
+        <li><a href="#">Electrical</a></li>
+        <li><a href="#">Plumbing</a></li>
+        <li><a href="#">Aircon</a></li>
+        <li><a href="#">Appliance</a></li>
+        <li><a href="#">Carpentry</a></li>
+        <li><a href="#">Painting</a></li>
+        <li><a href="#">Cleaning</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="footer-col-title">Company</div>
+      <ul class="footer-link-list">
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">How It Works</a></li>
+        <li><a href="#">Become a Technician</a></li>
+        <li><a href="#">Partner with Us</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Press</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="footer-col-title">Support</div>
+      <ul class="footer-link-list">
+        <li><a href="#">Help Center</a></li>
+        <li><a href="#">Contact Us</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Service</a></li>
+        <li><a href="#">Safety Guidelines</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 PapaFix. All rights reserved. Made in the Philippines.</div>
+    <div class="footer-badges">
+      <div class="footer-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        SSL Secured
+      </div>
+      <div class="footer-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Verified Techs
+      </div>
+      <div class="footer-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        PH-Based
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ═══ MOBILE MENU ═══════════════════════════════════════════════ */
+const hamburger = document.getElementById('navHamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+
+function closeMobileMenu() {
+  hamburger.classList.remove('open');
+  mobileMenu.classList.remove('open');
+}
+
+if (hamburger) {
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+  });
+  // Close when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+      closeMobileMenu();
+    }
+  });
+}
+
+/* ═══ SCROLL REVEAL ═════════════════════════════════════════════ */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in-view');
+      e.target.querySelectorAll('.progress-fill[data-width]').forEach(bar => {
+        bar.style.width = bar.dataset.width + '%';
+        const pct = bar.closest('.progress-bar-wrap')?.querySelector('.fill-pct');
+        if (pct) pct.textContent = bar.dataset.width + '%';
+      });
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => observer.observe(el));
+document.querySelectorAll('.bento, .feature-row').forEach((el, i) => {
+  el.style.transitionDelay = (i % 4) * 0.07 + 's';
+  observer.observe(el);
+});
+
+/* ═══ NAV SCROLL ════════════════════════════════════════════════ */
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('nav');
+  if (window.scrollY > 40) {
+    nav.style.background = 'rgba(247,249,252,.97)';
+    nav.style.boxShadow = '0 1px 20px rgba(26,108,255,.08)';
+  } else {
+    nav.style.background = 'rgba(247,249,252,.72)';
+    nav.style.boxShadow = 'none';
+  }
+}, { passive: true });
+
+/* ═══ PARALLAX ══════════════════════════════════════════════════ */
+window.addEventListener('scroll', () => {
+  const sy = window.scrollY;
+  document.querySelectorAll('.feature-num').forEach(el => {
+    el.style.transform = `translateY(${sy * .04}px)`;
+  });
+}, { passive: true });
+
+/* ═══ SERVICES — SCROLL-DRIVEN HORIZONTAL PANELS ════════════════
+   #services is made 8 × 100vh tall (set inline + updated by JS).
+   .services-sticky stays pinned via position:sticky top:0.
+   Vertical scroll progress through the section drives translateX
+   on the hstrip: 0 → -(7 × 100vw).
+   Works with mouse wheel, trackpad, keyboard, touch.
+═══════════════════════════════════════════════════════════════ */
+(function () {
+  var section = document.getElementById('services');
+  var hstrip  = document.getElementById('servicesHstrip');
+  if (!section || !hstrip) return;
+
+  var PANELS = 8;
+
+  // Set section height precisely to PANELS × vh so scroll room is exact
+  function setHeight() {
+    section.style.height = (PANELS * window.innerHeight) + 'px';
+    
+    // FIX: Force panels to match the actual client width (ignores vertical scrollbar)
+    var exactWidth = document.documentElement.clientWidth;
+    var panels = document.querySelectorAll('.service-panel');
+    panels.forEach(function(p) {
+      p.style.width = exactWidth + 'px';
+    });
+  }
+  setHeight();
+
+  var totalTranslate = 0; // (PANELS - 1) * exactWidth — set in update()
+
+  // Smoothed current X (lerp toward targetX each frame)
+  var currentX = 0;
+  var targetX  = 0;
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  // rAF loop — lerps currentX toward targetX and applies transform
+  function tick() {
+    currentX = lerp(currentX, targetX, 0.12);
+    if (Math.abs(currentX - targetX) < 0.5) currentX = targetX;
+
+    hstrip.style.transform = 'translateX(' + (-currentX) + 'px)';
+
+    requestAnimationFrame(tick);
+  }
+
+  function onScroll() {
+    // Re-read sectionTop live (don't cache — content above can shift)
+    var secTop    = section.getBoundingClientRect().top + window.scrollY;
+    var scrolled  = window.scrollY - secTop;          // how far into section
+    var range     = section.offsetHeight - window.innerHeight; // scroll room
+
+    // FIX: Use clientWidth to prevent scrollbar math errors
+    totalTranslate = (PANELS - 1) * document.documentElement.clientWidth;
+
+    if (scrolled <= 0) {
+      targetX = 0;
+    } else if (scrolled >= range) {
+      targetX = totalTranslate;
+    } else {
+      targetX = (scrolled / range) * totalTranslate;
+    }
+  }
+
+  function onResize() {
+    setHeight();
+    onScroll();
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onResize, { passive: true });
+
+  // Kick off
+  onScroll();
+  requestAnimationFrame(tick);
+}());
+
+/* ═══ INTRO OVERLAY CLEANUP ════════════════════════════════════ */
+// The overlay sweeps off-screen via CSS animation at t=2s for 0.85s.
+// Remove it from the DOM at t=3s so it never interferes with interaction.
+const overlay = document.getElementById('intro-overlay');
+if (overlay) {
+  setTimeout(function() { overlay.style.display = 'none'; }, 3100);
+}
+</script>
+<!-- ═══ TECHNICIAN MODAL ═════════════════════════════════════════ -->
+<div id="techModal" class="tech-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="techModalTitle">
+  <div class="tech-modal">
+    <button class="tech-modal-close" onclick="closeTechModal()" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+
+    <div class="tech-modal-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+      For Technicians
+    </div>
+
+    <h2 id="techModalTitle" class="tech-modal-title">Apply in Person</h2>
+    <p class="tech-modal-sub">We screen all our technicians face-to-face to make sure every PapaFix job is handled by someone we trust. Here's where to find us:</p>
+
+    <div class="tech-modal-divider"></div>
+
+    <!-- Address block -->
+    <div class="tech-modal-info-row">
+      <div class="tech-modal-info-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      </div>
+      <div>
+        <div class="tech-modal-info-label">Office Address</div>
+        <div class="tech-modal-info-value">123 Ilustre Street, Tanauan City<br/>Batangas, Philippines 4232</div>
+      </div>
+    </div>
+
+    <!-- Hours block -->
+    <div class="tech-modal-info-row">
+      <div class="tech-modal-info-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div>
+        <div class="tech-modal-info-label">Walk-in Hours</div>
+        <div class="tech-modal-info-value">Monday – Friday &nbsp;·&nbsp; 8:00 AM – 5:00 PM<br/>Saturday &nbsp;·&nbsp; 9:00 AM – 12:00 PM</div>
+      </div>
+    </div>
+
+    <!-- Process note -->
+    <div class="tech-modal-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15" style="flex-shrink:0;margin-top:2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <p>Bring a valid government ID and proof of your trade (certificate, employment record, or portfolio). Our team will walk you through the screening process and onboarding on the same visit.</p>
+    </div>
+
+    <a href="https://maps.google.com/?q=Tanauan+City+Batangas" target="_blank" rel="noopener" class="tech-modal-map-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      Open in Google Maps
+    </a>
+  </div>
+</div>
+
+<script>
+/* ═══ TECHNICIAN MODAL ══════════════════════════════════════════ */
+function openTechModal() {
+  const m = document.getElementById('techModal');
+  m.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeTechModal() {
+  const m = document.getElementById('techModal');
+  m.classList.remove('open');
+  document.body.style.overflow = '';
+}
+// Close on overlay click
+document.getElementById('techModal').addEventListener('click', function(e) {
+  if (e.target === this) closeTechModal();
+});
+// Close on Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeTechModal();
+});
+</script>
+
+</body>
+</html>
