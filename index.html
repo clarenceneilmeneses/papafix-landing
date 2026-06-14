@@ -836,14 +836,19 @@ footer {
   .footer-links-grid { grid-template-columns: 1fr 1fr; }
   .footer-qr-block { display: none; }
   nav .nav-links { display: none; }
-  /* Service panels on mobile: stack content above visual */
-  .service-panel { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
-  .service-panel .svc-visual { height: 35vh; order: -1 !important; }
-  .service-panel .svc-content { order: 1 !important; padding: 2.5rem 6vw; }
+  /* Disable horizontal scroll on mobile — stack panels vertically */
+  #services { height: auto !important; }
+  .services-sticky { position: relative !important; height: auto !important; }
+  .services-sticky-clip { position: relative !important; overflow: visible !important; }
+  .services-hstrip { flex-direction: column !important; width: 100% !important; height: auto !important; transform: none !important; will-change: auto !important; }
+  /* Service panels on mobile: image on top, content below */
+  .service-panel { height: auto !important; width: 100% !important; grid-template-columns: 1fr; grid-template-rows: 40vw auto; }
+  .service-panel .svc-visual { height: 40vw; order: -1 !important; }
+  .service-panel .svc-content { order: 1 !important; padding: 2.5rem 6vw 3rem; }
   .service-panel:nth-child(even) .svc-content { order: 1 !important; }
   .service-panel:nth-child(even) .svc-visual  { order: -1 !important; }
   .service-panel::after { display: none; }
-  .svc-big-name { font-size: 2.8rem; }
+  .svc-big-name { font-size: 2.4rem; }
   .svc-visual-icon { width: 100px; height: 100px; border-radius: 24px; }
   .svc-visual-icon svg { width: 48px; height: 48px; }
 }
@@ -2217,67 +2222,69 @@ window.addEventListener('scroll', () => {
   var hstrip  = document.getElementById('servicesHstrip');
   if (!section || !hstrip) return;
 
-  var PANELS = 8;
-
-  // Set section height precisely to PANELS × vh so scroll room is exact
-  function setHeight() {
-    section.style.height = (PANELS * window.innerHeight) + 'px';
-    
-    // FIX: Force panels to match the actual client width (ignores vertical scrollbar)
-    var exactWidth = document.documentElement.clientWidth;
-    var panels = document.querySelectorAll('.service-panel');
-    panels.forEach(function(p) {
-      p.style.width = exactWidth + 'px';
-    });
-  }
-  setHeight();
-
-  var totalTranslate = 0; // (PANELS - 1) * exactWidth — set in update()
-
-  // Smoothed current X (lerp toward targetX each frame)
+  var PANELS   = 8;
   var currentX = 0;
   var targetX  = 0;
 
+  function isMobile() { return window.innerWidth <= 900; }
   function lerp(a, b, t) { return a + (b - a) * t; }
 
-  // rAF loop — lerps currentX toward targetX and applies transform
+  function enableDesktop() {
+    var w = document.documentElement.clientWidth;
+    section.style.height = (PANELS * window.innerHeight) + 'px';
+    document.querySelectorAll('.service-panel').forEach(function(p) {
+      p.style.width = w + 'px';
+    });
+    updateTarget();
+  }
+
+  function disableMobile() {
+    section.style.height = '';
+    hstrip.style.transform = '';
+    currentX = 0;
+    targetX  = 0;
+    document.querySelectorAll('.service-panel').forEach(function(p) {
+      p.style.width = '';
+    });
+  }
+
+  function updateTarget() {
+    if (isMobile()) return;
+    var secTop   = section.getBoundingClientRect().top + window.scrollY;
+    var scrolled = window.scrollY - secTop;
+    var range    = section.offsetHeight - window.innerHeight;
+    var total    = (PANELS - 1) * document.documentElement.clientWidth;
+    targetX = scrolled <= 0 ? 0 : scrolled >= range ? total : (scrolled / range) * total;
+  }
+
   function tick() {
-    currentX = lerp(currentX, targetX, 0.12);
-    if (Math.abs(currentX - targetX) < 0.5) currentX = targetX;
-
-    hstrip.style.transform = 'translateX(' + (-currentX) + 'px)';
-
+    if (!isMobile()) {
+      currentX = lerp(currentX, targetX, 0.12);
+      if (Math.abs(currentX - targetX) < 0.5) currentX = targetX;
+      hstrip.style.transform = 'translateX(' + (-currentX) + 'px)';
+    }
     requestAnimationFrame(tick);
   }
 
-  function onScroll() {
-    // Re-read sectionTop live (don't cache — content above can shift)
-    var secTop    = section.getBoundingClientRect().top + window.scrollY;
-    var scrolled  = window.scrollY - secTop;          // how far into section
-    var range     = section.offsetHeight - window.innerHeight; // scroll room
-
-    // FIX: Use clientWidth to prevent scrollbar math errors
-    totalTranslate = (PANELS - 1) * document.documentElement.clientWidth;
-
-    if (scrolled <= 0) {
-      targetX = 0;
-    } else if (scrolled >= range) {
-      targetX = totalTranslate;
-    } else {
-      targetX = (scrolled / range) * totalTranslate;
-    }
-  }
+  function onScroll() { updateTarget(); }
 
   function onResize() {
-    setHeight();
-    onScroll();
+    if (isMobile()) {
+      disableMobile();
+    } else {
+      enableDesktop();
+    }
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', onResize, { passive: true });
 
-  // Kick off
-  onScroll();
+  // Initial setup
+  if (isMobile()) {
+    disableMobile();
+  } else {
+    enableDesktop();
+  }
   requestAnimationFrame(tick);
 }());
 
