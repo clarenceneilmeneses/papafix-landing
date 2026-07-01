@@ -11,7 +11,10 @@
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="PapaFix — Home Repairs, Done Right" />
 <meta name="twitter:description" content="On-demand home repair in Batangas. Book a verified technician in under 90 seconds." />
-<link rel="preload" as="image" href="hero.png" />
+<meta name="theme-color" content="#f26b1d" />
+<link rel="icon" type="image/png" href="papafix-logo.png" />
+<link rel="apple-touch-icon" href="papafix-logo.png" />
+<link rel="preload" as="image" href="papafix-logo.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -24,19 +27,20 @@ body { font-family: 'DM Sans', sans-serif; background: #f7f9fc; color: #0a0f1e; 
 
 /* ─── CSS VARIABLES ──────────────────────────────────────────── */
 :root {
-  --blue:       #1a6cff;
-  --blue-mid:   #0050e6;
-  --blue-deep:  #002fa0;
-  --blue-light: #e8f0ff;
-  --blue-pale:  #f0f4ff;
+  /* Brand palette — sampled from the official PAPAFix logo (warm orange) */
+  --blue:       #f26b1d;
+  --blue-mid:   #e15410;
+  --blue-deep:  #c2410c;
+  --blue-light: #ffebda;
+  --blue-pale:  #fff6ef;
   --off-white:  #f7f9fc;
   --ink:        #0a0f1e;
   --ink-light:  #3a4165;
   --ink-faint:  #7a84a8;
-  --border:     rgba(26,108,255,.12);
-  --shadow-sm:  0 2px 12px rgba(26,108,255,.08);
-  --shadow-md:  0 8px 40px rgba(26,108,255,.14);
-  --shadow-lg:  0 24px 80px rgba(26,108,255,.18);
+  --border:     rgba(242,107,29,.12);
+  --shadow-sm:  0 2px 12px rgba(242,107,29,.08);
+  --shadow-md:  0 8px 40px rgba(242,107,29,.14);
+  --shadow-lg:  0 24px 80px rgba(242,107,29,.18);
   --r-sm: 12px; --r-md: 20px; --r-lg: 32px; --r-xl: 48px;
 }
 
@@ -51,7 +55,7 @@ body { font-family: 'DM Sans', sans-serif; background: #f7f9fc; color: #0a0f1e; 
 ═══════════════════════════════════════════════════════════════ */
 #intro-overlay {
   position: fixed; inset: 0; z-index: 10000;
-  background: var(--blue);
+  background: var(--ink);
   display: flex; align-items: center; justify-content: center;
   overflow: hidden;
   /* Curtain slides off to the LEFT after the logo has been visible */
@@ -66,6 +70,15 @@ body { font-family: 'DM Sans', sans-serif; background: #f7f9fc; color: #0a0f1e; 
   position: relative; z-index: 2;
   display: flex; align-items: center; gap: 0;
   /* stays visible until the curtain sweeps it away */
+}
+.intro-logo-img {
+  width: clamp(150px, 30vw, 240px); height: auto;
+  filter: drop-shadow(0 24px 60px rgba(0,0,0,.45));
+  animation: introLogoIn 1s .15s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes introLogoIn {
+  from { transform: translateY(28px) scale(.9); opacity: 0; }
+  to   { transform: translateY(0) scale(1);     opacity: 1; }
 }
 
 .intro-wordmark {
@@ -109,16 +122,17 @@ nav {
   background: rgba(247,249,252,.72);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(26,108,255,.10);
+  border: 1px solid rgba(242,107,29,.10);
   border-radius: 100px;
   box-shadow: 0 6px 26px rgba(10,15,30,.07);
   transition: background .3s, box-shadow .3s, border-color .3s;
 }
 .nav-logo {
-  display: flex; align-items: center; gap: 10px;
+  display: flex; align-items: center; gap: 9px;
   font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.2rem;
   color: var(--ink); letter-spacing: -.02em; text-decoration: none;
 }
+.nav-logo-img { width: 34px; height: 34px; border-radius: 9px; object-fit: contain; }
 
 .nav-links { display: flex; align-items: center; gap: 2rem; }
 .nav-links a { font-size: .875rem; color: var(--ink-light); text-decoration: none; transition: color .2s; }
@@ -260,11 +274,11 @@ nav {
   transform: translateY(20px); opacity: 0;
   animation: heroPhoneIn 1.2s 2.9s cubic-bezier(.16,1,.3,1) forwards;
 }
-@keyframes heroPhoneIn { to { transform: translateY(0) rotate(-2deg); opacity: 1; } }
-.hero-phone { width: 90%; max-width: 560px; max-height: 90vh; object-fit: contain; filter: drop-shadow(0 40px 80px rgba(26,108,255,.22)) drop-shadow(0 10px 30px rgba(10,15,30,.12)); }
+@keyframes heroPhoneIn { to { transform: translateY(0); opacity: 1; } }
+.hero-phone { width: 80%; max-width: 440px; max-height: 78vh; object-fit: contain; filter: drop-shadow(0 40px 80px rgba(242,107,29,.28)) drop-shadow(0 10px 30px rgba(10,15,30,.15)); }
 .hero-bg-shape {
   position: absolute; inset: 0;
-  background: radial-gradient(ellipse 80% 80% at 60% 40%, rgba(26,108,255,.12) 0%, transparent 70%);
+  background: radial-gradient(ellipse 80% 80% at 60% 40%, rgba(242,107,29,.12) 0%, transparent 70%);
 }
 .hero-float-card {
   position: absolute; background: white; border-radius: var(--r-md);
@@ -383,7 +397,7 @@ section { position: relative; }
 .svc-visual::before {
   content: '';
   position: absolute; inset: 0;
-  background: radial-gradient(ellipse 70% 70% at 50% 50%, var(--panel-glow, rgba(26,108,255,.15)), transparent);
+  background: radial-gradient(ellipse 70% 70% at 50% 50%, var(--panel-glow, rgba(242,107,29,.15)), transparent);
   pointer-events: none;
 }
 
@@ -423,7 +437,7 @@ section { position: relative; }
   background: rgba(255,255,255,.07);
   border: 1px solid rgba(255,255,255,.1);
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 0 80px -10px var(--panel-glow, rgba(26,108,255,.3)),
+  box-shadow: 0 0 80px -10px var(--panel-glow, rgba(242,107,29,.3)),
               0 24px 60px rgba(0,0,0,.5);
   position: relative; z-index: 2;
 }
@@ -582,8 +596,8 @@ section { position: relative; }
 /* mockup pieces */
 .mockup-card {
   background: white; border-radius: 16px; padding: 1.25rem 1.5rem;
-  box-shadow: 0 6px 28px rgba(26,108,255,.1); margin: .5rem 0;
-  border: 1px solid rgba(26,108,255,.06);
+  box-shadow: 0 6px 28px rgba(242,107,29,.1); margin: .5rem 0;
+  border: 1px solid rgba(242,107,29,.06);
 }
 .mockup-title { font-family: 'Sora', sans-serif; font-weight: 700; font-size: .95rem; color: var(--ink); margin-bottom: .4rem; }
 .mockup-sub { font-size: .75rem; color: var(--ink-faint); }
@@ -628,8 +642,8 @@ section { position: relative; }
 .cta-h span { color: var(--blue); }
 .cta-sub { font-size: 1rem; line-height: 1.7; color: var(--ink-light); font-weight: 300; margin-bottom: 2.5rem; }
 .cta-phones { position: relative; display: flex; align-items: flex-end; justify-content: center; height: 420px; }
-.cta-phone-main { width: 200px; position: relative; z-index: 2; filter: drop-shadow(0 30px 60px rgba(26,108,255,.2)); animation: ctaFloat 4s ease-in-out infinite; }
-.cta-phone-back { width: 170px; position: absolute; left: -40px; bottom: 20px; opacity: .55; z-index: 1; filter: drop-shadow(0 20px 40px rgba(26,108,255,.15)); animation: ctaFloat 4s 1s ease-in-out infinite; }
+.cta-phone-main { width: 200px; position: relative; z-index: 2; filter: drop-shadow(0 30px 60px rgba(242,107,29,.2)); animation: ctaFloat 4s ease-in-out infinite; }
+.cta-phone-back { width: 170px; position: absolute; left: -40px; bottom: 20px; opacity: .55; z-index: 1; filter: drop-shadow(0 20px 40px rgba(242,107,29,.15)); animation: ctaFloat 4s 1s ease-in-out infinite; }
 @keyframes ctaFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 .cta-meta { display: flex; gap: 1.5rem; margin-top: 1.5rem; flex-wrap: wrap; }
 .cta-meta-item { display: flex; align-items: center; gap: 6px; font-size: .78rem; color: var(--ink-faint); }
@@ -652,6 +666,10 @@ footer {
   border-bottom: 1px solid rgba(255,255,255,.07);
   padding-bottom: 4rem; margin-bottom: 4rem;
   position: relative;
+}
+.footer-logo-img {
+  width: 76px; height: 76px; border-radius: 18px; object-fit: contain;
+  margin-bottom: 1.5rem; box-shadow: 0 12px 40px rgba(0,0,0,.35);
 }
 .footer-bigtype {
   font-family: 'Sora', sans-serif; font-weight: 800;
@@ -677,7 +695,7 @@ footer {
 }
 .footer-qr-placeholder {
   width: 100%; height: 100%; border-radius: 8px;
-  border: 2px dashed rgba(26,108,255,.3);
+  border: 2px dashed rgba(242,107,29,.3);
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
   background: var(--blue-pale);
 }
@@ -747,7 +765,7 @@ footer {
   position: relative;
   transform: translateY(24px) scale(.97);
   transition: transform .35s cubic-bezier(.16,1,.3,1);
-  box-shadow: 0 32px 80px rgba(10,15,30,.22), 0 0 0 1px rgba(26,108,255,.08);
+  box-shadow: 0 32px 80px rgba(10,15,30,.22), 0 0 0 1px rgba(242,107,29,.08);
 }
 .tech-modal-overlay.open .tech-modal {
   transform: translateY(0) scale(1);
@@ -1065,14 +1083,14 @@ footer {
   </svg>
 
   <div class="intro-logo">
-    <div class="intro-wordmark">Papa<span class="intro-accent">Fix</span></div>
+    <img src="papafix-logo.png" class="intro-logo-img" alt="PapaFix" />
   </div>
 
   <div class="intro-progress"></div>
 </div>
 
 <nav>
-  <a href="#" class="nav-logo"><span>Papa<span style="color:var(--blue);">Fix</span></span></a>
+  <a href="#" class="nav-logo"><img src="papafix-logo.png" class="nav-logo-img" alt="" /><span>Papa<span style="color:var(--blue);">Fix</span></span></a>
   <div class="nav-links">
     <a href="#services">Services</a>
     <a href="#how">How It Works</a>
@@ -1128,18 +1146,18 @@ footer {
     </div>
     <div class="hero-stats">
       <div>
-        <div class="hero-stat-num">200+</div>
-        <div class="hero-stat-label">Verified Techs</div>
+        <div class="hero-stat-num">3</div>
+        <div class="hero-stat-label">Cities in Batangas</div>
       </div>
       <div class="stat-divider"></div>
       <div>
-        <div class="hero-stat-num">4.9★</div>
-        <div class="hero-stat-label">Avg. Rating</div>
+        <div class="hero-stat-num">8</div>
+        <div class="hero-stat-label">Service Categories</div>
       </div>
       <div class="stat-divider"></div>
       <div>
-        <div class="hero-stat-num">≤1hr</div>
-        <div class="hero-stat-label">Avg. Response</div>
+        <div class="hero-stat-num">Live</div>
+        <div class="hero-stat-label">Job Tracking</div>
       </div>
     </div>
   </div>
@@ -1147,17 +1165,7 @@ footer {
   <div class="hero-right">
     <div class="hero-bg-shape"></div>
     <div class="hero-phone-wrap">
-      <img src="hero.png" class="hero-phone" alt="PapaFix app mockup"/>
-
-      <div class="hero-float-card hero-float-1">
-        <div class="fc-badge"><div class="fc-badge-dot"></div>Technician en route</div>
-        <div class="fc-title" style="margin-top:8px;">Mario Santos</div>
-        <div class="fc-sub">Arrives in ~12 min &nbsp;·&nbsp; 4.9 ★</div>
-      </div>
-      <div class="hero-float-card hero-float-2">
-        <div class="fc-title">₱850 <span style="font-size:.7rem;font-weight:400;color:#7a84a8;">est. fee</span></div>
-        <div class="fc-sub">Aircon cleaning &nbsp;·&nbsp; Confirmed</div>
-      </div>
+      <img src="papafix-logo.png" class="hero-phone" alt="PapaFix — Aircon Service App, Trusted Repairs"/>
     </div>
   </div>
 </section>
@@ -1190,7 +1198,7 @@ footer {
         <div class="trust-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
-        <div class="trust-text"><strong>≤1hr Response</strong><br/>Avg. arrival time</div>
+        <div class="trust-text"><strong>Fast Response</strong><br/>Nearest tech dispatched first</div>
       </div>
       <div class="trust-sep">·</div>
       <div class="trust-item">
@@ -1204,7 +1212,7 @@ footer {
         <div class="trust-icon">
           <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         </div>
-        <div class="trust-text"><strong>4.9 Rating</strong> <span class="trust-exclusive">Batangas-first</span></div>
+        <div class="trust-text"><strong>Batangas-First</strong> <span class="trust-exclusive">Now launching</span></div>
       </div>
     </div>
   </div>
@@ -1222,7 +1230,7 @@ footer {
     <div class="reveal" style="display:flex; gap:1.5rem; justify-content:center; flex-wrap:wrap; margin-bottom:2.5rem;">
 
       <!-- Tanauan City card -->
-      <div class="coverage-card" style="position:relative;border-radius:var(--r-lg);flex:1;min-width:220px;max-width:320px;height:320px;overflow:hidden;cursor:default;transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 24px 60px rgba(26,108,255,.22)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+      <div class="coverage-card" style="position:relative;border-radius:var(--r-lg);flex:1;min-width:220px;max-width:320px;height:320px;overflow:hidden;cursor:default;transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 24px 60px rgba(242,107,29,.22)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
         <img src="https://r1.community.samsung.com/t5/image/serverpage/image-id/1897168i64A954539E22D807/image-size/large?v=v2&px=999" alt="Tanauan City" loading="lazy" class="zoom-img" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;" onerror="this.style.display='none'"/>
         <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(10,15,30,.85) 0%, rgba(10,15,30,.3) 55%, rgba(10,15,30,.1) 100%);"></div>
         <div style="position:absolute;inset:0;padding:1.5rem;display:flex;flex-direction:column;justify-content:flex-end;">
@@ -1238,7 +1246,7 @@ footer {
       </div>
 
       <!-- Malvar card -->
-      <div class="coverage-card" style="position:relative;border-radius:var(--r-lg);flex:1;min-width:220px;max-width:320px;height:320px;overflow:hidden;cursor:default;transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 24px 60px rgba(26,108,255,.22)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+      <div class="coverage-card" style="position:relative;border-radius:var(--r-lg);flex:1;min-width:220px;max-width:320px;height:320px;overflow:hidden;cursor:default;transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 24px 60px rgba(242,107,29,.22)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
         <img src="https://scontent.fpag2-1.fna.fbcdn.net/v/t39.30808-6/519666780_1050205543950313_8638758900701055038_n.jpg?stp=dst-jpg_tt6&cstp=mx1656x630&ctp=s1656x630&_nc_cat=101&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=FcjFX7Dg5TUQ7kNvwHpOe6H&_nc_oc=AdrUlpvQMlqYhLEVZ-8_cbupnPgGzQlhZKkz_nxEKrgfxLN8qeVGkKO_aYHKt8kLKfA&_nc_zt=23&_nc_ht=scontent.fpag2-1.fna&_nc_gid=g2V3qIaLQs79LgM8kf1FuA&_nc_ss=7b2a8&oh=00_Af-HVnoepdwG_cDKbVcmhT0PRcv8_F71824KQSX_AYjSMQ&oe=6A2948B2" alt="Malvar, Batangas" loading="lazy" class="zoom-img" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;" onerror="this.style.display='none'"/>
         <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(10,15,30,.85) 0%, rgba(10,15,30,.3) 55%, rgba(10,15,30,.1) 100%);"></div>
         <div style="position:absolute;inset:0;padding:1.5rem;display:flex;flex-direction:column;justify-content:flex-end;">
@@ -1254,7 +1262,7 @@ footer {
       </div>
 
       <!-- Santo Tomas City card -->
-      <div class="coverage-card" style="position:relative;border-radius:var(--r-lg);flex:1;min-width:220px;max-width:320px;height:320px;overflow:hidden;cursor:default;transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 24px 60px rgba(26,108,255,.22)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+      <div class="coverage-card" style="position:relative;border-radius:var(--r-lg);flex:1;min-width:220px;max-width:320px;height:320px;overflow:hidden;cursor:default;transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 24px 60px rgba(242,107,29,.22)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
         <img src="https://upload.wikimedia.org/wikipedia/en/thumb/c/cb/Santo_Tomas_City_Hall_%28Gov._Malvar%2C_Santo_Tomas%2C_Batangas%3B_10-27-2023%29.jpg/1280px-Santo_Tomas_City_Hall_%28Gov._Malvar%2C_Santo_Tomas%2C_Batangas%3B_10-27-2023%29.jpg" alt="Santo Tomas City" loading="lazy" class="zoom-img" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;" onerror="this.style.display='none'"/>
         <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(10,15,30,.85) 0%, rgba(10,15,30,.3) 55%, rgba(10,15,30,.1) 100%);"></div>
         <div style="position:absolute;inset:0;padding:1.5rem;display:flex;flex-direction:column;justify-content:flex-end;">
@@ -1512,7 +1520,7 @@ footer {
           <div class="avatar">RL</div>
           <div class="avatar">AP</div>
           <div class="avatar">KB</div>
-          <div class="avatar avatar-more">+2k</div>
+          <div class="avatar avatar-more">✓</div>
         </div>
         <div class="progress-bar-wrap">
           <div class="progress-label"><span>Matching</span><span class="fill-pct">0%</span></div>
@@ -1528,9 +1536,9 @@ footer {
         <div class="bento-h">Track in real-time</div>
         <div class="bento-p">Watch your technician travel to you on a live map. No more vague "5 minutes away."</div>
         <div style="margin-top:1rem;height:90px;border-radius:12px;background:var(--blue-pale);position:relative;overflow:hidden;border:1px solid var(--border);">
-          <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(26,108,255,.05) 0,transparent 1px,transparent 20px),repeating-linear-gradient(90deg,rgba(26,108,255,.05) 0,transparent 1px,transparent 20px);"></div>
+          <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(242,107,29,.05) 0,transparent 1px,transparent 20px),repeating-linear-gradient(90deg,rgba(242,107,29,.05) 0,transparent 1px,transparent 20px);"></div>
           <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);">
-            <div style="width:22px;height:22px;background:var(--blue);border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 4px 12px rgba(26,108,255,.4);">
+            <div style="width:22px;height:22px;background:var(--blue);border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 4px 12px rgba(242,107,29,.4);">
               <div style="width:8px;height:8px;background:white;border-radius:50%;transform:rotate(45deg);margin:7px auto 0;"></div>
             </div>
           </div>
@@ -1648,7 +1656,7 @@ footer {
         <div class="bento-p">See the estimated fee before confirming. Final payment only after the job is done to your satisfaction.</div>
         <div style="margin-top:1.25rem;display:flex;align-items:baseline;gap:.4rem;">
           <span style="font-family:'Sora',sans-serif;font-weight:800;font-size:2.4rem;color:white;letter-spacing:-.04em;">₱450</span>
-          <span style="font-size:.8rem;color:rgba(255,255,255,.45);">avg. service fee</span>
+          <span style="font-size:.8rem;color:rgba(255,255,255,.45);">sample estimate</span>
         </div>
       </div>
 
@@ -1661,25 +1669,25 @@ footer {
         <div class="bento-p">Every job logged with detailed inspection checklists, technician notes, photos, and timestamps.</div>
         <div style="margin-top:1.25rem;display:flex;flex-direction:column;gap:.5rem;">
           <div style="display:flex;align-items:center;gap:.75rem;background:var(--blue-pale);border-radius:10px;padding:.6rem 1rem;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#1a6cff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;flex-shrink:0;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            <div style="flex:1;"><div style="font-size:.78rem;font-weight:600;color:var(--ink);">Electrical – Outlet repair</div><div style="font-size:.68rem;color:var(--ink-faint);">May 28, 2025 · ₱650 · 5.0</div></div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#f26b1d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;flex-shrink:0;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <div style="flex:1;"><div style="font-size:.78rem;font-weight:600;color:var(--ink);">Electrical – Outlet repair</div><div style="font-size:.68rem;color:var(--ink-faint);">Sample booking · ₱650</div></div>
             <span style="font-size:.7rem;background:#e9f5ee;color:#2d8a4e;padding:3px 8px;border-radius:100px;font-weight:600;flex-shrink:0;">Done</span>
           </div>
           <div style="display:flex;align-items:center;gap:.75rem;background:var(--blue-pale);border-radius:10px;padding:.6rem 1rem;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#1a6cff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;flex-shrink:0;"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07"/><circle cx="12" cy="12" r="4"/></svg>
-            <div style="flex:1;"><div style="font-size:.78rem;font-weight:600;color:var(--ink);">Aircon – Deep cleaning</div><div style="font-size:.68rem;color:var(--ink-faint);">May 15, 2025 · ₱900 · 5.0</div></div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#f26b1d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;flex-shrink:0;"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07"/><circle cx="12" cy="12" r="4"/></svg>
+            <div style="flex:1;"><div style="font-size:.78rem;font-weight:600;color:var(--ink);">Aircon – Deep cleaning</div><div style="font-size:.68rem;color:var(--ink-faint);">Sample booking · ₱900</div></div>
             <span style="font-size:.7rem;background:#e9f5ee;color:#2d8a4e;padding:3px 8px;border-radius:100px;font-weight:600;flex-shrink:0;">Done</span>
           </div>
         </div>
       </div>
 
       <div class="bento bento-7 reveal" data-delay="2">
-        <div class="bento-label">Community Trust</div>
-        <div class="bento-h">4.9 out of 5 stars</div>
-        <div class="bento-p">Based on thousands of verified service reviews across the Philippines.</div>
+        <div class="bento-label">Safety First</div>
+        <div class="bento-h">Every technician is verified</div>
+        <div class="bento-p">ID-checked and screened in person before their first job — and QR-verified at your door, so you always know who's coming.</div>
         <div class="rating-pill">
-          <svg viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" stroke-width="1" style="width:18px;height:18px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          4.9
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          Verified &amp; QR-checked
         </div>
       </div>
 
@@ -1690,20 +1698,20 @@ footer {
 <section id="stats">
   <div style="overflow:hidden;display:flex;">
     <div class="marquee-track">
-      <div class="marquee-item"><div class="marquee-num">200+</div><div class="marquee-label">Verified Technicians<span>Active in Batangas</span></div></div>
-      <div class="marquee-item"><div class="marquee-num">1,000+</div><div class="marquee-label">Jobs Completed<span>And counting</span></div></div>
-      <div class="marquee-item"><div class="marquee-num">&lt;1hr</div><div class="marquee-label">Avg. Response Time<span>From booking to arrival</span></div></div>
-      <div class="marquee-item"><div class="marquee-num">4.9</div><div class="marquee-label">Platform Rating<span>Early user reviews</span></div></div>
-      <div class="marquee-item"><div class="marquee-num">₱850</div><div class="marquee-label">Typical Starting Price<span>Transparent, no surprise fees</span></div></div>
       <div class="marquee-item"><div class="marquee-num">8</div><div class="marquee-label">Service Categories<span>One app for everything</span></div></div>
       <div class="marquee-item"><div class="marquee-num">3</div><div class="marquee-label">Cities Covered<span>Batangas — and growing</span></div></div>
-      <div class="marquee-item"><div class="marquee-num">200+</div><div class="marquee-label">Verified Technicians<span>Active in Batangas</span></div></div>
-      <div class="marquee-item"><div class="marquee-num">1,000+</div><div class="marquee-label">Jobs Completed<span>And counting</span></div></div>
-      <div class="marquee-item"><div class="marquee-num">&lt;1hr</div><div class="marquee-label">Avg. Response Time<span>From booking to arrival</span></div></div>
-      <div class="marquee-item"><div class="marquee-num">4.9</div><div class="marquee-label">Platform Rating<span>Early user reviews</span></div></div>
-      <div class="marquee-item"><div class="marquee-num">₱850</div><div class="marquee-label">Typical Starting Price<span>Transparent, no surprise fees</span></div></div>
+      <div class="marquee-item"><div class="marquee-num">Verified</div><div class="marquee-label">Technicians<span>Screened before every job</span></div></div>
+      <div class="marquee-item"><div class="marquee-num">Upfront</div><div class="marquee-label">Pricing<span>See the estimate before you book</span></div></div>
+      <div class="marquee-item"><div class="marquee-num">Live</div><div class="marquee-label">Tracking<span>Watch your tech on the way</span></div></div>
+      <div class="marquee-item"><div class="marquee-num">QR</div><div class="marquee-label">Verified at the Door<span>Know exactly who's coming</span></div></div>
+      <div class="marquee-item"><div class="marquee-num">Free</div><div class="marquee-label">To Download<span>Available on Google Play</span></div></div>
       <div class="marquee-item"><div class="marquee-num">8</div><div class="marquee-label">Service Categories<span>One app for everything</span></div></div>
       <div class="marquee-item"><div class="marquee-num">3</div><div class="marquee-label">Cities Covered<span>Batangas — and growing</span></div></div>
+      <div class="marquee-item"><div class="marquee-num">Verified</div><div class="marquee-label">Technicians<span>Screened before every job</span></div></div>
+      <div class="marquee-item"><div class="marquee-num">Upfront</div><div class="marquee-label">Pricing<span>See the estimate before you book</span></div></div>
+      <div class="marquee-item"><div class="marquee-num">Live</div><div class="marquee-label">Tracking<span>Watch your tech on the way</span></div></div>
+      <div class="marquee-item"><div class="marquee-num">QR</div><div class="marquee-label">Verified at the Door<span>Know exactly who's coming</span></div></div>
+      <div class="marquee-item"><div class="marquee-num">Free</div><div class="marquee-label">To Download<span>Available on Google Play</span></div></div>
     </div>
   </div>
 </section>
@@ -1734,13 +1742,13 @@ footer {
       <div class="feature-visual reveal-right">
         <div style="width:85%;position:relative;">
           <div style="position:relative;height:260px;border-radius:16px;overflow:hidden;background:var(--blue-pale);">
-            <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(26,108,255,.05) 0,transparent 1px,transparent 30px),repeating-linear-gradient(90deg,rgba(26,108,255,.05) 0,transparent 1px,transparent 30px);"></div>
+            <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(242,107,29,.05) 0,transparent 1px,transparent 30px),repeating-linear-gradient(90deg,rgba(242,107,29,.05) 0,transparent 1px,transparent 30px);"></div>
             <svg style="position:absolute;inset:0;width:100%;height:100%;" viewBox="0 0 400 260" preserveAspectRatio="none">
-              <path d="M40 130 Q120 60 200 130 Q280 200 360 130" stroke="rgba(26,108,255,.12)" stroke-width="12" fill="none" stroke-linecap="round"/>
-              <path d="M40 130 Q120 60 200 130 Q280 200 360 130" stroke="rgba(26,108,255,.4)" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="10 6"/>
+              <path d="M40 130 Q120 60 200 130 Q280 200 360 130" stroke="rgba(242,107,29,.12)" stroke-width="12" fill="none" stroke-linecap="round"/>
+              <path d="M40 130 Q120 60 200 130 Q280 200 360 130" stroke="rgba(242,107,29,.4)" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="10 6"/>
             </svg>
             <div style="position:absolute;top:38%;left:30%;transform:translate(-50%,-50%);">
-              <div style="width:36px;height:36px;background:var(--blue);border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 6px 18px rgba(26,108,255,.45);display:flex;align-items:center;justify-content:center;">
+              <div style="width:36px;height:36px;background:var(--blue);border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 6px 18px rgba(242,107,29,.45);display:flex;align-items:center;justify-content:center;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;transform:rotate(45deg);"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
               </div>
               <div class="map-ripple" style="width:36px;height:36px;position:absolute;top:0;left:0;"></div>
@@ -2011,83 +2019,21 @@ footer {
 <section id="testimonials">
   <div class="container">
     <div class="masonry-header reveal">
-      <div class="section-eyebrow">What People Say</div>
-      <h2 class="section-title">Real repairs, real reviews</h2>
-      <p class="section-sub">From quick fixes to full overhauls — thousands of homeowners trust PapaFix.</p>
+      <div class="section-eyebrow">Reviews</div>
+      <h2 class="section-title">Be among our first customers</h2>
+      <p class="section-sub">PapaFix is just launching in Batangas. We're onboarding our first verified technicians now — book early and your feedback will help shape the service. Real reviews from real neighbors will appear here as they come in.</p>
     </div>
 
-    <div class="masonry-grid">
-      <div class="masonry-item reveal" data-delay="1">
-        <div class="review-card blue">
-          <div class="review-quote">"</div>
-          <div class="review-stars">
-            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          </div>
-          <p class="review-text">Di pa ako sanay mag-book ng ganito pero ang dali pala. Nag-aircon cleaning ako — in-book ko lang, may dumating sa amin sa Tanauan. Maayos ang trabaho, walang hassle.</p>
-          <div class="reviewer"><div class="reviewer-avatar">ML</div><div><div class="reviewer-name">Maricel Lim</div><div class="reviewer-svc">Aircon Cleaning · Tanauan City</div></div></div>
-        </div>
+    <div class="reveal" style="max-width:720px;margin:0 auto;text-align:center;background:var(--blue-pale);border:1px solid var(--border);border-radius:var(--r-xl);padding:3.5rem 2.5rem;">
+      <div style="width:64px;height:64px;border-radius:18px;background:var(--blue);display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;box-shadow:var(--shadow-md);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       </div>
-
-      <div class="masonry-item reveal" data-delay="2">
-        <div class="review-card">
-          <div class="review-stars"><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-          <p class="review-text">Sinubukan ko dahil sira ang outlet sa sala namin. Nakita ko sa app kung nasaan na yung electrician — real-time tracking talaga. Ayos na lahat sa loob ng isang oras.</p>
-          <div class="reviewer"><div class="reviewer-avatar">RB</div><div><div class="reviewer-name">Ronaldo Bautista</div><div class="reviewer-svc">Electrical · Malvar</div></div></div>
-        </div>
-      </div>
-
-      <div class="masonry-item reveal" data-delay="3">
-        <div class="review-card">
-          <div class="review-stars"><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-          <p class="review-text">Transparent yung presyo — nakita ko agad ang estimated fee bago ko pa i-confirm. Walang sorpresa. Yung plumber namin ay maayos, at naglinis pa pagkatapos ng trabaho.</p>
-          <div class="reviewer"><div class="reviewer-avatar">GP</div><div><div class="reviewer-name">Grace Pineda</div><div class="reviewer-svc">Plumbing · Santo Tomas</div></div></div>
-        </div>
-      </div>
-
-      <div class="masonry-item reveal" data-delay="1">
-        <div class="review-card">
-          <div class="review-stars"><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-          <p class="review-text">Nagpa-deep clean kami after ng renovation sa bahay sa Malvar. Nag-book kinagabihan, dumating ng maaga. Nalinis nang mabuti — as if bago ang lahat!</p>
-          <div class="reviewer"><div class="reviewer-avatar">JA</div><div><div class="reviewer-name">Jonalyn Andal</div><div class="reviewer-svc">Deep Cleaning · Malvar</div></div></div>
-        </div>
-      </div>
-
-      <div class="masonry-item reveal" data-delay="2">
-        <div class="review-card">
-          <div class="review-quote">"</div>
-          <div class="review-stars"><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-          <p class="review-text">Nag-stop working yung ref namin. Nagpadala sila ng technician, na-diagnose agad — faulty relay pala. Natapos pa ng araw din. Sulit na sulit.</p>
-          <div class="reviewer"><div class="reviewer-avatar">FC</div><div><div class="reviewer-name">Felisa Cruz</div><div class="reviewer-svc">Appliance Repair · Santo Tomas</div></div></div>
-        </div>
-      </div>
-
-      <div class="masonry-item reveal" data-delay="3">
-        <div class="review-card blue">
-          <div class="review-stars"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-          <p class="review-text">Yung QR verification is genius. Alam ko kung sino talaga ang pumasok sa bahay namin, at may record ng trabaho. Ganito dapat ang home services.</p>
-          <div class="reviewer"><div class="reviewer-avatar">AM</div><div><div class="reviewer-name">Angelo Mendoza</div><div class="reviewer-svc">Carpentry · Tanauan City</div></div></div>
-        </div>
-      </div>
-
-      <div class="masonry-item reveal" data-delay="1">
-        <div class="review-card">
-          <div class="review-stars"><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#e8eef8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-          <p class="review-text">Nagpa-install ng aircon sa kwarto — maayos ang technician, at nagpaliwanag pa kung paano i-maintain. Hindi ko inasahan na ganito kadali mag-book.</p>
-          <div class="reviewer"><div class="reviewer-avatar">RS</div><div><div class="reviewer-name">Rosario Santos</div><div class="reviewer-svc">Aircon Install · Malvar</div></div></div>
-        </div>
-      </div>
-
-      <div class="masonry-item reveal" data-delay="2">
-        <div class="review-card">
-          <div class="review-stars"><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-          <p class="review-text">May painting job kami sa sala — nag-estimate agad sa app, pumunta yung painter, at natapos ng isang araw. Exactly yung nakalagay na presyo, walang dagdag.</p>
-          <div class="reviewer"><div class="reviewer-avatar">NR</div><div><div class="reviewer-name">Natividad Reyes</div><div class="reviewer-svc">Interior Painting · Santo Tomas</div></div></div>
-        </div>
-      </div>
+      <h3 style="font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(1.4rem,2.5vw,1.9rem);letter-spacing:-.03em;color:var(--ink);margin-bottom:.75rem;">Your review could be the first</h3>
+      <p style="font-size:.95rem;line-height:1.7;color:var(--ink-light);font-weight:300;max-width:44ch;margin:0 auto 2rem;">Download PapaFix, book a verified technician, and be one of the first Batangas homeowners to tell your neighbors how it went.</p>
+      <a href="#" class="btn-google-play" style="display:inline-flex;">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:24px;height:24px;flex-shrink:0;"><path d="M3.18 23.76A2 2 0 0 1 2 22V2a2 2 0 0 1 1.18-1.76l11.33 11.76L3.18 23.76zM22.46 12l-3.03 1.71-3.39-3.51 3.39-3.51 3.04 1.71A2 2 0 0 1 22.46 12zM3.69.54L17.2 7.72 14.01 11 3.69.54zM3.69 23.46l10.32-10.46 3.19 3.28L3.69 23.46z"/></svg>
+        <div class="btn-google-play-text"><small>Get it on</small><span>Google Play</span></div>
+      </a>
     </div>
   </div>
 </section>
@@ -2097,10 +2043,10 @@ footer {
   <div class="container">
     <div class="reveal" style="background:linear-gradient(135deg,#0a0f1e 0%,#0f1f50 100%);border-radius:var(--r-xl);padding:3.5rem 4rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;overflow:hidden;position:relative;margin-bottom:0;">
       <!-- Background pattern -->
-      <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(26,108,255,.04) 0,rgba(26,108,255,.04) 1px,transparent 1px,transparent 30px);pointer-events:none;"></div>
-      <div style="position:absolute;right:-60px;top:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(26,108,255,.15) 0%,transparent 70%);pointer-events:none;"></div>
+      <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(242,107,29,.04) 0,rgba(242,107,29,.04) 1px,transparent 1px,transparent 30px);pointer-events:none;"></div>
+      <div style="position:absolute;right:-60px;top:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(242,107,29,.15) 0%,transparent 70%);pointer-events:none;"></div>
       <div style="position:relative;z-index:1;max-width:480px;">
-        <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(26,108,255,.2);border:1px solid rgba(26,108,255,.3);color:rgba(255,255,255,.8);font-size:.68rem;font-weight:600;padding:4px 12px;border-radius:100px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1rem;">
+        <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(242,107,29,.2);border:1px solid rgba(242,107,29,.3);color:rgba(255,255,255,.8);font-size:.68rem;font-weight:600;padding:4px 12px;border-radius:100px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1rem;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
           For Technicians
         </div>
@@ -2137,7 +2083,7 @@ footer {
     <div class="reveal-left">
       <div class="section-eyebrow">Download Now</div>
       <h2 class="cta-h">Your home,<br/><span>sorted fast.</span></h2>
-      <p class="cta-sub">PapaFix is live in Tanauan, Malvar, and Santo Tomas. Download the app, book your first service, and see why Batangas homeowners are already switching.</p>
+      <p class="cta-sub">PapaFix is launching in Tanauan, Malvar, and Santo Tomas. Download the app, book your first service, and be one of the first Batangas homeowners to try it.</p>
       <a href="#" class="btn-google-play">
         <svg viewBox="0 0 24 24" fill="currentColor" style="width:24px;height:24px;flex-shrink:0;"><path d="M3.18 23.76A2 2 0 0 1 2 22V2a2 2 0 0 1 1.18-1.76l11.33 11.76L3.18 23.76zM22.46 12l-3.03 1.71-3.39-3.51 3.39-3.51 3.04 1.71A2 2 0 0 1 22.46 12zM3.69.54L17.2 7.72 14.01 11 3.69.54zM3.69 23.46l10.32-10.46 3.19 3.28L3.69 23.46z"/></svg>
         <div class="btn-google-play-text"><small>Get it on</small><span>Google Play</span></div>
@@ -2160,19 +2106,19 @@ footer {
     <div class="cta-phones reveal-right">
       <!-- Stat cards visual -->
       <div style="position:relative;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;gap:1rem;">
-        <div style="background:white;border-radius:var(--r-md);padding:1.5rem 1.75rem;border:1px solid var(--border);box-shadow:0 8px 32px rgba(26,108,255,.09);">
-          <div style="font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin-bottom:.5rem;">Now Live in Batangas</div>
+        <div style="background:white;border-radius:var(--r-md);padding:1.5rem 1.75rem;border:1px solid var(--border);box-shadow:0 8px 32px rgba(242,107,29,.09);">
+          <div style="font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin-bottom:.5rem;">Now Launching in Batangas</div>
           <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.9rem;color:var(--ink);letter-spacing:-.04em;">3 Cities</div>
           <div style="font-size:.8rem;color:var(--ink-faint);margin-top:4px;">Tanauan · Malvar · Santo Tomas</div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
           <div style="background:var(--blue);border-radius:var(--r-md);padding:1.25rem 1.5rem;">
-            <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.6rem;color:white;letter-spacing:-.04em;">200+</div>
-            <div style="font-size:.72rem;color:rgba(255,255,255,.65);margin-top:3px;">Verified Techs</div>
+            <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.6rem;color:white;letter-spacing:-.04em;">8</div>
+            <div style="font-size:.72rem;color:rgba(255,255,255,.65);margin-top:3px;">Service Types</div>
           </div>
           <div style="background:var(--ink);border-radius:var(--r-md);padding:1.25rem 1.5rem;">
-            <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.6rem;color:white;letter-spacing:-.04em;">4.9★</div>
-            <div style="font-size:.72rem;color:rgba(255,255,255,.5);margin-top:3px;">Platform Rating</div>
+            <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.6rem;color:white;letter-spacing:-.04em;">Live</div>
+            <div style="font-size:.72rem;color:rgba(255,255,255,.5);margin-top:3px;">Job Tracking</div>
           </div>
         </div>
         <div style="background:white;border-radius:var(--r-md);padding:1.25rem 1.75rem;border:1px solid var(--border);display:flex;align-items:center;gap:1rem;">
@@ -2194,6 +2140,7 @@ footer {
 <footer>
 
   <div class="footer-hero">
+    <img src="papafix-logo.png" class="footer-logo-img" alt="PapaFix" />
     <div class="footer-bigtype">
       Papa<span class="ft-accent">Fix</span>
     </div>
@@ -2201,15 +2148,15 @@ footer {
 
     <!-- Coverage cities in footer -->
     <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1.75rem;">
-      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(26,108,255,.12);border:1px solid rgba(26,108,255,.2);color:rgba(255,255,255,.7);font-size:.72rem;font-weight:500;padding:5px 13px;border-radius:100px;">
+      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(242,107,29,.12);border:1px solid rgba(242,107,29,.2);color:rgba(255,255,255,.7);font-size:.72rem;font-weight:500;padding:5px 13px;border-radius:100px;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
         Tanauan City
       </div>
-      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(26,108,255,.12);border:1px solid rgba(26,108,255,.2);color:rgba(255,255,255,.7);font-size:.72rem;font-weight:500;padding:5px 13px;border-radius:100px;">
+      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(242,107,29,.12);border:1px solid rgba(242,107,29,.2);color:rgba(255,255,255,.7);font-size:.72rem;font-weight:500;padding:5px 13px;border-radius:100px;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
         Malvar
       </div>
-      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(26,108,255,.12);border:1px solid rgba(26,108,255,.2);color:rgba(255,255,255,.7);font-size:.72rem;font-weight:500;padding:5px 13px;border-radius:100px;">
+      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(242,107,29,.12);border:1px solid rgba(242,107,29,.2);color:rgba(255,255,255,.7);font-size:.72rem;font-weight:500;padding:5px 13px;border-radius:100px;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
         Santo Tomas City
       </div>
