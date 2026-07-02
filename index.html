@@ -4,13 +4,16 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>PapaFix — Home Repairs, Done Right</title>
-<meta name="description" content="PapaFix is Batangas' first on-demand home repair app. Book verified electricians, plumbers, aircon technicians and more in Tanauan, Malvar, and Santo Tomas. Fast response, real-time tracking, upfront pricing." />
+<meta name="description" content="PapaFix is Batangas' first on-demand home repair app — launching soon in Tanauan, Malvar, and Santo Tomas. Verified electricians, plumbers, aircon technicians and more, with live tracking and upfront pricing. Join the waitlist." />
 <meta property="og:title" content="PapaFix — Home Repairs, Done Right" />
-<meta property="og:description" content="On-demand home repair in Batangas. Book a verified technician in under 90 seconds — tracked live, at your door fast." />
+<meta property="og:description" content="On-demand home repair, launching soon in Batangas. Join the waitlist to be first in line when PapaFix arrives in Tanauan, Malvar, and Santo Tomas." />
 <meta property="og:type" content="website" />
+<!-- TODO: update these two URLs once the site is live on its final domain -->
+<meta property="og:url" content="https://clarenceneilmeneses.github.io/papafix-landing/" />
+<meta property="og:image" content="https://clarenceneilmeneses.github.io/papafix-landing/papafix-logo.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="PapaFix — Home Repairs, Done Right" />
-<meta name="twitter:description" content="On-demand home repair in Batangas. Book a verified technician in under 90 seconds." />
+<meta name="twitter:description" content="On-demand home repair, launching soon in Batangas. Join the waitlist to be first in line." />
 <meta name="theme-color" content="#f26b1d" />
 <link rel="icon" type="image/png" href="papafix-logo.png" />
 <link rel="apple-touch-icon" href="papafix-logo.png" />
@@ -18,6 +21,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script>
+/* Skip the intro curtain on repeat views this session — must run before first paint */
+try {
+  if (sessionStorage.getItem('pfIntroSeen')) document.documentElement.classList.add('no-intro');
+  else sessionStorage.setItem('pfIntroSeen', '1');
+} catch (e) {}
+</script>
 
 <style>
 /* ─── RESET ──────────────────────────────────────────────────── */
@@ -28,11 +38,11 @@ body { font-family: 'DM Sans', sans-serif; background: #f7f9fc; color: #0a0f1e; 
 /* ─── CSS VARIABLES ──────────────────────────────────────────── */
 :root {
   /* Brand palette — sampled from the official PAPAFix logo (warm orange) */
-  --blue:       #f26b1d;
-  --blue-mid:   #e15410;
-  --blue-deep:  #c2410c;
-  --blue-light: #ffebda;
-  --blue-pale:  #fff6ef;
+  --brand:       #f26b1d;
+  --brand-mid:   #e15410;
+  --brand-deep:  #c2410c;
+  --brand-light: #ffebda;
+  --brand-pale:  #fff6ef;
   --off-white:  #f7f9fc;
   --ink:        #0a0f1e;
   --ink-light:  #3a4165;
@@ -42,11 +52,17 @@ body { font-family: 'DM Sans', sans-serif; background: #f7f9fc; color: #0a0f1e; 
   --shadow-md:  0 8px 40px rgba(242,107,29,.14);
   --shadow-lg:  0 24px 80px rgba(242,107,29,.18);
   --r-sm: 12px; --r-md: 20px; --r-lg: 32px; --r-xl: 48px;
+  /* Hero content waits for the intro curtain; html.no-intro zeroes this */
+  --intro-base: 2.5s;
 }
+
+/* Repeat view this session (html.no-intro set in <head>): no curtain, no wait */
+html.no-intro #intro-overlay { display: none; }
+html.no-intro { --intro-base: 0s; }
 
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: var(--brand); border-radius: 4px; }
 
 /* ═══════════════════════════════════════════════════════════════
    PAGE LOAD INTRO ANIMATION
@@ -136,7 +152,7 @@ nav {
 
 .nav-links { display: flex; align-items: center; gap: 2rem; }
 .nav-links a { font-size: .875rem; color: var(--ink-light); text-decoration: none; transition: color .2s; }
-.nav-links a:hover { color: var(--blue); }
+.nav-links a:hover { color: var(--brand); }
 .nav-cta-gplay {
   display: inline-flex; align-items: center; gap: 9px;
   background: #0a0f1e; color: white; border: none;
@@ -207,33 +223,33 @@ nav {
 }
 .hero-tag {
   display: inline-flex; align-items: center; gap: 8px;
-  background: var(--blue-light); color: var(--blue);
+  background: var(--brand-light); color: var(--brand);
   font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
   padding: 6px 14px; border-radius: 100px; margin-bottom: 2rem; width: fit-content;
-  opacity: 0; animation: fadeUp .8s 2.6s ease forwards;
+  opacity: 0; animation: fadeUp .8s ease forwards; animation-delay: calc(var(--intro-base) + .1s);
 }
-.hero-tag-dot { width: 6px; height: 6px; background: var(--blue); border-radius: 50%; animation: pulse 2s infinite; }
+.hero-tag-dot { width: 6px; height: 6px; background: var(--brand); border-radius: 50%; animation: pulse 2s infinite; }
 @keyframes pulse { 0%,100% { opacity:1;transform:scale(1); } 50% { opacity:.4;transform:scale(.7); } }
 
 .hero-h1 {
   font-family: 'Sora', sans-serif; font-weight: 800;
   font-size: clamp(2.8rem, 4.5vw, 5rem); line-height: 1.04; letter-spacing: -.04em;
   color: var(--ink); margin-bottom: 1.5rem;
-  opacity: 0; animation: fadeUp .8s 2.8s ease forwards;
+  opacity: 0; animation: fadeUp .8s ease forwards; animation-delay: calc(var(--intro-base) + .3s);
 }
-.hero-h1 em { font-style: normal; color: var(--blue); position: relative; }
+.hero-h1 em { font-style: normal; color: var(--brand); position: relative; }
 .hero-h1 em::after {
   content: ''; position: absolute; left: 0; bottom: 3px; right: 0; height: 4px;
-  background: var(--blue); opacity: .2; border-radius: 2px;
+  background: var(--brand); opacity: .2; border-radius: 2px;
 }
 .hero-sub {
   font-size: 1.05rem; line-height: 1.7; color: var(--ink-light); font-weight: 300;
   max-width: 44ch; margin-bottom: 3rem;
-  opacity: 0; animation: fadeUp .8s 3s ease forwards;
+  opacity: 0; animation: fadeUp .8s ease forwards; animation-delay: calc(var(--intro-base) + .5s);
 }
 .hero-actions {
   display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
-  opacity: 0; animation: fadeUp .8s 3.2s ease forwards;
+  opacity: 0; animation: fadeUp .8s ease forwards; animation-delay: calc(var(--intro-base) + .7s);
 }
 .btn-google-play {
   display: inline-flex; align-items: center; gap: 12px;
@@ -254,28 +270,29 @@ nav {
   border: 1.5px solid rgba(10,15,30,.12); font-size: .9rem; font-weight: 500;
   transition: border-color .2s, color .2s, background .2s;
 }
-.btn-ghost:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-pale); }
+.btn-ghost:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-pale); }
 .btn-ghost svg { width: 15px; height: 15px; }
 
 .hero-stats {
   display: flex; gap: 2rem; margin-top: 3.5rem;
-  opacity: 0; animation: fadeUp .8s 3.4s ease forwards;
+  opacity: 0; animation: fadeUp .8s ease forwards; animation-delay: calc(var(--intro-base) + .9s);
 }
 .hero-stat-num { font-family: 'Sora', sans-serif; font-size: 1.6rem; font-weight: 700; letter-spacing: -.04em; }
 .hero-stat-label { font-size: .75rem; color: var(--ink-faint); margin-top: 2px; }
 .stat-divider { width: 1px; background: var(--border); align-self: stretch; }
 
 .hero-right {
-  position: relative; overflow: hidden; background: var(--blue-pale);
+  position: relative; overflow: hidden; background: var(--brand-pale);
   display: flex; align-items: center; justify-content: center;
 }
 .hero-phone-wrap {
   position: relative; z-index: 2;
   transform: translateY(20px); opacity: 0;
-  animation: heroPhoneIn 1.2s 2.9s cubic-bezier(.16,1,.3,1) forwards;
+  animation: heroPhoneIn 1.2s cubic-bezier(.16,1,.3,1) forwards;
+  animation-delay: calc(var(--intro-base) + .4s);
 }
 @keyframes heroPhoneIn { to { transform: translateY(0); opacity: 1; } }
-.hero-phone { width: 80%; max-width: 440px; max-height: 78vh; object-fit: contain; filter: drop-shadow(0 40px 80px rgba(242,107,29,.28)) drop-shadow(0 10px 30px rgba(10,15,30,.15)); }
+.hero-phone { width: 80%; max-width: 440px; max-height: 78vh; object-fit: contain; border-radius: 24px; filter: drop-shadow(0 40px 80px rgba(242,107,29,.28)) drop-shadow(0 10px 30px rgba(10,15,30,.15)); }
 .hero-bg-shape {
   position: absolute; inset: 0;
   background: radial-gradient(ellipse 80% 80% at 60% 40%, rgba(242,107,29,.12) 0%, transparent 70%);
@@ -300,7 +317,7 @@ nav {
 /* ─── COMMON ─────────────────────────────────────────────────── */
 section { position: relative; }
 .container { max-width: 1180px; margin: 0 auto; padding: 0 5vw; }
-.section-eyebrow { font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--blue); margin-bottom: .75rem; }
+.section-eyebrow { font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--brand); margin-bottom: .75rem; }
 .section-title { font-family: 'Sora', sans-serif; font-weight: 700; font-size: clamp(2rem, 3.5vw, 3.2rem); letter-spacing: -.04em; line-height: 1.1; color: var(--ink); }
 .section-sub { font-size: 1rem; line-height: 1.7; color: var(--ink-light); font-weight: 300; max-width: 52ch; }
 .section-divider { height: 1px; background: linear-gradient(to right, transparent, var(--border), transparent); margin: 0 5vw; }
@@ -309,14 +326,14 @@ section { position: relative; }
 #trust { padding: 48px 0; background: white; }
 .trust-inner { display: flex; align-items: center; justify-content: center; gap: 3rem; flex-wrap: wrap; }
 .trust-item { display: flex; align-items: center; gap: .75rem; font-size: .82rem; color: var(--ink-faint); }
-.trust-icon { width: 32px; height: 32px; background: var(--blue-light); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.trust-icon svg { width: 15px; height: 15px; color: var(--blue); }
+.trust-icon { width: 32px; height: 32px; background: var(--brand-light); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.trust-icon svg { width: 15px; height: 15px; color: var(--brand); }
 .trust-text strong { color: var(--ink-light); font-weight: 500; }
 .trust-sep { font-size: 1.2rem; color: var(--border); line-height: 1; }
 .trust-exclusive {
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: .72rem; font-weight: 600; color: var(--blue);
-  background: var(--blue-light); padding: 5px 13px; border-radius: 100px;
+  font-size: .72rem; font-weight: 600; color: var(--brand);
+  background: var(--brand-light); padding: 5px 13px; border-radius: 100px;
   margin-left: .5rem;
 }
 
@@ -472,20 +489,20 @@ section { position: relative; }
   transition: transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s;
 }
 .bento:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
-.bento-1 { grid-column: span 5; background: var(--blue); }
+.bento-1 { grid-column: span 5; background: var(--brand); }
 .bento-2 { grid-column: span 7; }
 .bento-3 { grid-column: span 4; }
 .bento-4 { grid-column: span 4; }
 .bento-5 { grid-column: span 4; background: var(--ink); }
 .bento-6 { grid-column: span 7; }
-.bento-7 { grid-column: span 5; background: var(--blue-pale); }
+.bento-7 { grid-column: span 5; background: var(--brand-pale); }
 
 .bento-step-num {
   font-family: 'Sora', sans-serif; font-weight: 800; font-size: 5rem;
   line-height: 1; letter-spacing: -.06em; opacity: .12; margin-bottom: -.5rem;
 }
 .bento-1 .bento-step-num, .bento-5 .bento-step-num { opacity: .2; color: white; }
-.bento-label { font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--blue); margin-bottom: .6rem; }
+.bento-label { font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--brand); margin-bottom: .6rem; }
 .bento-1 .bento-label, .bento-5 .bento-label { color: rgba(255,255,255,.6); }
 .bento-h { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.2rem; line-height: 1.25; margin-bottom: .6rem; color: var(--ink); }
 .bento-1 .bento-h, .bento-5 .bento-h { color: white; }
@@ -494,10 +511,10 @@ section { position: relative; }
 
 .bento-icon-wrap {
   width: 48px; height: 48px; border-radius: var(--r-sm);
-  background: var(--blue-light); display: flex; align-items: center; justify-content: center;
+  background: var(--brand-light); display: flex; align-items: center; justify-content: center;
   margin-bottom: 1rem;
 }
-.bento-icon-wrap svg { width: 22px; height: 22px; color: var(--blue); }
+.bento-icon-wrap svg { width: 22px; height: 22px; color: var(--brand); }
 .bento-1 .bento-icon-wrap { background: rgba(255,255,255,.18); }
 .bento-1 .bento-icon-wrap svg { color: white; }
 .bento-5 .bento-icon-wrap { background: rgba(255,255,255,.1); }
@@ -510,22 +527,22 @@ section { position: relative; }
   border: 3px solid white; margin-left: -12px;
   display: flex; align-items: center; justify-content: center;
   font-family: 'Sora', sans-serif; font-size: .82rem; font-weight: 700;
-  background: var(--blue); color: white;
+  background: var(--brand); color: white;
 }
 .avatar:first-child { margin-left: 0; }
-.avatar-more { background: var(--blue-light); color: var(--blue); font-size: .7rem; }
+.avatar-more { background: var(--brand-light); color: var(--brand); font-size: .7rem; }
 
 /* progress bar */
 .progress-bar-wrap { margin-top: 1rem; }
 .progress-label { display: flex; justify-content: space-between; font-size: .75rem; margin-bottom: 6px; color: var(--ink-faint); }
-.progress-bar { height: 6px; background: var(--blue-light); border-radius: 3px; overflow: hidden; }
-.progress-fill { height: 100%; background: var(--blue); border-radius: 3px; transition: width 1.5s cubic-bezier(.16,1,.3,1); width: 0; }
+.progress-bar { height: 6px; background: var(--brand-light); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--brand); border-radius: 3px; transition: width 1.5s cubic-bezier(.16,1,.3,1); width: 0; }
 
 /* rating pill */
 .rating-pill {
   display: inline-flex; align-items: center; gap: 8px;
-  background: var(--blue-light); padding: 8px 16px; border-radius: 100px;
-  font-family: 'Sora', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--blue);
+  background: var(--brand-light); padding: 8px 16px; border-radius: 100px;
+  font-family: 'Sora', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--brand);
   margin-top: 1rem;
 }
 .star-icon { color: #f59e0b; }
@@ -539,7 +556,7 @@ section { position: relative; }
 
 /* map ripple */
 .map-ripple {
-  position: absolute; border: 2px solid var(--blue); border-radius: 50%; opacity: 0;
+  position: absolute; border: 2px solid var(--brand); border-radius: 50%; opacity: 0;
   animation: ripple 2s ease-out infinite;
 }
 .map-ripple:nth-child(2) { animation-delay: .7s; }
@@ -576,11 +593,11 @@ section { position: relative; }
 .feature-num {
   position: absolute; right: 0; top: -1rem;
   font-family: 'Sora', sans-serif; font-weight: 800; font-size: 8rem;
-  color: var(--blue-light); line-height: 1; letter-spacing: -.06em;
+  color: var(--brand-light); line-height: 1; letter-spacing: -.06em;
   pointer-events: none; z-index: 0;
 }
 .feature-text { position: relative; z-index: 1; }
-.feature-eyebrow { font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--blue); margin-bottom: .75rem; }
+.feature-eyebrow { font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--brand); margin-bottom: .75rem; }
 .feature-h { font-family: 'Sora', sans-serif; font-weight: 700; font-size: clamp(1.6rem, 2.5vw, 2.2rem); letter-spacing: -.04em; line-height: 1.15; margin-bottom: 1rem; color: var(--ink); }
 .feature-p { font-size: .95rem; line-height: 1.75; color: var(--ink-light); font-weight: 300; max-width: 44ch; }
 .feature-chips { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 1.5rem; }
@@ -588,7 +605,7 @@ section { position: relative; }
 
 .feature-visual {
   border-radius: var(--r-xl); overflow: hidden; position: relative;
-  background: var(--blue-pale); aspect-ratio: 4/3;
+  background: var(--brand-pale); aspect-ratio: 4/3;
   display: flex; align-items: center; justify-content: center;
   border: 1px solid var(--border);
 }
@@ -615,20 +632,20 @@ section { position: relative; }
   transition: transform .3s, box-shadow .3s;
 }
 .review-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-sm); }
-.review-card.blue { background: var(--blue); }
+.review-card.blue { background: var(--brand); }
 .review-card.blue .review-text, .review-card.blue .reviewer-name { color: white; }
 .review-card.blue .reviewer-svc { color: rgba(255,255,255,.6); }
 .review-stars { display: flex; gap: 3px; margin-bottom: .75rem; }
 .review-stars svg { width: 14px; height: 14px; color: #f59e0b; }
 .review-card.blue .review-stars svg { color: rgba(255,255,255,.9); }
 .review-text { font-size: .9rem; line-height: 1.7; color: var(--ink-light); margin-bottom: 1.25rem; font-weight: 300; }
-.review-quote { font-size: 3.5rem; line-height: .5; font-family: 'Sora', sans-serif; font-weight: 800; color: var(--blue); opacity: .15; margin-bottom: .5rem; }
+.review-quote { font-size: 3.5rem; line-height: .5; font-family: 'Sora', sans-serif; font-weight: 800; color: var(--brand); opacity: .15; margin-bottom: .5rem; }
 .review-card.blue .review-quote { opacity: .25; color: white; }
 .reviewer { display: flex; align-items: center; gap: 10px; }
 .reviewer-avatar {
   width: 38px; height: 38px; border-radius: 50%;
-  background: var(--blue-light); display: flex; align-items: center; justify-content: center;
-  font-family: 'Sora', sans-serif; font-weight: 700; font-size: .82rem; color: var(--blue); flex-shrink: 0;
+  background: var(--brand-light); display: flex; align-items: center; justify-content: center;
+  font-family: 'Sora', sans-serif; font-weight: 700; font-size: .82rem; color: var(--brand); flex-shrink: 0;
 }
 .review-card.blue .reviewer-avatar { background: rgba(255,255,255,.2); color: white; }
 .reviewer-name { font-family: 'Sora', sans-serif; font-weight: 600; font-size: .88rem; color: var(--ink); }
@@ -636,10 +653,10 @@ section { position: relative; }
 
 /* ─── CTA SECTION ────────────────────────────────────────────── */
 #cta { padding: 140px 0; background: white; position: relative; overflow: hidden; }
-.cta-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 70% at 80% 50%, var(--blue-pale) 0%, transparent 70%); }
+.cta-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 70% at 80% 50%, var(--brand-pale) 0%, transparent 70%); }
 .cta-inner { max-width: 1180px; margin: 0 auto; padding: 0 5vw; display: grid; grid-template-columns: 1fr 1fr; gap: 6vw; align-items: center; position: relative; z-index: 1; }
 .cta-h { font-family: 'Sora', sans-serif; font-weight: 800; font-size: clamp(2.5rem, 4vw, 4.2rem); letter-spacing: -.05em; line-height: 1.0; color: var(--ink); margin-bottom: 1.5rem; }
-.cta-h span { color: var(--blue); }
+.cta-h span { color: var(--brand); }
 .cta-sub { font-size: 1rem; line-height: 1.7; color: var(--ink-light); font-weight: 300; margin-bottom: 2.5rem; }
 .cta-phones { position: relative; display: flex; align-items: flex-end; justify-content: center; height: 420px; }
 .cta-phone-main { width: 200px; position: relative; z-index: 2; filter: drop-shadow(0 30px 60px rgba(242,107,29,.2)); animation: ctaFloat 4s ease-in-out infinite; }
@@ -647,7 +664,7 @@ section { position: relative; }
 @keyframes ctaFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 .cta-meta { display: flex; gap: 1.5rem; margin-top: 1.5rem; flex-wrap: wrap; }
 .cta-meta-item { display: flex; align-items: center; gap: 6px; font-size: .78rem; color: var(--ink-faint); }
-.cta-meta-item svg { width: 14px; height: 14px; color: var(--blue); }
+.cta-meta-item svg { width: 14px; height: 14px; color: var(--brand); }
 
 /* ═══════════════════════════════════════════════════════════════
    FOOTER — LARGE TYPE + NEGATIVE
@@ -676,7 +693,7 @@ footer {
   font-size: clamp(4rem, 10vw, 10rem); letter-spacing: -.05em; line-height: .9;
   color: white; user-select: none;
 }
-.footer-bigtype .ft-accent { color: var(--blue); }
+.footer-bigtype .ft-accent { color: var(--brand); }
 .footer-tagline {
   font-size: 1rem; color: rgba(255,255,255,.45); font-weight: 300;
   margin-top: 1.5rem; max-width: 48ch;
@@ -697,9 +714,9 @@ footer {
   width: 100%; height: 100%; border-radius: 8px;
   border: 2px dashed rgba(242,107,29,.3);
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
-  background: var(--blue-pale);
+  background: var(--brand-pale);
 }
-.footer-qr-placeholder svg { width: 28px; height: 28px; color: var(--blue); opacity: .5; }
+.footer-qr-placeholder svg { width: 28px; height: 28px; color: var(--brand); opacity: .5; }
 .footer-qr-placeholder span { font-size: .6rem; color: var(--ink-faint); text-align: center; line-height: 1.4; font-weight: 500; letter-spacing: .04em; }
 .footer-qr-label { font-size: .72rem; color: rgba(255,255,255,.4); text-align: center; letter-spacing: .04em; text-transform: uppercase; font-weight: 600; }
 
@@ -742,7 +759,7 @@ footer {
   background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);
   padding: 5px 12px; border-radius: 8px; font-size: .72rem; color: rgba(255,255,255,.35);
 }
-.footer-badge svg { width: 12px; height: 12px; color: var(--blue); }
+.footer-badge svg { width: 12px; height: 12px; color: var(--brand); }
 
 /* ═══════════════════════════════════════════════════════════════
    TECHNICIAN MODAL
@@ -778,11 +795,11 @@ footer {
   cursor: pointer; color: var(--ink-faint);
   transition: background .2s, color .2s;
 }
-.tech-modal-close:hover { background: var(--blue-light); color: var(--blue); }
+.tech-modal-close:hover { background: var(--brand-light); color: var(--brand); }
 
 .tech-modal-badge {
   display: inline-flex; align-items: center; gap: 6px;
-  background: var(--blue-light); color: var(--blue);
+  background: var(--brand-light); color: var(--brand);
   font-size: .68rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
   padding: 5px 12px; border-radius: 100px; margin-bottom: 1rem;
 }
@@ -804,7 +821,7 @@ footer {
 }
 .tech-modal-info-icon {
   width: 40px; height: 40px; flex-shrink: 0;
-  background: var(--blue-light); border-radius: 10px;
+  background: var(--brand-light); border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
 }
 .tech-modal-info-label {
@@ -816,7 +833,7 @@ footer {
 }
 .tech-modal-note {
   display: flex; gap: .75rem; align-items: flex-start;
-  background: var(--blue-pale); border: 1px solid var(--border);
+  background: var(--brand-pale); border: 1px solid var(--border);
   border-radius: var(--r-sm); padding: 1rem 1.1rem;
   margin-bottom: 1.5rem;
 }
@@ -852,7 +869,7 @@ footer {
    REFERENCE-SITE LAYERED ANIMATIONS
    (1) hero word reveal  (2) pinned story band  (3) image zoom-in
    (4) lifestyle gallery  (5) section-title build-in
-   All reuse --blue/--ink + cubic-bezier(.16,1,.3,1).
+   All reuse --brand/--ink + cubic-bezier(.16,1,.3,1).
 ═══════════════════════════════════════════════════════════════ */
 
 /* ── (1) HERO HEADLINE — word-by-word reveal ────────────────── */
@@ -863,8 +880,8 @@ footer {
   display: inline-block;
   opacity: 0; transform: translateY(1em) rotate(2deg);
   animation: heroWordUp .7s cubic-bezier(.16,1,.3,1) forwards;
-  /* base delay clears the intro curtain (~2.85s); --i set per word */
-  animation-delay: calc(2.55s + var(--i) * .09s);
+  /* base delay clears the intro curtain; --i set per word */
+  animation-delay: calc(var(--intro-base) + .05s + var(--i) * .09s);
 }
 /* keep the blue underline accent intact on the em "word" */
 .hero-h1 em.hero-word { overflow: visible; }
@@ -918,14 +935,14 @@ footer {
 }
 .story-eyebrow {
   font-size: .72rem; font-weight: 600; letter-spacing: .12em;
-  text-transform: uppercase; color: var(--blue); margin-bottom: 1rem;
+  text-transform: uppercase; color: var(--brand); margin-bottom: 1rem;
 }
 .story-h {
   font-family: 'Sora', sans-serif; font-weight: 800;
   font-size: clamp(2.2rem, 4.6vw, 4.2rem); letter-spacing: -.04em;
   line-height: 1.06; color: white; margin-bottom: 1.4rem;
 }
-.story-h em { font-style: normal; color: var(--blue); }
+.story-h em { font-style: normal; color: var(--brand); }
 .story-p {
   font-size: 1.05rem; line-height: 1.75; color: rgba(255,255,255,.72);
   font-weight: 300; max-width: 50ch;
@@ -990,6 +1007,9 @@ footer {
 
 /* ── REDUCED MOTION — everything resolves to its final state ─── */
 @media (prefers-reduced-motion: reduce) {
+  #intro-overlay { display: none !important; }
+  :root { --intro-base: 0s; }
+  .hero-tag, .hero-h1, .hero-sub, .hero-actions, .hero-stats, .hero-phone-wrap { animation: none !important; opacity: 1 !important; transform: none !important; }
   .hero-word { animation: none !important; opacity: 1 !important; transform: none !important; }
   .section-title .tw { transition: none !important; opacity: 1 !important; transform: none !important; }
   .zoom-img { transition: none !important; transform: none !important; filter: none !important; }
@@ -1045,7 +1065,7 @@ footer {
 /* ─── SCROLL PROGRESS ─────────────────────────────────────────── */
 .scroll-progress {
   position: fixed; top: 0; left: 0; z-index: 10001;
-  height: 3px; width: 0%; background: var(--blue);
+  height: 3px; width: 0%; background: var(--brand);
   pointer-events: none; transition: width .1s linear;
 }
 
@@ -1060,7 +1080,7 @@ footer {
   transition: opacity .3s, transform .3s, background .2s;
 }
 .back-to-top.visible { opacity: 1; transform: translateY(0); pointer-events: all; }
-.back-to-top:hover { background: var(--blue); }
+.back-to-top:hover { background: var(--brand); }
 .back-to-top svg { width: 18px; height: 18px; }
 </style>
 <noscript><style>.reveal,.reveal-left,.reveal-right{opacity:1!important;transform:none!important;}.zoom-img{transform:none!important;filter:none!important;}</style></noscript>
@@ -1090,7 +1110,7 @@ footer {
 </div>
 
 <nav>
-  <a href="#" class="nav-logo"><img src="papafix-logo.png" class="nav-logo-img" alt="" /><span>Papa<span style="color:var(--blue);">Fix</span></span></a>
+  <a href="#" class="nav-logo"><img src="papafix-logo.png" class="nav-logo-img" alt="" /><span>Papa<span style="color:var(--brand);">Fix</span></span></a>
   <div class="nav-links">
     <a href="#services">Services</a>
     <a href="#how">How It Works</a>
@@ -1098,10 +1118,10 @@ footer {
     <a href="#testimonials">Reviews</a>
   </div>
   <div style="display:flex;align-items:center;gap:.75rem;">
-    <a href="#" class="nav-cta-gplay">
+    <a href="#waitlist" class="nav-cta-gplay">
       <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M3.18 23.76A2 2 0 0 1 2 22V2a2 2 0 0 1 1.18-1.76l11.33 11.76L3.18 23.76zM22.46 12l-3.03 1.71-3.39-3.51 3.39-3.51 3.04 1.71A2 2 0 0 1 22.46 12zM3.69.54L17.2 7.72 14.01 11 3.69.54zM3.69 23.46l10.32-10.46 3.19 3.28L3.69 23.46z"/></svg>
       <div class="nav-gplay-text">
-        <small>Get it on</small>
+        <small>Coming soon</small>
         <span>Google Play</span>
       </div>
     </a>
@@ -1117,9 +1137,9 @@ footer {
   <a href="#how" onclick="closeMobileMenu()">How It Works</a>
   <a href="#features" onclick="closeMobileMenu()">Features</a>
   <a href="#testimonials" onclick="closeMobileMenu()">Reviews</a>
-  <a href="#" class="mobile-menu-cta">
+  <a href="#waitlist" class="mobile-menu-cta" onclick="closeMobileMenu()">
     <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M3.18 23.76A2 2 0 0 1 2 22V2a2 2 0 0 1 1.18-1.76l11.33 11.76L3.18 23.76zM22.46 12l-3.03 1.71-3.39-3.51 3.39-3.51 3.04 1.71A2 2 0 0 1 22.46 12zM3.69.54L17.2 7.72 14.01 11 3.69.54zM3.69 23.46l10.32-10.46 3.19 3.28L3.69 23.46z"/></svg>
-    Download on Google Play
+    Coming Soon — Join the Waitlist
   </a>
 </div>
 
@@ -1127,15 +1147,15 @@ footer {
   <div class="hero-left">
     <div class="hero-tag">
       <div class="hero-tag-dot"></div>
-      Now Serving Batangas
+      Launching Soon in Batangas
     </div>
     <h1 class="hero-h1">Your home fixed,<br/><em>fast & right.</em></h1>
-    <p class="hero-sub">Batangas' first on-demand repair app. Trusted local technicians from Tanauan, Malvar, and Santo Tomas — tracked live, at your door fast.</p>
+    <p class="hero-sub">Batangas' first on-demand repair app. Trusted local technicians from Tanauan, Malvar, and Santo Tomas — tracked live, at your door fast. Launching soon: join the waitlist and be first in line.</p>
     <div class="hero-actions">
-      <a href="#" class="btn-google-play">
+      <a href="#waitlist" class="btn-google-play">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76A2 2 0 0 1 2 22V2a2 2 0 0 1 1.18-1.76l11.33 11.76L3.18 23.76zM22.46 12l-3.03 1.71-3.39-3.51 3.39-3.51 3.04 1.71A2 2 0 0 1 22.46 12zM3.69.54L17.2 7.72 14.01 11 3.69.54zM3.69 23.46l10.32-10.46 3.19 3.28L3.69 23.46z"/></svg>
         <div class="btn-google-play-text">
-          <small>Get it on</small>
+          <small>Coming soon on</small>
           <span>Google Play</span>
         </div>
       </a>
@@ -1165,7 +1185,7 @@ footer {
   <div class="hero-right">
     <div class="hero-bg-shape"></div>
     <div class="hero-phone-wrap">
-      <img src="papafix-logo.png" class="hero-phone" alt="PapaFix — Aircon Service App, Trusted Repairs"/>
+      <img src="hero.png" class="hero-phone" alt="PapaFix — all your home repair needs, covered"/>
     </div>
   </div>
 </section>
@@ -1223,7 +1243,7 @@ footer {
   <div class="container">
     <div style="text-align:center; margin-bottom: 3rem;">
       <div class="section-eyebrow">Service Area</div>
-      <h2 class="section-title" style="margin-bottom:.75rem;">Proudly rooted in <em style="font-style:normal;color:var(--blue);">Batangas</em></h2>
+      <h2 class="section-title" style="margin-bottom:.75rem;">Proudly rooted in <em style="font-style:normal;color:var(--brand);">Batangas</em></h2>
       <p class="section-sub" style="margin:0 auto;">We're starting close to home. PapaFix currently serves three cities in Batangas — with more areas coming soon.</p>
     </div>
 
@@ -1231,7 +1251,7 @@ footer {
 
       <!-- Tanauan City card -->
       <div class="coverage-card" style="position:relative;border-radius:var(--r-lg);flex:1;min-width:220px;max-width:320px;height:320px;overflow:hidden;cursor:default;transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 24px 60px rgba(242,107,29,.22)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-        <img src="https://r1.community.samsung.com/t5/image/serverpage/image-id/1897168i64A954539E22D807/image-size/large?v=v2&px=999" alt="Tanauan City" loading="lazy" class="zoom-img" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;" onerror="this.style.display='none'"/>
+        <img src="tanauan.jpg" alt="Tanauan City Hall" loading="lazy" class="zoom-img" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;"/>
         <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(10,15,30,.85) 0%, rgba(10,15,30,.3) 55%, rgba(10,15,30,.1) 100%);"></div>
         <div style="position:absolute;inset:0;padding:1.5rem;display:flex;flex-direction:column;justify-content:flex-end;">
           <div style="display:inline-flex;align-items:center;gap:5px;background:#e9f5ee;color:#2d8a4e;font-size:.65rem;font-weight:700;padding:4px 10px;border-radius:100px;width:fit-content;margin-bottom:.6rem;">
@@ -1247,7 +1267,7 @@ footer {
 
       <!-- Malvar card -->
       <div class="coverage-card" style="position:relative;border-radius:var(--r-lg);flex:1;min-width:220px;max-width:320px;height:320px;overflow:hidden;cursor:default;transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 24px 60px rgba(242,107,29,.22)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-        <img src="https://scontent.fpag2-1.fna.fbcdn.net/v/t39.30808-6/519666780_1050205543950313_8638758900701055038_n.jpg?stp=dst-jpg_tt6&cstp=mx1656x630&ctp=s1656x630&_nc_cat=101&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=FcjFX7Dg5TUQ7kNvwHpOe6H&_nc_oc=AdrUlpvQMlqYhLEVZ-8_cbupnPgGzQlhZKkz_nxEKrgfxLN8qeVGkKO_aYHKt8kLKfA&_nc_zt=23&_nc_ht=scontent.fpag2-1.fna&_nc_gid=g2V3qIaLQs79LgM8kf1FuA&_nc_ss=7b2a8&oh=00_Af-HVnoepdwG_cDKbVcmhT0PRcv8_F71824KQSX_AYjSMQ&oe=6A2948B2" alt="Malvar, Batangas" loading="lazy" class="zoom-img" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;" onerror="this.style.display='none'"/>
+        <img src="malvar.jpg" alt="Malvar Municipal Hall, Batangas" loading="lazy" class="zoom-img" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;"/>
         <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(10,15,30,.85) 0%, rgba(10,15,30,.3) 55%, rgba(10,15,30,.1) 100%);"></div>
         <div style="position:absolute;inset:0;padding:1.5rem;display:flex;flex-direction:column;justify-content:flex-end;">
           <div style="display:inline-flex;align-items:center;gap:5px;background:#e9f5ee;color:#2d8a4e;font-size:.65rem;font-weight:700;padding:4px 10px;border-radius:100px;width:fit-content;margin-bottom:.6rem;">
@@ -1263,7 +1283,7 @@ footer {
 
       <!-- Santo Tomas City card -->
       <div class="coverage-card" style="position:relative;border-radius:var(--r-lg);flex:1;min-width:220px;max-width:320px;height:320px;overflow:hidden;cursor:default;transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 24px 60px rgba(242,107,29,.22)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/c/cb/Santo_Tomas_City_Hall_%28Gov._Malvar%2C_Santo_Tomas%2C_Batangas%3B_10-27-2023%29.jpg/1280px-Santo_Tomas_City_Hall_%28Gov._Malvar%2C_Santo_Tomas%2C_Batangas%3B_10-27-2023%29.jpg" alt="Santo Tomas City" loading="lazy" class="zoom-img" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;" onerror="this.style.display='none'"/>
+        <img src="santotomas.jpg" alt="Santo Tomas City Hall" loading="lazy" class="zoom-img" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;"/>
         <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(10,15,30,.85) 0%, rgba(10,15,30,.3) 55%, rgba(10,15,30,.1) 100%);"></div>
         <div style="position:absolute;inset:0;padding:1.5rem;display:flex;flex-direction:column;justify-content:flex-end;">
           <div style="display:inline-flex;align-items:center;gap:5px;background:#e9f5ee;color:#2d8a4e;font-size:.65rem;font-weight:700;padding:4px 10px;border-radius:100px;width:fit-content;margin-bottom:.6rem;">
@@ -1280,19 +1300,20 @@ footer {
     </div>
 
     <div class="reveal" style="text-align:center;">
-      <div style="display:inline-flex;align-items:center;gap:8px;background:var(--blue-light);color:var(--blue);font-size:.78rem;font-weight:600;padding:8px 20px;border-radius:100px;">
+      <div style="display:inline-flex;align-items:center;gap:8px;background:var(--brand-light);color:var(--brand);font-size:.78rem;font-weight:600;padding:8px 20px;border-radius:100px;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         More cities coming soon
       </div>
     </div>
 
-    <!-- City notification signup -->
-    <div class="reveal" style="margin-top:2rem;text-align:center;">
-      <p style="font-size:.85rem;color:var(--ink-faint);margin-bottom:.75rem;">Not in your city yet? Get notified when we launch near you.</p>
-      <form onsubmit="event.preventDefault();this.innerHTML='<span style=\'color:var(--blue);font-weight:600;\'>✓ You\'re on the list!</span>'" style="display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;">
-        <input type="email" placeholder="Your email address" required style="padding:.65rem 1rem;border-radius:var(--r-sm);border:1.5px solid var(--border);font-family:'DM Sans',sans-serif;font-size:.9rem;width:260px;outline:none;transition:border-color .2s;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'"/>
-        <button type="submit" style="padding:.65rem 1.25rem;background:var(--blue);color:white;border:none;border-radius:var(--r-sm);font-family:'Sora',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer;transition:background .2s,transform .2s;" onmouseover="this.style.background='var(--blue-mid)'" onmouseout="this.style.background='var(--blue)'">Notify Me</button>
+    <!-- Waitlist signup — the page's primary pre-launch conversion -->
+    <div class="reveal" id="waitlist" style="margin-top:2rem;text-align:center;scroll-margin-top:110px;">
+      <p style="font-size:.85rem;color:var(--ink-faint);margin-bottom:.75rem;">Be first in line — get notified the moment PapaFix launches near you.</p>
+      <form id="waitlistForm" style="display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;">
+        <input type="email" name="email" placeholder="Your email address" required style="padding:.65rem 1rem;border-radius:var(--r-sm);border:1.5px solid var(--border);font-family:'DM Sans',sans-serif;font-size:.9rem;width:260px;outline:none;transition:border-color .2s;" onfocus="this.style.borderColor='var(--brand)'" onblur="this.style.borderColor='var(--border)'"/>
+        <button type="submit" style="padding:.65rem 1.25rem;background:var(--brand);color:white;border:none;border-radius:var(--r-sm);font-family:'Sora',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer;transition:background .2s,transform .2s;" onmouseover="this.style.background='var(--brand-mid)'" onmouseout="this.style.background='var(--brand)'">Notify Me</button>
       </form>
+      <p id="waitlistMsg" style="display:none;margin-top:.75rem;font-size:.85rem;font-weight:600;"></p>
     </div>
   </div>
 </section>
@@ -1324,7 +1345,7 @@ footer {
   </div>
 </section>
 
-<section id="services" style="height: 800vh; position: relative;">
+<section id="services" style="height: 520vh; position: relative;">
 
   <div class="services-sticky" id="servicesSticky">
 
@@ -1342,7 +1363,7 @@ footer {
       <div class="service-panel" style="--panel-bg:#18120a;--panel-accent:#fbbf24;--panel-glow:rgba(251,191,36,.18);">
         <div class="svc-content">
           <div class="svc-counter">01 / 08</div>
-          <div class="svc-big-name">Elec&shy;trical</div>
+          <h3 class="svc-big-name">Elec&shy;trical</h3>
           <p class="svc-big-desc">Wiring, outlets, panels, circuit breakers, and full safety inspections by certified electricians.</p>
           <div class="svc-tags">
             <span class="svc-tag">Rewiring</span>
@@ -1360,7 +1381,7 @@ footer {
       <div class="service-panel" style="--panel-bg:#06101e;--panel-accent:#60a5fa;--panel-glow:rgba(96,165,250,.18);">
         <div class="svc-content">
           <div class="svc-counter">02 / 08</div>
-          <div class="svc-big-name">Plumb&shy;ing</div>
+          <h3 class="svc-big-name">Plumb&shy;ing</h3>
           <p class="svc-big-desc">Leaks, pipe repairs, drainage, faucets, and water pressure fixes done right the first time.</p>
           <div class="svc-tags">
             <span class="svc-tag">Leak Repair</span>
@@ -1378,7 +1399,7 @@ footer {
       <div class="service-panel" style="--panel-bg:#001a22;--panel-accent:#22d3ee;--panel-glow:rgba(34,211,238,.18);">
         <div class="svc-content">
           <div class="svc-counter">03 / 08</div>
-          <div class="svc-big-name">Air&shy;con</div>
+          <h3 class="svc-big-name">Air&shy;con</h3>
           <p class="svc-big-desc">Cleaning, installation, refrigerant recharging, and preventive maintenance for all brands.</p>
           <div class="svc-tags">
             <span class="svc-tag">Deep Clean</span>
@@ -1396,7 +1417,7 @@ footer {
       <div class="service-panel" style="--panel-bg:#061509;--panel-accent:#4ade80;--panel-glow:rgba(74,222,128,.18);">
         <div class="svc-content">
           <div class="svc-counter">04 / 08</div>
-          <div class="svc-big-name">Appli&shy;ance</div>
+          <h3 class="svc-big-name">Appli&shy;ance</h3>
           <p class="svc-big-desc">Washing machines, refrigerators, ovens, and full appliance diagnostics — repaired, not replaced.</p>
           <div class="svc-tags">
             <span class="svc-tag">Refrigerators</span>
@@ -1414,7 +1435,7 @@ footer {
       <div class="service-panel" style="--panel-bg:#1a0d04;--panel-accent:#fb923c;--panel-glow:rgba(251,146,60,.18);">
         <div class="svc-content">
           <div class="svc-counter">05 / 08</div>
-          <div class="svc-big-name">Carpen&shy;try</div>
+          <h3 class="svc-big-name">Carpen&shy;try</h3>
           <p class="svc-big-desc">Cabinets, doors, furniture assembly, flooring installations, and custom woodwork.</p>
           <div class="svc-tags">
             <span class="svc-tag">Cabinets</span>
@@ -1432,7 +1453,7 @@ footer {
       <div class="service-panel" style="--panel-bg:#1a0510;--panel-accent:#f472b6;--panel-glow:rgba(244,114,182,.18);">
         <div class="svc-content">
           <div class="svc-counter">06 / 08</div>
-          <div class="svc-big-name">Paint&shy;ing</div>
+          <h3 class="svc-big-name">Paint&shy;ing</h3>
           <p class="svc-big-desc">Interior and exterior painting, touch-ups, waterproofing, and textured finishes done to spec.</p>
           <div class="svc-tags">
             <span class="svc-tag">Interior</span>
@@ -1450,7 +1471,7 @@ footer {
       <div class="service-panel" style="--panel-bg:#001618;--panel-accent:#2dd4bf;--panel-glow:rgba(45,212,191,.18);">
         <div class="svc-content">
           <div class="svc-counter">07 / 08</div>
-          <div class="svc-big-name">Clean&shy;ing</div>
+          <h3 class="svc-big-name">Clean&shy;ing</h3>
           <p class="svc-big-desc">Deep cleans, move-in/out, post-renovation, and regular housekeeping tailored to your space.</p>
           <div class="svc-tags">
             <span class="svc-tag">Deep Clean</span>
@@ -1468,7 +1489,7 @@ footer {
       <div class="service-panel" style="--panel-bg:#06020f;--panel-accent:#a78bfa;--panel-glow:rgba(167,139,250,.18);">
         <div class="svc-content">
           <div class="svc-counter">08 / 08</div>
-          <div class="svc-big-name">And<br/>More</div>
+          <h3 class="svc-big-name">And<br/>More</h3>
           <p class="svc-big-desc">Roofing, tiling, locksmith, pest control, and fully custom requests — one app for it all.</p>
           <div class="svc-tags">
             <span class="svc-tag">Roofing</span>
@@ -1535,10 +1556,10 @@ footer {
         <div class="bento-label">Step Three</div>
         <div class="bento-h">Track in real-time</div>
         <div class="bento-p">Watch your technician travel to you on a live map. No more vague "5 minutes away."</div>
-        <div style="margin-top:1rem;height:90px;border-radius:12px;background:var(--blue-pale);position:relative;overflow:hidden;border:1px solid var(--border);">
+        <div style="margin-top:1rem;height:90px;border-radius:12px;background:var(--brand-pale);position:relative;overflow:hidden;border:1px solid var(--border);">
           <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(242,107,29,.05) 0,transparent 1px,transparent 20px),repeating-linear-gradient(90deg,rgba(242,107,29,.05) 0,transparent 1px,transparent 20px);"></div>
           <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);">
-            <div style="width:22px;height:22px;background:var(--blue);border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 4px 12px rgba(242,107,29,.4);">
+            <div style="width:22px;height:22px;background:var(--brand);border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 4px 12px rgba(242,107,29,.4);">
               <div style="width:8px;height:8px;background:white;border-radius:50%;transform:rotate(45deg);margin:7px auto 0;"></div>
             </div>
           </div>
@@ -1668,12 +1689,12 @@ footer {
         <div class="bento-h">Full booking history &amp; inspection reports</div>
         <div class="bento-p">Every job logged with detailed inspection checklists, technician notes, photos, and timestamps.</div>
         <div style="margin-top:1.25rem;display:flex;flex-direction:column;gap:.5rem;">
-          <div style="display:flex;align-items:center;gap:.75rem;background:var(--blue-pale);border-radius:10px;padding:.6rem 1rem;">
+          <div style="display:flex;align-items:center;gap:.75rem;background:var(--brand-pale);border-radius:10px;padding:.6rem 1rem;">
             <svg viewBox="0 0 24 24" fill="none" stroke="#f26b1d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;flex-shrink:0;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
             <div style="flex:1;"><div style="font-size:.78rem;font-weight:600;color:var(--ink);">Electrical – Outlet repair</div><div style="font-size:.68rem;color:var(--ink-faint);">Sample booking · ₱650</div></div>
             <span style="font-size:.7rem;background:#e9f5ee;color:#2d8a4e;padding:3px 8px;border-radius:100px;font-weight:600;flex-shrink:0;">Done</span>
           </div>
-          <div style="display:flex;align-items:center;gap:.75rem;background:var(--blue-pale);border-radius:10px;padding:.6rem 1rem;">
+          <div style="display:flex;align-items:center;gap:.75rem;background:var(--brand-pale);border-radius:10px;padding:.6rem 1rem;">
             <svg viewBox="0 0 24 24" fill="none" stroke="#f26b1d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;flex-shrink:0;"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07"/><circle cx="12" cy="12" r="4"/></svg>
             <div style="flex:1;"><div style="font-size:.78rem;font-weight:600;color:var(--ink);">Aircon – Deep cleaning</div><div style="font-size:.68rem;color:var(--ink-faint);">Sample booking · ₱900</div></div>
             <span style="font-size:.7rem;background:#e9f5ee;color:#2d8a4e;padding:3px 8px;border-radius:100px;font-weight:600;flex-shrink:0;">Done</span>
@@ -1704,14 +1725,14 @@ footer {
       <div class="marquee-item"><div class="marquee-num">Upfront</div><div class="marquee-label">Pricing<span>See the estimate before you book</span></div></div>
       <div class="marquee-item"><div class="marquee-num">Live</div><div class="marquee-label">Tracking<span>Watch your tech on the way</span></div></div>
       <div class="marquee-item"><div class="marquee-num">QR</div><div class="marquee-label">Verified at the Door<span>Know exactly who's coming</span></div></div>
-      <div class="marquee-item"><div class="marquee-num">Free</div><div class="marquee-label">To Download<span>Available on Google Play</span></div></div>
+      <div class="marquee-item"><div class="marquee-num">Soon</div><div class="marquee-label">On Google Play<span>Join the waitlist to get notified</span></div></div>
       <div class="marquee-item"><div class="marquee-num">8</div><div class="marquee-label">Service Categories<span>One app for everything</span></div></div>
       <div class="marquee-item"><div class="marquee-num">3</div><div class="marquee-label">Cities Covered<span>Batangas — and growing</span></div></div>
       <div class="marquee-item"><div class="marquee-num">Verified</div><div class="marquee-label">Technicians<span>Screened before every job</span></div></div>
       <div class="marquee-item"><div class="marquee-num">Upfront</div><div class="marquee-label">Pricing<span>See the estimate before you book</span></div></div>
       <div class="marquee-item"><div class="marquee-num">Live</div><div class="marquee-label">Tracking<span>Watch your tech on the way</span></div></div>
       <div class="marquee-item"><div class="marquee-num">QR</div><div class="marquee-label">Verified at the Door<span>Know exactly who's coming</span></div></div>
-      <div class="marquee-item"><div class="marquee-num">Free</div><div class="marquee-label">To Download<span>Available on Google Play</span></div></div>
+      <div class="marquee-item"><div class="marquee-num">Soon</div><div class="marquee-label">On Google Play<span>Join the waitlist to get notified</span></div></div>
     </div>
   </div>
 </section>
@@ -1741,14 +1762,14 @@ footer {
       </div>
       <div class="feature-visual reveal-right">
         <div style="width:85%;position:relative;">
-          <div style="position:relative;height:260px;border-radius:16px;overflow:hidden;background:var(--blue-pale);">
+          <div style="position:relative;height:260px;border-radius:16px;overflow:hidden;background:var(--brand-pale);">
             <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(242,107,29,.05) 0,transparent 1px,transparent 30px),repeating-linear-gradient(90deg,rgba(242,107,29,.05) 0,transparent 1px,transparent 30px);"></div>
             <svg style="position:absolute;inset:0;width:100%;height:100%;" viewBox="0 0 400 260" preserveAspectRatio="none">
               <path d="M40 130 Q120 60 200 130 Q280 200 360 130" stroke="rgba(242,107,29,.12)" stroke-width="12" fill="none" stroke-linecap="round"/>
               <path d="M40 130 Q120 60 200 130 Q280 200 360 130" stroke="rgba(242,107,29,.4)" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="10 6"/>
             </svg>
             <div style="position:absolute;top:38%;left:30%;transform:translate(-50%,-50%);">
-              <div style="width:36px;height:36px;background:var(--blue);border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 6px 18px rgba(242,107,29,.45);display:flex;align-items:center;justify-content:center;">
+              <div style="width:36px;height:36px;background:var(--brand);border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 6px 18px rgba(242,107,29,.45);display:flex;align-items:center;justify-content:center;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;transform:rotate(45deg);"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
               </div>
               <div class="map-ripple" style="width:36px;height:36px;position:absolute;top:0;left:0;"></div>
@@ -1756,7 +1777,7 @@ footer {
             </div>
             <div style="position:absolute;top:55%;left:68%;transform:translate(-50%,-50%);">
               <div style="width:32px;height:32px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(10,15,30,.12);">
-                <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
               </div>
             </div>
             <div style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:white;border-radius:12px;padding:10px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 6px 24px rgba(10,15,30,.12);white-space:nowrap;">
@@ -1914,7 +1935,7 @@ footer {
             <div class="mockup-title">Book Now</div>
             <div class="mockup-sub">Available technicians nearby</div>
             <div style="margin-top:.75rem;">
-              <div style="background:var(--blue);color:white;display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:100px;font-size:.75rem;font-weight:600;font-family:'Sora',sans-serif;">
+              <div style="background:var(--brand);color:white;display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:100px;font-size:.75rem;font-weight:600;font-family:'Sora',sans-serif;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                 Confirm
               </div>
@@ -1927,7 +1948,7 @@ footer {
               <div style="text-align:center;font-size:.68rem;color:var(--ink-faint);padding:4px;border-radius:5px;">2</div>
               <div style="text-align:center;font-size:.68rem;color:var(--ink-faint);padding:4px;border-radius:5px;">3</div>
               <div style="text-align:center;font-size:.68rem;color:var(--ink-faint);padding:4px;border-radius:5px;">4</div>
-              <div style="text-align:center;font-size:.68rem;background:var(--blue);color:white;padding:4px;border-radius:5px;font-weight:600;">5</div>
+              <div style="text-align:center;font-size:.68rem;background:var(--brand);color:white;padding:4px;border-radius:5px;font-weight:600;">5</div>
               <div style="text-align:center;font-size:.68rem;color:var(--ink-faint);padding:4px;border-radius:5px;">6</div>
               <div style="text-align:center;font-size:.68rem;color:var(--ink-faint);padding:4px;border-radius:5px;">7</div>
               <div style="text-align:center;font-size:.68rem;color:var(--ink-faint);padding:4px;border-radius:5px;">8</div>
@@ -1973,7 +1994,7 @@ footer {
         </div>
 
         <div class="gallery-card">
-          <img src="https://r1.community.samsung.com/t5/image/serverpage/image-id/1897168i64A954539E22D807/image-size/large?v=v2&px=999" alt="Tanauan City, Batangas" loading="lazy" onerror="this.closest('.gallery-card').style.display='none'"/>
+          <img src="tanauan.jpg" alt="Tanauan City, Batangas" loading="lazy" onerror="this.closest('.gallery-card').style.display='none'"/>
           <div class="g-veil"></div>
           <div class="gallery-cap">
             <div class="g-t">Tanauan City</div>
@@ -2024,15 +2045,15 @@ footer {
       <p class="section-sub">PapaFix is just launching in Batangas. We're onboarding our first verified technicians now — book early and your feedback will help shape the service. Real reviews from real neighbors will appear here as they come in.</p>
     </div>
 
-    <div class="reveal" style="max-width:720px;margin:0 auto;text-align:center;background:var(--blue-pale);border:1px solid var(--border);border-radius:var(--r-xl);padding:3.5rem 2.5rem;">
-      <div style="width:64px;height:64px;border-radius:18px;background:var(--blue);display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;box-shadow:var(--shadow-md);">
+    <div class="reveal" style="max-width:720px;margin:0 auto;text-align:center;background:var(--brand-pale);border:1px solid var(--border);border-radius:var(--r-xl);padding:3.5rem 2.5rem;">
+      <div style="width:64px;height:64px;border-radius:18px;background:var(--brand);display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;box-shadow:var(--shadow-md);">
         <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       </div>
       <h3 style="font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(1.4rem,2.5vw,1.9rem);letter-spacing:-.03em;color:var(--ink);margin-bottom:.75rem;">Your review could be the first</h3>
-      <p style="font-size:.95rem;line-height:1.7;color:var(--ink-light);font-weight:300;max-width:44ch;margin:0 auto 2rem;">Download PapaFix, book a verified technician, and be one of the first Batangas homeowners to tell your neighbors how it went.</p>
-      <a href="#" class="btn-google-play" style="display:inline-flex;">
+      <p style="font-size:.95rem;line-height:1.7;color:var(--ink-light);font-weight:300;max-width:44ch;margin:0 auto 2rem;">Join the waitlist today — when PapaFix launches in your city, you could book one of our very first jobs and write the review that starts it all.</p>
+      <a href="#waitlist" class="btn-google-play" style="display:inline-flex;">
         <svg viewBox="0 0 24 24" fill="currentColor" style="width:24px;height:24px;flex-shrink:0;"><path d="M3.18 23.76A2 2 0 0 1 2 22V2a2 2 0 0 1 1.18-1.76l11.33 11.76L3.18 23.76zM22.46 12l-3.03 1.71-3.39-3.51 3.39-3.51 3.04 1.71A2 2 0 0 1 22.46 12zM3.69.54L17.2 7.72 14.01 11 3.69.54zM3.69 23.46l10.32-10.46 3.19 3.28L3.69 23.46z"/></svg>
-        <div class="btn-google-play-text"><small>Get it on</small><span>Google Play</span></div>
+        <div class="btn-google-play-text"><small>Join the</small><span>Waitlist</span></div>
       </a>
     </div>
   </div>
@@ -2068,7 +2089,7 @@ footer {
             Local jobs only
           </div>
         </div>
-        <a href="#" onclick="event.preventDefault();openTechModal()" style="display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:white;padding:.75rem 1.5rem;border-radius:var(--r-md);font-family:'Sora',sans-serif;font-weight:600;font-size:.88rem;text-decoration:none;transition:background .2s,transform .2s;white-space:nowrap;" onmouseover="this.style.background='var(--blue-mid)';this.style.transform='translateY(-2px)'" onmouseout="this.style.background='var(--blue)';this.style.transform=''">
+        <a href="#" onclick="event.preventDefault();openTechModal()" style="display:inline-flex;align-items:center;gap:8px;background:var(--brand);color:white;padding:.75rem 1.5rem;border-radius:var(--r-md);font-family:'Sora',sans-serif;font-weight:600;font-size:.88rem;text-decoration:none;transition:background .2s,transform .2s;white-space:nowrap;" onmouseover="this.style.background='var(--brand-mid)';this.style.transform='translateY(-2px)'" onmouseout="this.style.background='var(--brand)';this.style.transform=''">
           Apply as a Technician
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
@@ -2081,12 +2102,12 @@ footer {
   <div class="cta-bg"></div>
   <div class="cta-inner">
     <div class="reveal-left">
-      <div class="section-eyebrow">Download Now</div>
+      <div class="section-eyebrow">Launching Soon</div>
       <h2 class="cta-h">Your home,<br/><span>sorted fast.</span></h2>
-      <p class="cta-sub">PapaFix is launching in Tanauan, Malvar, and Santo Tomas. Download the app, book your first service, and be one of the first Batangas homeowners to try it.</p>
-      <a href="#" class="btn-google-play">
+      <p class="cta-sub">PapaFix is launching in Tanauan, Malvar, and Santo Tomas. Join the waitlist and be one of the first Batangas homeowners to try it the day we go live on Google Play.</p>
+      <a href="#waitlist" class="btn-google-play">
         <svg viewBox="0 0 24 24" fill="currentColor" style="width:24px;height:24px;flex-shrink:0;"><path d="M3.18 23.76A2 2 0 0 1 2 22V2a2 2 0 0 1 1.18-1.76l11.33 11.76L3.18 23.76zM22.46 12l-3.03 1.71-3.39-3.51 3.39-3.51 3.04 1.71A2 2 0 0 1 22.46 12zM3.69.54L17.2 7.72 14.01 11 3.69.54zM3.69 23.46l10.32-10.46 3.19 3.28L3.69 23.46z"/></svg>
-        <div class="btn-google-play-text"><small>Get it on</small><span>Google Play</span></div>
+        <div class="btn-google-play-text"><small>Coming soon on</small><span>Google Play</span></div>
       </a>
       <div class="cta-meta">
         <div class="cta-meta-item">
@@ -2107,12 +2128,12 @@ footer {
       <!-- Stat cards visual -->
       <div style="position:relative;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;gap:1rem;">
         <div style="background:white;border-radius:var(--r-md);padding:1.5rem 1.75rem;border:1px solid var(--border);box-shadow:0 8px 32px rgba(242,107,29,.09);">
-          <div style="font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin-bottom:.5rem;">Now Launching in Batangas</div>
+          <div style="font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);margin-bottom:.5rem;">Now Launching in Batangas</div>
           <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.9rem;color:var(--ink);letter-spacing:-.04em;">3 Cities</div>
           <div style="font-size:.8rem;color:var(--ink-faint);margin-top:4px;">Tanauan · Malvar · Santo Tomas</div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-          <div style="background:var(--blue);border-radius:var(--r-md);padding:1.25rem 1.5rem;">
+          <div style="background:var(--brand);border-radius:var(--r-md);padding:1.25rem 1.5rem;">
             <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.6rem;color:white;letter-spacing:-.04em;">8</div>
             <div style="font-size:.72rem;color:rgba(255,255,255,.65);margin-top:3px;">Service Types</div>
           </div>
@@ -2122,8 +2143,8 @@ footer {
           </div>
         </div>
         <div style="background:white;border-radius:var(--r-md);padding:1.25rem 1.75rem;border:1px solid var(--border);display:flex;align-items:center;gap:1rem;">
-          <div style="width:40px;height:40px;background:var(--blue-light);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <div style="width:40px;height:40px;background:var(--brand-light);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           </div>
           <div>
             <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:.88rem;color:var(--ink);">100% Verified Technicians</div>
@@ -2167,186 +2188,10 @@ footer {
 
     <div class="footer-qr-block">
       <div class="footer-qr-frame">
-        <!-- QR code for https://play.google.com/store -->
-        <svg viewBox="0 0 37 37" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;" shape-rendering="crispEdges">
-          <!-- Finder top-left -->
-          <rect x="1" y="1" width="7" height="7" fill="#0a0f1e"/>
-          <rect x="2" y="2" width="5" height="5" fill="white"/>
-          <rect x="3" y="3" width="3" height="3" fill="#0a0f1e"/>
-          <!-- Finder top-right -->
-          <rect x="29" y="1" width="7" height="7" fill="#0a0f1e"/>
-          <rect x="30" y="2" width="5" height="5" fill="white"/>
-          <rect x="31" y="3" width="3" height="3" fill="#0a0f1e"/>
-          <!-- Finder bottom-left -->
-          <rect x="1" y="29" width="7" height="7" fill="#0a0f1e"/>
-          <rect x="2" y="30" width="5" height="5" fill="white"/>
-          <rect x="3" y="31" width="3" height="3" fill="#0a0f1e"/>
-          <!-- Timing patterns -->
-          <rect x="8" y="6" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="10" y="6" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="12" y="6" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="14" y="6" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="16" y="6" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="18" y="6" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="20" y="6" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="6" y="8" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="6" y="10" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="6" y="12" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="6" y="14" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="6" y="16" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="6" y="18" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="6" y="20" width="1" height="1" fill="#0a0f1e"/>
-          <!-- Data modules — unique pattern for play.google.com/store -->
-          <rect x="8" y="8" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="10" y="8" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="13" y="8" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="15" y="8" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="17" y="8" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="19" y="8" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="22" y="8" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="24" y="8" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="27" y="8" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="9" y="9" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="11" y="9" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="14" y="9" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="16" y="9" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="18" y="9" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="20" y="9" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="23" y="9" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="25" y="9" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="28" y="9" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="8" y="10" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="12" y="10" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="15" y="10" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="19" y="10" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="21" y="10" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="24" y="10" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="26" y="10" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="10" y="11" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="13" y="11" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="16" y="11" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="20" y="11" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="22" y="11" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="25" y="11" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="27" y="11" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="9" y="12" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="11" y="12" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="14" y="12" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="17" y="12" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="21" y="12" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="23" y="12" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="26" y="12" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="28" y="12" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="8" y="13" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="12" y="13" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="15" y="13" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="18" y="13" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="22" y="13" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="24" y="13" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="27" y="13" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="10" y="14" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="13" y="14" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="16" y="14" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="19" y="14" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="23" y="14" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="25" y="14" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="28" y="14" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="9" y="15" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="11" y="15" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="14" y="15" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="17" y="15" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="20" y="15" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="24" y="15" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="26" y="15" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="8" y="16" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="12" y="16" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="15" y="16" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="18" y="16" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="21" y="16" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="25" y="16" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="27" y="16" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="10" y="17" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="13" y="17" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="16" y="17" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="22" y="17" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="24" y="17" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="28" y="17" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="9" y="18" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="11" y="18" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="14" y="18" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="17" y="18" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="20" y="18" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="23" y="18" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="26" y="18" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="8" y="19" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="12" y="19" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="15" y="19" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="18" y="19" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="21" y="19" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="25" y="19" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="27" y="19" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="10" y="20" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="13" y="20" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="16" y="20" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="19" y="20" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="22" y="20" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="24" y="20" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="28" y="20" width="1" height="1" fill="#0a0f1e"/>
-          <!-- Bottom rows data -->
-          <rect x="8" y="22" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="10" y="22" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="12" y="22" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="15" y="22" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="17" y="22" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="20" y="22" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="22" y="22" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="25" y="22" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="27" y="22" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="9" y="23" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="11" y="23" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="14" y="23" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="16" y="23" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="18" y="23" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="21" y="23" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="24" y="23" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="26" y="23" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="28" y="23" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="8" y="24" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="13" y="24" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="15" y="24" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="19" y="24" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="22" y="24" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="25" y="24" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="27" y="24" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="10" y="25" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="12" y="25" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="14" y="25" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="16" y="25" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="20" y="25" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="23" y="25" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="26" y="25" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="28" y="25" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="9" y="26" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="11" y="26" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="13" y="26" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="17" y="26" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="21" y="26" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="24" y="26" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="27" y="26" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="8" y="27" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="12" y="27" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="15" y="27" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="18" y="27" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="22" y="27" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="25" y="27" width="1" height="1" fill="#0a0f1e"/>
-          <rect x="28" y="27" width="1" height="1" fill="#0a0f1e"/>
-          <!-- Bottom finder alignment patterns -->
-          <rect x="22" y="22" width="5" height="5" fill="#0a0f1e"/>
-          <rect x="23" y="23" width="3" height="3" fill="white"/>
-          <rect x="24" y="24" width="1" height="1" fill="#0a0f1e"/>
-        </svg>
+        <img src="papafix-logo.png" alt="PapaFix" style="width:100%;height:100%;object-fit:contain;border-radius:8px;"/>
       </div>
-      <div class="footer-qr-label">Scan to download</div>
+      <div class="footer-qr-label">Coming soon on<br/>Google Play</div>
+      <a href="#waitlist" style="font-size:.78rem;font-weight:600;color:var(--brand);text-decoration:none;">Join the waitlist &#8594;</a>
     </div>
   </div>
 
@@ -2368,10 +2213,10 @@ footer {
         </a>
       </div>
       <div style="margin-top:2rem;">
-        <div class="footer-col-title">Download</div>
-        <a href="#" class="btn-google-play" style="margin-top:.5rem;display:inline-flex;">
+        <div class="footer-col-title">Get the App</div>
+        <a href="#waitlist" class="btn-google-play" style="margin-top:.5rem;display:inline-flex;">
           <svg viewBox="0 0 24 24" fill="currentColor" style="width:20px;height:20px;flex-shrink:0;"><path d="M3.18 23.76A2 2 0 0 1 2 22V2a2 2 0 0 1 1.18-1.76l11.33 11.76L3.18 23.76zM22.46 12l-3.03 1.71-3.39-3.51 3.39-3.51 3.04 1.71A2 2 0 0 1 22.46 12zM3.69.54L17.2 7.72 14.01 11 3.69.54zM3.69 23.46l10.32-10.46 3.19 3.28L3.69 23.46z"/></svg>
-          <div class="btn-google-play-text"><small>Get it on</small><span>Google Play</span></div>
+          <div class="btn-google-play-text"><small>Coming soon on</small><span>Google Play</span></div>
         </a>
       </div>
     </div>
@@ -2414,7 +2259,7 @@ footer {
   </div>
 
   <div class="footer-bottom">
-    <div class="footer-copy">© 2025 PapaFix. All rights reserved. Made in the Philippines.</div>
+    <div class="footer-copy">© 2026 PapaFix. All rights reserved. Made in the Philippines.</div>
     <div class="footer-badges">
       <div class="footer-badge">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -2527,7 +2372,8 @@ window.addEventListener('scroll', () => {
 
   function enableDesktop() {
     var w = document.documentElement.clientWidth;
-    section.style.height = (PANELS * window.innerHeight) + 'px';
+    // 0.6vh of scroll per panel transition — full 100vh each felt like a tunnel
+    section.style.height = (window.innerHeight + (PANELS - 1) * window.innerHeight * 0.6) + 'px';
     document.querySelectorAll('.service-panel').forEach(function(p) {
       p.style.width = w + 'px';
     });
@@ -2725,6 +2571,49 @@ if (overlay) {
   layout();
   requestAnimationFrame(tick);
 }());
+
+/* ═══ WAITLIST FORM ═════════════════════════════════════════════
+   Sends signups to the team inbox via FormSubmit's AJAX endpoint.
+   NOTE: the first-ever submission triggers a one-time activation
+   email from formsubmit.co — click the link inside it once.      */
+(function () {
+  var form = document.getElementById('waitlistForm');
+  var msg  = document.getElementById('waitlistMsg');
+  if (!form || !msg) return;
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var btn   = form.querySelector('button[type="submit"]');
+    var email = form.querySelector('input[name="email"]').value.trim();
+    if (!email) return;
+    btn.disabled = true;
+    btn.textContent = 'Joining…';
+    msg.style.display = 'none';
+
+    fetch('https://formsubmit.co/ajax/clarenceneilpamplona@gmail.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        email: email,
+        _subject: 'New PapaFix waitlist signup',
+        _template: 'table',
+        _captcha: 'false'
+      })
+    }).then(function (res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      form.style.display = 'none';
+      msg.style.color = 'var(--brand)';
+      msg.textContent = "✓ You're on the list! We'll email you the moment PapaFix launches in your city.";
+      msg.style.display = 'block';
+    }).catch(function () {
+      btn.disabled = false;
+      btn.textContent = 'Notify Me';
+      msg.style.color = 'var(--brand-deep)';
+      msg.textContent = 'Something went wrong — please try again in a moment.';
+      msg.style.display = 'block';
+    });
+  });
+}());
 </script>
 <!-- ═══ TECHNICIAN MODAL ═════════════════════════════════════════ -->
 <div id="techModal" class="tech-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="techModalTitle">
@@ -2739,41 +2628,41 @@ if (overlay) {
     </div>
 
     <h2 id="techModalTitle" class="tech-modal-title">Apply in Person</h2>
-    <p class="tech-modal-sub">We screen all our technicians face-to-face to make sure every PapaFix job is handled by someone we trust. Here's where to find us:</p>
+    <p class="tech-modal-sub">We screen all our technicians face-to-face to make sure every PapaFix job is handled by someone we trust. Here's how it will work:</p>
 
     <div class="tech-modal-divider"></div>
 
     <!-- Address block -->
     <div class="tech-modal-info-row">
       <div class="tech-modal-info-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
       </div>
       <div>
-        <div class="tech-modal-info-label">Office Address</div>
-        <div class="tech-modal-info-value">123 Ilustre Street, Tanauan City<br/>Batangas, Philippines 4232</div>
+        <div class="tech-modal-info-label">Office Location</div>
+        <div class="tech-modal-info-value">Tanauan City, Batangas<br/>Exact address announced at launch</div>
       </div>
     </div>
 
     <!-- Hours block -->
     <div class="tech-modal-info-row">
       <div class="tech-modal-info-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       </div>
       <div>
-        <div class="tech-modal-info-label">Walk-in Hours</div>
-        <div class="tech-modal-info-value">Monday – Friday &nbsp;·&nbsp; 8:00 AM – 5:00 PM<br/>Saturday &nbsp;·&nbsp; 9:00 AM – 12:00 PM</div>
+        <div class="tech-modal-info-label">Applications</div>
+        <div class="tech-modal-info-value">Walk-in screening opens when we launch.<br/>Follow our socials for the announcement.</div>
       </div>
     </div>
 
     <!-- Process note -->
     <div class="tech-modal-note">
-      <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15" style="flex-shrink:0;margin-top:2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      <p>Bring a valid government ID and proof of your trade (certificate, employment record, or portfolio). Our team will walk you through the screening process and onboarding on the same visit.</p>
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15" style="flex-shrink:0;margin-top:2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <p>When applications open, bring a valid government ID and proof of your trade (certificate, employment record, or portfolio). Our team will walk you through screening and onboarding on the same visit.</p>
     </div>
 
-    <a href="https://maps.google.com/?q=Tanauan+City+Batangas" target="_blank" rel="noopener" class="tech-modal-map-btn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-      Open in Google Maps
+    <a href="#waitlist" onclick="closeTechModal()" class="tech-modal-map-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+      Get notified at launch
     </a>
   </div>
 </div>
