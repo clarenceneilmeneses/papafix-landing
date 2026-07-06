@@ -53,24 +53,33 @@ A **single-page static marketing site**. There is no build step, framework, or b
 ### Structure
 
 ```
-index.html         # The entire landing page (markup + inline <style> + inline <script>)
-papafix-logo.png   # Official brand logo (app-icon style, orange). Used as favicon,
-                   #   nav mark, intro loader, hero, and footer.
-*.png              # Service / lifestyle photos: electrical, plumbing, aircon,
-                   #   appliance, carpentry, painting, cleaning, more
-hero.png           # Legacy hero mockup — no longer referenced (safe to delete)
-README.md          # This file
+index.html                    # The entire landing page (markup + inline <style> + inline <script>)
+PapaFix_Logo_FINAL_2048.png   # Source master — official customer/brand logo (orange)
+papafix-technician logo.png   # Source master — technician app logo (blue)
+papafix-logo-1024.png         # Brand logo, og:image size
+papafix-logo-480.webp         # Brand logo for in-page use (intro, nav, footer)
+papafix-logo-180.png          # apple-touch-icon
+papafix-logo-32.png           # favicon
+papafix-tech-logo-360.webp    # Technician logo (banner badge + technician modal)
+papafix-*-ui-guide.pdf        # Official app UI guides — source of truth for the
+                              #   CSS phone mockups (colors, copy, screen layouts)
+*.png / *.jpg                 # Service / lifestyle / city photos
+papafix-logo.png              # Old brand logo — no longer referenced
+papafix-icon-1024.png         # Old icon — no longer referenced
+hero.png                      # Legacy hero mockup — no longer referenced (safe to delete)
+README.md                     # This file
 ```
 
 ### Sections of the page (in order)
 
-Intro loader → sticky nav → hero → trust bar → services (horizontal scroll panels) → coverage/cities → "story" band → how it works (bento grid) → stats marquee → features → testimonials → "become a technician" banner → download CTA → footer.
+Intro loader → sticky nav → hero (customer-app phone mockup) → trust bar → coverage/cities + waitlist → "A Look Inside the App" (3 mini phone mockups) → "story" band → services (horizontal scroll panels) → how it works (bento grid) → stats marquee → features → lifestyle gallery → testimonials → "become a technician" banner (technician-app phone mockup) → download CTA → footer.
 
 ### Notable implementation details
 
 - **Custom scroll animations** (no library): hero word reveal, a pinned "story" band, image zoom-in, a GSAP-style vertical→horizontal scroll for the Services panels, and section build-ins.
 - **Intro overlay** plays once on load, then sweeps away.
-- Fully responsive; mobile collapses the two-column layouts and hides some desktop-only flourishes.
+- **App mockups are pure HTML/CSS** — a reusable `.phone` frame component (bezel, notch, status bar, home indicator) renders real screens from the official UI guides: live tracking in the hero, booking/confirm/payment in "A Look Inside the App", and Incoming Jobs in the technician banner. Customer screens use the app's blue `#3B8EEF`, technician screens the orange `#F07C1A` (these are *app* tokens, deliberately not the site brand variables). The hero map marker (SMIL) and job countdowns pause under `prefers-reduced-motion`. No screenshots or images are used.
+- Fully responsive; mobile collapses the two-column layouts, makes the app-screens row swipeable (scroll-snap), and hides some desktop-only flourishes.
 
 ### Brand / design system
 
