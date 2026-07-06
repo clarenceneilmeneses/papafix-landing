@@ -395,6 +395,12 @@ nav {
 
 /* Floating chips around the hero phone reuse .hero-float-card */
 .hero-phone-stage { position: relative; }
+.hero-phone-stage .hero-float-1 { left: -130px; bottom: 32%; }
+.hero-phone-stage .hero-float-2 { right: -125px; bottom: 6%; }
+@media (max-width: 1200px) {
+  .hero-phone-stage .hero-float-1 { left: -70px; }
+  .hero-phone-stage .hero-float-2 { right: -60px; }
+}
 .hero-phone-cap { margin-top: 1.1rem; text-align: center; font-size: .72rem; color: var(--ink-faint); }
 .fc-check {
   width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
@@ -406,10 +412,10 @@ nav {
 
 /* ── technician INCOMING JOBS screen (banner) ──────────────── */
 .phone-tech { width: 260px; border-radius: 40px; }
-.phone-tech .phone-screen { border-radius: 32px; font-size: 11.5px; }
+.phone-tech .phone-screen { border-radius: 32px; font-size: 13.5px; }
 .tj-head {
   display: flex; align-items: center; gap: .55em;
-  padding: 44px 14px 10px;
+  padding: 56px 14px 12px;
   font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.3em; letter-spacing: -.02em;
 }
 .tj-count {
@@ -419,26 +425,28 @@ nav {
   display: inline-flex; align-items: center; justify-content: center;
 }
 .tj-card {
-  background: white; border-radius: 14px; padding: 1em 1.05em;
-  margin: 0 12px .8em; box-shadow: 0 4px 16px rgba(26,31,46,.07);
+  background: white; border-radius: 14px; padding: 1.35em 1.15em;
+  margin: 0 12px 1em; box-shadow: 0 4px 16px rgba(26,31,46,.07);
 }
-.tj-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: .55em; }
+.tj-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: .7em; }
 .tj-tag {
   background: #fdeedd; color: var(--app-orange);
   font-size: .62em; font-weight: 700; letter-spacing: .07em;
   padding: .35em .9em; border-radius: 100px;
 }
 .tj-timer { font-family: 'DM Mono', monospace; font-size: .85em; font-weight: 500; color: var(--app-orange); }
-.tj-title { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.05em; margin-bottom: .2em; }
+.tj-title { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.12em; margin-bottom: .25em; }
 .tj-line { font-size: .8em; color: var(--app-muted); }
 .tj-quote { font-size: .74em; color: var(--app-muted); font-style: italic; margin-top: .4em; }
-.tj-actions { display: flex; gap: .6em; margin-top: .85em; }
+.tj-actions { display: flex; gap: .6em; margin-top: 1.1em; }
 .tj-btn {
-  flex: 1; text-align: center; border-radius: 100px; padding: .62em 0;
+  flex: 1; text-align: center; border-radius: 100px; padding: .7em 0;
   font-size: .8em; font-weight: 600;
 }
 .tj-decline { border: 1.5px solid #dde2ec; color: var(--app-muted); }
 .tj-confirm { background: var(--app-orange); color: white; box-shadow: 0 6px 16px rgba(240,124,26,.35); }
+/* second card runs on past the tab bar so the list reads as scrollable */
+.tj-crop { padding-bottom: 5.5em; margin-bottom: 0; }
 .tj-tabbar {
   position: absolute; bottom: 0; left: 0; right: 0; z-index: 10;
   background: white; border-top: 1px solid #edf0f5; border-radius: 0 0 30px 30px;
@@ -498,7 +506,7 @@ nav {
 .app-shot:last-child { margin-right: auto; }
 .app-cap { margin-top: 1.1rem; font-size: .78rem; line-height: 1.55; color: var(--ink-light); text-align: center; max-width: 26ch; }
 .phone-mini { width: 230px; border-radius: 36px; padding: 8px; }
-.phone-mini .phone-screen { border-radius: 29px; font-size: 10.5px; }
+.phone-mini .phone-screen { border-radius: 29px; font-size: 11px; }
 .phone-mini .phone-notch { width: 58px; height: 15px; top: 8px; }
 .phone-mini .phone-status { padding: 9px 16px 0; font-size: 8.5px; }
 .phone-mini .phone-home { width: 74px; bottom: 6px; }
@@ -2504,7 +2512,7 @@ footer {
 </section>
 
 <!-- ─── BECOME A TECHNICIAN BANNER ─────────────────────────────── -->
-<section style="padding:0;background:var(--off-white);">
+<section id="technicians" style="padding:0;background:var(--off-white);scroll-margin-top:90px;">
   <div class="container">
     <div class="reveal tech-banner">
       <!-- Background pattern -->
@@ -2555,7 +2563,7 @@ footer {
             </div>
 
             <!-- second card intentionally runs behind the tab bar (cropped) -->
-            <div class="tj-card">
+            <div class="tj-card tj-crop">
               <div class="tj-row"><span class="tj-tag">PLUMBING</span><span class="tj-timer job-timer" data-from="108">1:48</span></div>
               <div class="tj-title">Leaking Faucet</div>
               <div class="tj-line">Ana Cruz</div>
