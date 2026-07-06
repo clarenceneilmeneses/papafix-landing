@@ -72,13 +72,13 @@ README.md                     # This file
 
 ### Sections of the page (in order)
 
-Intro loader → sticky nav → hero (customer-app phone mockup) → trust bar → coverage/cities + waitlist → "A Look Inside the App" (3 mini phone mockups) → "story" band → services (horizontal scroll panels) → how it works (bento grid) → stats marquee → features → lifestyle gallery → testimonials → "become a technician" banner (technician-app phone mockup) → download CTA → footer.
+Intro loader → sticky nav → hero (customer-app phone mockup) → trust bar → coverage/cities + waitlist → "A Look Inside the App" (3 mini phone mockups) → "story" band → services (compact 8-card grid) → how it works (bento grid) → stats marquee → features → lifestyle gallery → testimonials → "become a technician" banner (technician-app phone mockup) → download CTA → footer.
 
 ### Notable implementation details
 
-- **Custom scroll animations** (no library): hero word reveal, a pinned "story" band, image zoom-in, a GSAP-style vertical→horizontal scroll for the Services panels, and section build-ins.
+- **Custom scroll animations** (no library): hero word reveal, a pinned "story" band, image zoom-in, a sticky horizontal lifestyle gallery, and section build-ins. (Services used to be a scroll-jacked horizontal strip; it was flattened to a normal grid to keep total scroll length sane — don't reintroduce it.)
 - **Intro overlay** plays once on load, then sweeps away.
-- **App mockups are pure HTML/CSS** — a reusable `.phone` frame component (bezel, notch, status bar, home indicator) renders real screens from the official UI guides: live tracking in the hero, booking/confirm/payment in "A Look Inside the App", and Incoming Jobs in the technician banner. Customer screens use the app's blue `#3B8EEF`, technician screens the orange `#F07C1A` (these are *app* tokens, deliberately not the site brand variables). The hero map marker (SMIL) and job countdowns pause under `prefers-reduced-motion`. No screenshots or images are used.
+- **App mockups are pure HTML/CSS** — a reusable `.phone` frame component (Android-style: bezel, punch-hole camera, status bar, gesture bar — the app ships on Google Play only) renders real screens from the official UI guides: live tracking in the hero, booking/confirm/payment in "A Look Inside the App", and Incoming Jobs in the technician banner. Customer screens use the app's blue `#3B8EEF`, technician screens the orange `#F07C1A` (these are *app* tokens, deliberately not the site brand variables). The hero map marker (SMIL) and job countdowns pause under `prefers-reduced-motion`. No screenshots or images are used.
 - Fully responsive; mobile collapses the two-column layouts, makes the app-screens row swipeable (scroll-snap), and hides some desktop-only flourishes.
 
 ### Brand / design system
@@ -87,7 +87,7 @@ Intro loader → sticky nav → hero (customer-app phone mockup) → trust bar �
 - **Ink / text:** `#0a0f1e`. **Background:** `#f7f9fc`.
 - **Fonts:** Sora (headings/wordmark), DM Sans (body), DM Mono (labels) — loaded from Google Fonts.
 - **Google Play button** uses Google's official brand colors on hover — leave those as-is.
-- **Service panels** each carry their own accent color (a deliberate rainbow) — that variety is intentional and is *not* the brand accent.
+- **Service cards** each carry their own accent color (a deliberate rainbow) — that variety is intentional and is *not* the brand accent.
 
 > When changing brand color, update the `:root` variables and the shared shadow token `rgba(242,107,29,…)` together so shadows/borders stay in sync.
 

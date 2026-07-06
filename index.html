@@ -337,9 +337,11 @@ nav {
   font-family: 'DM Sans', sans-serif; font-size: 13px;
   color: var(--app-ink); text-align: left; line-height: 1.35;
 }
-.phone-notch {
-  position: absolute; top: 9px; left: 50%; transform: translateX(-50%);
-  width: 72px; height: 18px; background: #0a0f1e; border-radius: 11px; z-index: 40;
+/* centered punch-hole camera — Android frame (the app ships on Google Play) */
+.phone-cam {
+  position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+  width: 12px; height: 12px; background: #0a0f1e; border-radius: 50%; z-index: 40;
+  box-shadow: inset 0 0 0 3px rgba(30,40,60,.9), inset 0 0 2px 4px rgba(90,110,150,.25);
 }
 .phone-status {
   position: absolute; top: 0; left: 0; right: 0; z-index: 30;
@@ -507,7 +509,7 @@ nav {
 .app-cap { margin-top: 1.1rem; font-size: .78rem; line-height: 1.55; color: var(--ink-light); text-align: center; max-width: 26ch; }
 .phone-mini { width: 230px; border-radius: 36px; padding: 8px; }
 .phone-mini .phone-screen { border-radius: 29px; font-size: 11px; }
-.phone-mini .phone-notch { width: 58px; height: 15px; top: 8px; }
+.phone-mini .phone-cam { width: 10px; height: 10px; top: 10px; }
 .phone-mini .phone-status { padding: 9px 16px 0; font-size: 8.5px; }
 .phone-mini .phone-home { width: 74px; bottom: 6px; }
 
@@ -605,139 +607,41 @@ section { position: relative; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   SERVICES — GSAP-STYLE VERTICAL→HORIZONTAL SCROLL
-   The outer wrapper is tall (8 × 100vh) so normal vertical scroll
-   drives the panels. The inner strip stays sticky + translates X.
+   SERVICES — COMPACT DARK GRID
+   (formerly a scroll-jacked horizontal strip; flattened to a normal
+   grid to keep the page's scroll length sane)
 ═══════════════════════════════════════════════════════════════ */
-
-/* Outer scroller — JS sets height to (PANELS * 100vh) */
-#services {
-  position: relative;
-  /* NO overflow here — kills sticky children */
+#services { padding: 120px 0; background: var(--ink); scroll-margin-top: 40px; }
+.services-header { text-align: center; margin-bottom: 3.5rem; }
+.services-header .section-title { color: white; }
+.services-header .section-sub { margin: 1rem auto 0; color: rgba(255,255,255,.55); }
+.services-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
+.svc-card {
+  display: flex; flex-direction: column;
+  background: var(--panel-bg, #0f1526); border-radius: var(--r-md);
+  border: 1px solid rgba(255,255,255,.07); overflow: hidden;
+  transition: transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s, border-color .35s;
 }
-
-/* Sticky frame — must NOT have overflow:hidden (breaks sticky in all browsers) */
-.services-sticky {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  width: 100%;
+.svc-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255,255,255,.14);
+  box-shadow: 0 24px 50px -18px var(--panel-glow, rgba(242,107,29,.3));
 }
-
-/* Separate clip wrapper so the hstrip doesn't bleed outside the viewport */
-.services-sticky-clip {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-}
-
-/* Header bar — hidden for full-screen immersive panels */
-.services-sticky-header { display: none; }
-
-
-/* The horizontal strip — all panels side by side */
-.services-hstrip {
-  display: flex;
-  width: fit-content;     /* expands to hold all panels */
-  height: 100vh;
-  will-change: transform;
-}
-
-/* Each full-viewport panel — full-bleed immersive */
-.service-panel {
-  height: 100vh;
-  flex-shrink: 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  position: relative;
-  overflow: hidden;
-  background: var(--panel-bg, #0a0f1e);
-}
-
-/* Subtle vertical divider between halves */
-.service-panel::after {
-  content: '';
-  position: absolute; top: 10%; bottom: 10%; left: 50%;
-  width: 1px; background: rgba(255,255,255,.06);
-  pointer-events: none;
-}
-
-/* Even panels: flip layout */
-.service-panel:nth-child(even) .svc-content { order: 2; }
-.service-panel:nth-child(even) .svc-visual  { order: 1; }
-
-.svc-content {
-  display: flex; flex-direction: column; justify-content: center;
-  padding: 8vh 6vw;
-  background: transparent; position: relative; z-index: 2;
-}
-.svc-visual {
-  position: relative; overflow: hidden;
-  display: flex; align-items: center; justify-content: center;
-  background: transparent;
-}
-
-/* Radial accent glow on the visual half */
-.svc-visual::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(ellipse 70% 70% at 50% 50%, var(--panel-glow, rgba(242,107,29,.15)), transparent);
-  pointer-events: none;
-}
-
-/* Ghost watermark number — tinted with accent */
-.svc-panel-num {
-  position: absolute; bottom: -1rem; right: 1rem;
-  font-family: 'Sora', sans-serif; font-weight: 800;
-  font-size: 22vw; line-height: 1; letter-spacing: -.06em;
-  color: var(--panel-accent, white); opacity: .05; pointer-events: none; user-select: none;
-}
-
-.svc-counter {
-  font-family: 'DM Mono', monospace; font-size: .72rem;
-  color: var(--panel-accent, rgba(255,255,255,.5)); letter-spacing: .12em; text-transform: uppercase;
-  margin-bottom: 1.25rem;
-}
-.svc-big-name {
-  font-family: 'Sora', sans-serif; font-weight: 800;
-  font-size: clamp(2.6rem, 5.5vw, 6rem); line-height: .92; letter-spacing: -.05em;
-  color: white; margin-bottom: 1.25rem;
-}
-.svc-big-desc {
-  font-size: 1rem; line-height: 1.7; color: rgba(255,255,255,.55); font-weight: 300;
-  max-width: 36ch; margin-bottom: 2rem;
-}
-.svc-tags { display: flex; gap: .5rem; flex-wrap: wrap; }
+.svc-card-img { position: relative; height: 140px; flex-shrink: 0; overflow: hidden; }
+.svc-card-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; opacity: .85; }
+.svc-card-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 40%, var(--panel-bg, #0f1526)); }
+.svc-card-body { padding: 1.1rem 1.3rem 1.4rem; display: flex; flex-direction: column; flex: 1; }
+.svc-counter { font-family: 'DM Mono', monospace; font-size: .68rem; color: var(--panel-accent, rgba(255,255,255,.5)); letter-spacing: .12em; text-transform: uppercase; margin-bottom: .5rem; }
+.svc-card-name { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.15rem; letter-spacing: -.02em; color: white; margin-bottom: .45rem; }
+.svc-card-desc { font-size: .8rem; line-height: 1.6; color: rgba(255,255,255,.5); font-weight: 300; margin-bottom: 1rem; flex: 1; }
+.svc-tags { display: flex; gap: .4rem; flex-wrap: wrap; }
 .svc-tag {
-  background: rgba(255,255,255,.08);
-  color: rgba(255,255,255,.8);
+  background: rgba(255,255,255,.08); color: rgba(255,255,255,.75);
   border: 1px solid rgba(255,255,255,.12);
-  padding: 5px 13px; border-radius: 100px; font-size: .76rem; font-weight: 500;
+  padding: 3px 10px; border-radius: 100px; font-size: .68rem; font-weight: 500;
 }
-
-/* Large icon — glassy on dark */
-.svc-visual-icon {
-  width: 160px; height: 160px; border-radius: 36px;
-  background: rgba(255,255,255,.07);
-  border: 1px solid rgba(255,255,255,.1);
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 0 80px -10px var(--panel-glow, rgba(242,107,29,.3)),
-              0 24px 60px rgba(0,0,0,.5);
-  position: relative; z-index: 2;
-}
-.svc-visual-icon svg { width: 72px; height: 72px; }
-
-/* Photo-based service visual */
-.svc-visual-photo {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover; object-position: center top;
-  z-index: 0;
-  opacity: 0.82;
-}
-.svc-visual::before { z-index: 1; }
-.svc-panel-num { z-index: 2; }
-
+@media (max-width: 1080px) { .services-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px)  { .services-grid { grid-template-columns: 1fr; } .svc-card-img { height: 160px; } }
 
 /* ═══════════════════════════════════════════════════════════════
    HOW IT WORKS — BENTO GRID
@@ -1166,7 +1070,7 @@ footer {
 
 /* ── (3) SCROLL-DRIVEN IMAGE ZOOM-IN ────────────────────────── */
 /* image arrives: starts slightly scaled-down + blurred, settles to 1:1.
-   Applied to .coverage-card imgs and .svc-visual-photo.          */
+   Applied to .coverage-card and .svc-card-img imgs.              */
 .zoom-img {
   transform: scale(.9); filter: blur(8px);
   transition: transform 1.1s cubic-bezier(.16,1,.3,1),
@@ -1215,7 +1119,7 @@ footer {
   font-weight: 300; max-width: 50ch;
 }
 
-/* ── (4) LIFESTYLE GALLERY — sticky horizontal (mirrors #services) ─ */
+/* ── (4) LIFESTYLE GALLERY — sticky horizontal scroll ───────── */
 #gallery { position: relative; background: var(--off-white); }
 .gallery-sticky { position: sticky; top: 0; height: 100vh; width: 100%; }
 .gallery-sticky-clip {
@@ -1306,21 +1210,6 @@ footer {
   .footer-links-grid { grid-template-columns: 1fr 1fr; }
   .footer-qr-block { display: none; }
   nav .nav-links { display: none; }
-  /* Disable horizontal scroll on mobile — stack panels vertically */
-  #services { height: auto !important; }
-  .services-sticky { position: relative !important; height: auto !important; }
-  .services-sticky-clip { position: relative !important; overflow: visible !important; }
-  .services-hstrip { flex-direction: column !important; width: 100% !important; height: auto !important; transform: none !important; will-change: auto !important; }
-  /* Service panels on mobile: image on top, content below */
-  .service-panel { height: auto !important; width: 100% !important; grid-template-columns: 1fr; grid-template-rows: 40vw auto; }
-  .service-panel .svc-visual { height: 40vw; order: -1 !important; }
-  .service-panel .svc-content { order: 1 !important; padding: 2.5rem 6vw 3rem; }
-  .service-panel:nth-child(even) .svc-content { order: 1 !important; }
-  .service-panel:nth-child(even) .svc-visual  { order: -1 !important; }
-  .service-panel::after { display: none; }
-  .svc-big-name { font-size: 2.4rem; }
-  .svc-visual-icon { width: 100px; height: 100px; border-radius: 24px; }
-  .svc-visual-icon svg { width: 48px; height: 48px; }
 }
 @media (max-width: 600px) {
   .masonry-grid { columns: 1; }
@@ -1459,7 +1348,7 @@ footer {
         <!-- Customer app · Live Tracking screen (per papafix-customer-ui-guide.pdf) -->
         <div class="phone phone-hero" role="img" aria-label="Preview of the PapaFix customer app live-tracking screen: technician Mark Reyes, rated 4.8, is 8 minutes away on a live map, with a Call Technician button below.">
           <div class="phone-screen" aria-hidden="true">
-            <div class="phone-notch"></div>
+            <div class="phone-cam"></div>
             <div class="phone-status"><span>9:41</span><span class="ps-right">5G<span class="ps-sig"><i></i><i></i><i></i><i></i></span><span class="ps-batt"></span></span></div>
 
             <div class="track-map">
@@ -1680,7 +1569,7 @@ footer {
     <div class="app-shot">
       <div class="phone phone-mini" role="img" aria-label="PapaFix app booking screen: 'What needs fixing?' with Appliances, Electrical and Plumbing categories.">
         <div class="phone-screen" aria-hidden="true">
-          <div class="phone-notch"></div>
+          <div class="phone-cam"></div>
           <div class="phone-status"><span>9:41</span><span class="ps-right">5G<span class="ps-sig"><i></i><i></i><i></i><i></i></span><span class="ps-batt"></span></span></div>
           <div class="app-scr">
             <div class="scr-h">What needs fixing?</div>
@@ -1711,7 +1600,7 @@ footer {
     <div class="app-shot">
       <div class="phone phone-mini" role="img" aria-label="PapaFix app confirm-booking screen showing the assigned technician, job details and a Confirm Booking button.">
         <div class="phone-screen" aria-hidden="true">
-          <div class="phone-notch"></div>
+          <div class="phone-cam"></div>
           <div class="phone-status"><span>9:41</span><span class="ps-right">5G<span class="ps-sig"><i></i><i></i><i></i><i></i></span><span class="ps-batt"></span></span></div>
           <div class="app-scr">
             <div class="scr-h">Confirm Booking</div>
@@ -1746,7 +1635,7 @@ footer {
     <div class="app-shot">
       <div class="phone phone-mini" role="img" aria-label="PapaFix app payment screen: job completed, fee breakdown totalling ₱850 and a Pay button with GCash, Maya and card options.">
         <div class="phone-screen" aria-hidden="true">
-          <div class="phone-notch"></div>
+          <div class="phone-cam"></div>
           <div class="phone-status"><span>9:41</span><span class="ps-right">5G<span class="ps-sig"><i></i><i></i><i></i><i></i></span><span class="ps-batt"></span></span></div>
           <div class="app-scr">
             <div class="pay-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
@@ -1797,168 +1686,99 @@ footer {
   </div>
 </section>
 
-<section id="services" style="height: 520vh; position: relative;">
+<section id="services">
+  <div class="container">
+    <div class="services-header reveal">
+      <div class="section-eyebrow">8 Categories</div>
+      <h2 class="section-title">Everything your home needs</h2>
+      <p class="section-sub">Eight service categories, one app — every job handled by a verified local technician.</p>
+    </div>
 
-  <div class="services-sticky" id="servicesSticky">
+    <div class="services-grid">
 
-    <div class="services-sticky-clip">
-
-      <div class="services-sticky-header">
-        <div>
-          <div class="section-eyebrow">8 Categories</div>
-          <h2 class="section-title">Everything your home needs</h2>
-        </div>
-      </div>
-
-      <div class="services-hstrip" id="servicesHstrip">
-
-      <div class="service-panel" style="--panel-bg:#18120a;--panel-accent:#fbbf24;--panel-glow:rgba(251,191,36,.18);">
-        <div class="svc-content">
+      <div class="svc-card reveal" data-delay="1" style="--panel-bg:#18120a;--panel-accent:#fbbf24;--panel-glow:rgba(251,191,36,.18);">
+        <div class="svc-card-img"><img src="electrical.png" class="zoom-img" loading="lazy" alt="Electrician at work"/></div>
+        <div class="svc-card-body">
           <div class="svc-counter">01 / 08</div>
-          <h3 class="svc-big-name">Elec&shy;trical</h3>
-          <p class="svc-big-desc">Wiring, outlets, panels, circuit breakers, and full safety inspections by certified electricians.</p>
-          <div class="svc-tags">
-            <span class="svc-tag">Rewiring</span>
-            <span class="svc-tag">Outlets</span>
-            <span class="svc-tag">Breaker Panels</span>
-            <span class="svc-tag">Safety Check</span>
-          </div>
-        </div>
-        <div class="svc-visual">
-          <img src="electrical.png" class="svc-visual-photo zoom-img" loading="lazy" alt="Electrician at work"/>
-          <div class="svc-panel-num">01</div>
+          <h3 class="svc-card-name">Electrical</h3>
+          <p class="svc-card-desc">Wiring, outlets, panels, circuit breakers, and full safety inspections by certified electricians.</p>
+          <div class="svc-tags"><span class="svc-tag">Rewiring</span><span class="svc-tag">Outlets</span><span class="svc-tag">Safety Check</span></div>
         </div>
       </div>
 
-      <div class="service-panel" style="--panel-bg:#06101e;--panel-accent:#60a5fa;--panel-glow:rgba(96,165,250,.18);">
-        <div class="svc-content">
+      <div class="svc-card reveal" data-delay="2" style="--panel-bg:#06101e;--panel-accent:#60a5fa;--panel-glow:rgba(96,165,250,.18);">
+        <div class="svc-card-img"><img src="plumbing.png" class="zoom-img" loading="lazy" alt="Plumber at work"/></div>
+        <div class="svc-card-body">
           <div class="svc-counter">02 / 08</div>
-          <h3 class="svc-big-name">Plumb&shy;ing</h3>
-          <p class="svc-big-desc">Leaks, pipe repairs, drainage, faucets, and water pressure fixes done right the first time.</p>
-          <div class="svc-tags">
-            <span class="svc-tag">Leak Repair</span>
-            <span class="svc-tag">Pipe Work</span>
-            <span class="svc-tag">Drainage</span>
-            <span class="svc-tag">Faucets</span>
-          </div>
-        </div>
-        <div class="svc-visual">
-          <img src="plumbing.png" class="svc-visual-photo zoom-img" loading="lazy" alt="Plumber at work"/>
-          <div class="svc-panel-num">02</div>
+          <h3 class="svc-card-name">Plumbing</h3>
+          <p class="svc-card-desc">Leaks, pipe repairs, drainage, faucets, and water pressure fixes done right the first time.</p>
+          <div class="svc-tags"><span class="svc-tag">Leak Repair</span><span class="svc-tag">Pipe Work</span><span class="svc-tag">Faucets</span></div>
         </div>
       </div>
 
-      <div class="service-panel" style="--panel-bg:#001a22;--panel-accent:#22d3ee;--panel-glow:rgba(34,211,238,.18);">
-        <div class="svc-content">
+      <div class="svc-card reveal" data-delay="3" style="--panel-bg:#001a22;--panel-accent:#22d3ee;--panel-glow:rgba(34,211,238,.18);">
+        <div class="svc-card-img"><img src="aircon.png" class="zoom-img" loading="lazy" alt="Aircon technician at work"/></div>
+        <div class="svc-card-body">
           <div class="svc-counter">03 / 08</div>
-          <h3 class="svc-big-name">Air&shy;con</h3>
-          <p class="svc-big-desc">Cleaning, installation, refrigerant recharging, and preventive maintenance for all brands.</p>
-          <div class="svc-tags">
-            <span class="svc-tag">Deep Clean</span>
-            <span class="svc-tag">Installation</span>
-            <span class="svc-tag">Recharging</span>
-            <span class="svc-tag">All Brands</span>
-          </div>
-        </div>
-        <div class="svc-visual">
-          <img src="aircon.png" class="svc-visual-photo zoom-img" loading="lazy" alt="Aircon technician at work"/>
-          <div class="svc-panel-num">03</div>
+          <h3 class="svc-card-name">Aircon</h3>
+          <p class="svc-card-desc">Cleaning, installation, refrigerant recharging, and preventive maintenance for all brands.</p>
+          <div class="svc-tags"><span class="svc-tag">Deep Clean</span><span class="svc-tag">Installation</span><span class="svc-tag">All Brands</span></div>
         </div>
       </div>
 
-      <div class="service-panel" style="--panel-bg:#061509;--panel-accent:#4ade80;--panel-glow:rgba(74,222,128,.18);">
-        <div class="svc-content">
+      <div class="svc-card reveal" data-delay="4" style="--panel-bg:#061509;--panel-accent:#4ade80;--panel-glow:rgba(74,222,128,.18);">
+        <div class="svc-card-img"><img src="appliance.png" class="zoom-img" loading="lazy" alt="Appliance repair technician at work"/></div>
+        <div class="svc-card-body">
           <div class="svc-counter">04 / 08</div>
-          <h3 class="svc-big-name">Appli&shy;ance</h3>
-          <p class="svc-big-desc">Washing machines, refrigerators, ovens, and full appliance diagnostics — repaired, not replaced.</p>
-          <div class="svc-tags">
-            <span class="svc-tag">Refrigerators</span>
-            <span class="svc-tag">Washers</span>
-            <span class="svc-tag">Ovens</span>
-            <span class="svc-tag">Diagnostics</span>
-          </div>
-        </div>
-        <div class="svc-visual">
-          <img src="appliance.png" class="svc-visual-photo zoom-img" loading="lazy" alt="Appliance repair technician at work"/>
-          <div class="svc-panel-num">04</div>
+          <h3 class="svc-card-name">Appliance</h3>
+          <p class="svc-card-desc">Washing machines, refrigerators, ovens, and full appliance diagnostics — repaired, not replaced.</p>
+          <div class="svc-tags"><span class="svc-tag">Refrigerators</span><span class="svc-tag">Washers</span><span class="svc-tag">Diagnostics</span></div>
         </div>
       </div>
 
-      <div class="service-panel" style="--panel-bg:#1a0d04;--panel-accent:#fb923c;--panel-glow:rgba(251,146,60,.18);">
-        <div class="svc-content">
+      <div class="svc-card reveal" data-delay="1" style="--panel-bg:#1a0d04;--panel-accent:#fb923c;--panel-glow:rgba(251,146,60,.18);">
+        <div class="svc-card-img"><img src="carpentry.png" class="zoom-img" loading="lazy" alt="Carpenter at work"/></div>
+        <div class="svc-card-body">
           <div class="svc-counter">05 / 08</div>
-          <h3 class="svc-big-name">Carpen&shy;try</h3>
-          <p class="svc-big-desc">Cabinets, doors, furniture assembly, flooring installations, and custom woodwork.</p>
-          <div class="svc-tags">
-            <span class="svc-tag">Cabinets</span>
-            <span class="svc-tag">Flooring</span>
-            <span class="svc-tag">Doors</span>
-            <span class="svc-tag">Assembly</span>
-          </div>
-        </div>
-        <div class="svc-visual">
-          <img src="carpentry.png" class="svc-visual-photo zoom-img" loading="lazy" alt="Carpenter at work"/>
-          <div class="svc-panel-num">05</div>
+          <h3 class="svc-card-name">Carpentry</h3>
+          <p class="svc-card-desc">Cabinets, doors, furniture assembly, flooring installations, and custom woodwork.</p>
+          <div class="svc-tags"><span class="svc-tag">Cabinets</span><span class="svc-tag">Flooring</span><span class="svc-tag">Assembly</span></div>
         </div>
       </div>
 
-      <div class="service-panel" style="--panel-bg:#1a0510;--panel-accent:#f472b6;--panel-glow:rgba(244,114,182,.18);">
-        <div class="svc-content">
+      <div class="svc-card reveal" data-delay="2" style="--panel-bg:#1a0510;--panel-accent:#f472b6;--panel-glow:rgba(244,114,182,.18);">
+        <div class="svc-card-img"><img src="painting.png" class="zoom-img" loading="lazy" alt="Painter at work"/></div>
+        <div class="svc-card-body">
           <div class="svc-counter">06 / 08</div>
-          <h3 class="svc-big-name">Paint&shy;ing</h3>
-          <p class="svc-big-desc">Interior and exterior painting, touch-ups, waterproofing, and textured finishes done to spec.</p>
-          <div class="svc-tags">
-            <span class="svc-tag">Interior</span>
-            <span class="svc-tag">Exterior</span>
-            <span class="svc-tag">Waterproofing</span>
-            <span class="svc-tag">Touch-ups</span>
-          </div>
-        </div>
-        <div class="svc-visual">
-          <img src="painting.png" class="svc-visual-photo zoom-img" loading="lazy" alt="Painter at work"/>
-          <div class="svc-panel-num">06</div>
+          <h3 class="svc-card-name">Painting</h3>
+          <p class="svc-card-desc">Interior and exterior painting, touch-ups, waterproofing, and textured finishes done to spec.</p>
+          <div class="svc-tags"><span class="svc-tag">Interior</span><span class="svc-tag">Exterior</span><span class="svc-tag">Touch-ups</span></div>
         </div>
       </div>
 
-      <div class="service-panel" style="--panel-bg:#001618;--panel-accent:#2dd4bf;--panel-glow:rgba(45,212,191,.18);">
-        <div class="svc-content">
+      <div class="svc-card reveal" data-delay="3" style="--panel-bg:#001618;--panel-accent:#2dd4bf;--panel-glow:rgba(45,212,191,.18);">
+        <div class="svc-card-img"><img src="cleaning.png" class="zoom-img" loading="lazy" alt="Cleaner at work"/></div>
+        <div class="svc-card-body">
           <div class="svc-counter">07 / 08</div>
-          <h3 class="svc-big-name">Clean&shy;ing</h3>
-          <p class="svc-big-desc">Deep cleans, move-in/out, post-renovation, and regular housekeeping tailored to your space.</p>
-          <div class="svc-tags">
-            <span class="svc-tag">Deep Clean</span>
-            <span class="svc-tag">Move In/Out</span>
-            <span class="svc-tag">Post-Reno</span>
-            <span class="svc-tag">Regular</span>
-          </div>
-        </div>
-        <div class="svc-visual">
-          <img src="cleaning.png" class="svc-visual-photo zoom-img" loading="lazy" alt="Cleaner at work"/>
-          <div class="svc-panel-num">07</div>
+          <h3 class="svc-card-name">Cleaning</h3>
+          <p class="svc-card-desc">Deep cleans, move-in/out, post-renovation, and regular housekeeping tailored to your space.</p>
+          <div class="svc-tags"><span class="svc-tag">Deep Clean</span><span class="svc-tag">Move In/Out</span><span class="svc-tag">Regular</span></div>
         </div>
       </div>
 
-      <div class="service-panel" style="--panel-bg:#06020f;--panel-accent:#a78bfa;--panel-glow:rgba(167,139,250,.18);">
-        <div class="svc-content">
+      <div class="svc-card reveal" data-delay="4" style="--panel-bg:#06020f;--panel-accent:#a78bfa;--panel-glow:rgba(167,139,250,.18);">
+        <div class="svc-card-img"><img src="more.png" class="zoom-img" loading="lazy" alt="Worker at work"/></div>
+        <div class="svc-card-body">
           <div class="svc-counter">08 / 08</div>
-          <h3 class="svc-big-name">And<br/>More</h3>
-          <p class="svc-big-desc">Roofing, tiling, locksmith, pest control, and fully custom requests — one app for it all.</p>
-          <div class="svc-tags">
-            <span class="svc-tag">Roofing</span>
-            <span class="svc-tag">Locksmith</span>
-            <span class="svc-tag">Pest Control</span>
-            <span class="svc-tag">Custom</span>
-          </div>
-        </div>
-        <div class="svc-visual">
-          <img src="more.png" class="svc-visual-photo zoom-img" loading="lazy" alt="Worker at work"/>
-          <div class="svc-panel-num">08</div>
+          <h3 class="svc-card-name">And More</h3>
+          <p class="svc-card-desc">Roofing, tiling, locksmith, pest control, and fully custom requests — one app for it all.</p>
+          <div class="svc-tags"><span class="svc-tag">Roofing</span><span class="svc-tag">Locksmith</span><span class="svc-tag">Pest Control</span></div>
         </div>
       </div>
 
     </div>
-
-    </div></div></section>
+  </div>
+</section>
 
 <section id="how">
   <div class="container">
@@ -2413,7 +2233,7 @@ footer {
 </section>
 
 <!-- ─── LIFESTYLE GALLERY ─────────────────────────────────────────
-     Sticky horizontal scroll — reuses the exact #services technique.
+     Sticky horizontal scroll (scroll maps to translateX).
      Driven by its own IIFE (#galleryHstrip); on mobile / reduced-
      motion it stacks vertically via CSS.                          -->
 <section id="gallery">
@@ -2548,7 +2368,7 @@ footer {
       <div class="tb-phone-col">
         <div class="phone phone-tech" role="img" aria-label="Preview of the PapaFix Technician app incoming-jobs screen: two job requests with countdown timers and Confirm or Decline buttons, plus a bottom tab bar.">
           <div class="phone-screen" aria-hidden="true">
-            <div class="phone-notch"></div>
+            <div class="phone-cam"></div>
             <div class="phone-status"><span>9:41</span><span class="ps-right">5G<span class="ps-sig"><i></i><i></i><i></i><i></i></span><span class="ps-batt"></span></span></div>
 
             <div class="tj-head">Incoming Jobs <span class="tj-count">2</span></div>
@@ -2838,85 +2658,6 @@ window.addEventListener('scroll', () => {
   }, { passive: true });
 }());
 
-/* ═══ SERVICES — SCROLL-DRIVEN HORIZONTAL PANELS ════════════════
-   #services is made 8 × 100vh tall (set inline + updated by JS).
-   .services-sticky stays pinned via position:sticky top:0.
-   Vertical scroll progress through the section drives translateX
-   on the hstrip: 0 → -(7 × 100vw).
-   Works with mouse wheel, trackpad, keyboard, touch.
-═══════════════════════════════════════════════════════════════ */
-(function () {
-  var section = document.getElementById('services');
-  var hstrip  = document.getElementById('servicesHstrip');
-  if (!section || !hstrip) return;
-
-  var PANELS   = 8;
-  var currentX = 0;
-  var targetX  = 0;
-
-  function isMobile() { return window.innerWidth <= 900; }
-  function lerp(a, b, t) { return a + (b - a) * t; }
-
-  function enableDesktop() {
-    var w = document.documentElement.clientWidth;
-    // 0.6vh of scroll per panel transition — full 100vh each felt like a tunnel
-    section.style.height = (window.innerHeight + (PANELS - 1) * window.innerHeight * 0.6) + 'px';
-    document.querySelectorAll('.service-panel').forEach(function(p) {
-      p.style.width = w + 'px';
-    });
-    updateTarget();
-  }
-
-  function disableMobile() {
-    section.style.height = '';
-    hstrip.style.transform = '';
-    currentX = 0;
-    targetX  = 0;
-    document.querySelectorAll('.service-panel').forEach(function(p) {
-      p.style.width = '';
-    });
-  }
-
-  function updateTarget() {
-    if (isMobile()) return;
-    var secTop   = section.getBoundingClientRect().top + window.scrollY;
-    var scrolled = window.scrollY - secTop;
-    var range    = section.offsetHeight - window.innerHeight;
-    var total    = (PANELS - 1) * document.documentElement.clientWidth;
-    targetX = scrolled <= 0 ? 0 : scrolled >= range ? total : (scrolled / range) * total;
-  }
-
-  function tick() {
-    if (!isMobile()) {
-      currentX = lerp(currentX, targetX, 0.12);
-      if (Math.abs(currentX - targetX) < 0.5) currentX = targetX;
-      hstrip.style.transform = 'translateX(' + (-currentX) + 'px)';
-    }
-    requestAnimationFrame(tick);
-  }
-
-  function onScroll() { updateTarget(); }
-
-  function onResize() {
-    if (isMobile()) {
-      disableMobile();
-    } else {
-      enableDesktop();
-    }
-  }
-
-  window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', onResize, { passive: true });
-
-  // Initial setup
-  if (isMobile()) {
-    disableMobile();
-  } else {
-    enableDesktop();
-  }
-  requestAnimationFrame(tick);
-}());
-
 /* ═══ INTRO OVERLAY CLEANUP ════════════════════════════════════ */
 // The overlay sweeps off-screen via CSS animation at t=2s for 0.85s.
 // Remove it from the DOM at t=3s so it never interferes with interaction.
@@ -3005,9 +2746,8 @@ if (overlay) {
 }());
 
 /* (4) LIFESTYLE GALLERY — sticky horizontal scroll.
-   Mirrors the #services IIFE but computes travel from the strip's
-   real scrollWidth, and stays self-contained so it never touches
-   the #services scroll state.                                     */
+   Computes travel from the strip's real scrollWidth; vertical
+   scroll through the tall section maps 1:1 to translateX.         */
 (function () {
   var section = document.getElementById('gallery');
   var strip   = document.getElementById('galleryHstrip');
