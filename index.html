@@ -1371,6 +1371,7 @@ footer {
 <nav>
   <a href="#" class="nav-logo"><img src="papafix-logo-480.webp" width="34" height="34" class="nav-logo-img" alt="" /><span>Papa<span style="color:var(--brand);">Fix</span></span></a>
   <div class="nav-links">
+    <a href="#app">The App</a>
     <a href="#services">Services</a>
     <a href="#how">How It Works</a>
     <a href="#features">Features</a>
@@ -1392,6 +1393,7 @@ footer {
 
 <!-- Mobile menu -->
 <div class="mobile-menu" id="mobileMenu">
+  <a href="#app" onclick="closeMobileMenu()">The App</a>
   <a href="#services" onclick="closeMobileMenu()">Services</a>
   <a href="#how" onclick="closeMobileMenu()">How It Works</a>
   <a href="#features" onclick="closeMobileMenu()">Features</a>
@@ -1648,6 +1650,115 @@ footer {
       </form>
       <p id="waitlistMsg" style="display:none;margin-top:.75rem;font-size:.85rem;font-weight:600;"></p>
     </div>
+  </div>
+</section>
+
+<!-- ─── A LOOK INSIDE THE APP ─────────────────────────────────────
+     Three static customer-app screens reproduced in pure HTML/CSS
+     from papafix-customer-ui-guide.pdf — booking, confirm, payment.
+     3-up on desktop; horizontally swipeable (scroll-snap) on mobile. -->
+<section id="app" style="scroll-margin-top:90px;">
+  <div class="container">
+    <div class="app-header reveal">
+      <div class="section-eyebrow">The App</div>
+      <h2 class="section-title">Book it like you'd book a ride</h2>
+      <p class="section-sub">Three taps from problem to booked technician. These are the actual screens of the PapaFix customer app.</p>
+    </div>
+  </div>
+
+  <div class="app-row reveal" data-delay="1">
+
+    <!-- (a) Booking — category selection -->
+    <div class="app-shot">
+      <div class="phone phone-mini" role="img" aria-label="PapaFix app booking screen: 'What needs fixing?' with Appliances, Electrical and Plumbing categories.">
+        <div class="phone-screen" aria-hidden="true">
+          <div class="phone-notch"></div>
+          <div class="phone-status"><span>9:41</span><span class="ps-right">5G<span class="ps-sig"><i></i><i></i><i></i><i></i></span><span class="ps-batt"></span></span></div>
+          <div class="app-scr">
+            <div class="scr-h">What needs fixing?</div>
+            <div class="scr-sub">Choose a service category.</div>
+            <div class="bk-item">
+              <span class="bk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="5" y1="10" x2="19" y2="10"/><line x1="9" y1="5.5" x2="9" y2="7"/><line x1="9" y1="13.5" x2="9" y2="16"/></svg></span>
+              <span><b>Appliances</b><i>Fridge, AC, washer &amp; more</i></span>
+              <span class="bk-chev">›</span>
+            </div>
+            <div class="bk-item">
+              <span class="bk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+              <span><b>Electrical</b><i>Wiring, outlets, breakers</i></span>
+              <span class="bk-chev">›</span>
+            </div>
+            <div class="bk-item">
+              <span class="bk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></span>
+              <span><b>Plumbing</b><i>Leaks, drains, fixtures</i></span>
+              <span class="bk-chev">›</span>
+            </div>
+          </div>
+          <div class="phone-home"></div>
+        </div>
+      </div>
+      <p class="app-cap">Pick the service — plain-language categories, no jargon.</p>
+    </div>
+
+    <!-- (b) Confirm booking -->
+    <div class="app-shot">
+      <div class="phone phone-mini" role="img" aria-label="PapaFix app confirm-booking screen showing the assigned technician, job details and a Confirm Booking button.">
+        <div class="phone-screen" aria-hidden="true">
+          <div class="phone-notch"></div>
+          <div class="phone-status"><span>9:41</span><span class="ps-right">5G<span class="ps-sig"><i></i><i></i><i></i><i></i></span><span class="ps-batt"></span></span></div>
+          <div class="app-scr">
+            <div class="scr-h">Confirm Booking</div>
+            <div class="scr-sub">Review before sending the request.</div>
+            <div class="scr-label">YOUR TECHNICIAN</div>
+            <div class="cf-card cf-tech">
+              <div class="tc-ava">M</div>
+              <div>
+                <div class="tc-name">Mark Reyes</div>
+                <div class="tc-meta"><b>★ 4.8</b> · Est. arrival: ~12 min</div>
+              </div>
+            </div>
+            <div class="scr-label">JOB DETAILS</div>
+            <div class="cf-card">
+              <div class="cf-row"><span>SERVICE</span><b>Appliances</b></div>
+              <div class="cf-row"><span>ISSUE</span><b>Air Conditioner</b></div>
+              <div class="cf-row"><span>ADDRESS</span><b>123 Mabini St, Santo Tomas</b></div>
+            </div>
+            <div class="cf-note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Payment collected after job completion.
+            </div>
+            <div class="scr-btn">Confirm Booking</div>
+          </div>
+          <div class="phone-home"></div>
+        </div>
+      </div>
+      <p class="app-cap">See who's coming and what it costs — before you commit.</p>
+    </div>
+
+    <!-- (c) Payment -->
+    <div class="app-shot">
+      <div class="phone phone-mini" role="img" aria-label="PapaFix app payment screen: job completed, fee breakdown totalling ₱850 and a Pay button with GCash, Maya and card options.">
+        <div class="phone-screen" aria-hidden="true">
+          <div class="phone-notch"></div>
+          <div class="phone-status"><span>9:41</span><span class="ps-right">5G<span class="ps-sig"><i></i><i></i><i></i><i></i></span><span class="ps-batt"></span></span></div>
+          <div class="app-scr">
+            <div class="pay-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="scr-h">Job Completed</div>
+            <div class="scr-sub">Please review and pay.</div>
+            <div class="scr-label">FEE BREAKDOWN</div>
+            <div class="cf-card">
+              <div class="pay-row"><span>Service fee</span><b>₱500.00</b></div>
+              <div class="pay-row"><span>Parts (capacitor)</span><b>₱350.00</b></div>
+              <div class="pay-row pay-total"><span>Total</span><b>₱850.00</b></div>
+            </div>
+            <div class="scr-btn">Pay ₱850.00</div>
+            <div class="pay-methods">GCash · Maya · Card</div>
+          </div>
+          <div class="phone-home"></div>
+        </div>
+      </div>
+      <p class="app-cap">Pay in-app with GCash, Maya, or card when the job's done.</p>
+    </div>
+
   </div>
 </section>
 
