@@ -72,11 +72,12 @@ README.md                     # This file
 
 ### Sections of the page (in order)
 
-Intro loader → sticky nav → hero (customer-app phone mockup) → trust bar → coverage/cities + waitlist → "A Look Inside the App" (3 mini phone mockups) → "story" band → services (compact 8-card grid) → how it works (bento grid) → stats marquee → features → lifestyle gallery → testimonials → "become a technician" banner (technician-app phone mockup) → download CTA → footer.
+Intro loader → sticky nav → hero (customer-app phone mockup) → trust bar → coverage/cities + waitlist → "A Look Inside the App" (3 mini phone mockups) → "story" banner → services (compact 8-card grid) → how it works (bento grid) → stats marquee → features → founders gallery → testimonials → "become a technician" banner (technician-app phone mockup) → download CTA → footer.
 
 ### Notable implementation details
 
-- **Custom scroll animations** (no library): hero word reveal, a pinned "story" band, image zoom-in, a sticky horizontal lifestyle gallery, and section build-ins. (Services used to be a scroll-jacked horizontal strip; it was flattened to a normal grid to keep total scroll length sane — don't reintroduce it.)
+- **Custom scroll animations** (no library): hero word reveal, image zoom-in, a sticky horizontal founders gallery, and section build-ins. (Services used to be a scroll-jacked horizontal strip and the story band used to be a pinned 200vh section; both were flattened to keep total scroll length sane — don't reintroduce them.)
+- **Founders gallery** expects `founder-rai.png`, `founder-clarence.png`, `founder-hanna.png`, `founder-albert.png` (portrait photos, ~800px wide). Until a file exists, its card shows a monogram placeholder.
 - **Intro overlay** plays once on load, then sweeps away.
 - **App mockups are pure HTML/CSS** — a reusable `.phone` frame component (Android-style: bezel, punch-hole camera, status bar, gesture bar — the app ships on Google Play only) renders real screens from the official UI guides: live tracking in the hero, booking/confirm/payment in "A Look Inside the App", and Incoming Jobs in the technician banner. Customer screens use the app's blue `#3B8EEF`, technician screens the orange `#F07C1A` (these are *app* tokens, deliberately not the site brand variables). The hero map marker (SMIL) and job countdowns pause under `prefers-reduced-motion`. No screenshots or images are used.
 - Fully responsive; mobile collapses the two-column layouts, makes the app-screens row swipeable (scroll-snap), and hides some desktop-only flourishes.

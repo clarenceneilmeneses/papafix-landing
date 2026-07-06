@@ -1081,14 +1081,11 @@ footer {
 /* dark backing so the brief sub-1 scale never flashes page-white at edges */
 .coverage-card { background: var(--ink); }
 
-/* ── (2) PINNED FULL-BLEED STORY BAND ───────────────────────── */
-#story { position: relative; background: var(--ink); }
-.story-pin {
-  position: sticky; top: 0; height: 100vh; overflow: hidden; z-index: 0;
-}
+/* ── (2) FULL-BLEED STORY BANNER (compact — no pinning) ─────── */
+#story { position: relative; background: var(--ink); overflow: hidden; }
 .story-media {
   position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover; transform: scale(1.06);
+  object-fit: cover;
 }
 /* ink overlay gradient for legibility (same tone as coverage cards) */
 .story-veil {
@@ -1097,12 +1094,8 @@ footer {
     rgba(10,15,30,.92) 0%, rgba(10,15,30,.45) 48%, rgba(10,15,30,.78) 100%);
 }
 .story-copy {
-  position: relative; z-index: 2; margin-top: -100vh;
-  padding: 0 7vw; pointer-events: none;
-}
-.story-inner {
-  min-height: 200vh; display: flex; flex-direction: column;
-  justify-content: center; max-width: 760px;
+  position: relative; z-index: 2;
+  padding: clamp(4.5rem, 14vh, 8.5rem) 7vw; max-width: 900px;
 }
 .story-eyebrow {
   font-size: .72rem; font-weight: 600; letter-spacing: .12em;
@@ -1119,7 +1112,7 @@ footer {
   font-weight: 300; max-width: 50ch;
 }
 
-/* ── (4) LIFESTYLE GALLERY — sticky horizontal scroll ───────── */
+/* ── (4) FOUNDERS GALLERY — sticky horizontal scroll ────────── */
 #gallery { position: relative; background: var(--off-white); }
 .gallery-sticky { position: sticky; top: 0; height: 100vh; width: 100%; }
 .gallery-sticky-clip {
@@ -1144,6 +1137,15 @@ footer {
   position: absolute; inset: 0; width: 100%; height: 100%;
   object-fit: cover; transition: transform .6s cubic-bezier(.16,1,.3,1);
 }
+/* monogram placeholder — visible until the founder photo is added
+   (the img sits on top once it loads; on 404 it removes itself) */
+.g-ph {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(160deg, #1c2440 0%, #0a0f1e 80%);
+  font-family: 'Sora', sans-serif; font-weight: 800; font-size: 5rem;
+  letter-spacing: -.04em; color: rgba(255,255,255,.1); user-select: none;
+}
 .gallery-card:hover img { transform: scale(1.05); }
 .g-veil {
   position: absolute; inset: 0;
@@ -1161,11 +1163,7 @@ footer {
 
 /* ── MOBILE STACKING for the two new sections ───────────────── */
 @media (max-width: 900px) {
-  /* story: pin → static banner with copy below */
-  .story-pin { position: relative; height: 56vh; }
-  .story-media { transform: none; }
-  .story-copy { margin-top: 0; padding: 2.5rem 6vw 3.5rem; }
-  .story-inner { min-height: auto; }
+  .story-copy { padding: 3.5rem 6vw 4rem; }
   .story-h { font-size: 2.2rem; }
   /* gallery: kill horizontal scroll, stack vertically like #services */
   #gallery { height: auto !important; }
@@ -1184,7 +1182,6 @@ footer {
   .hero-word { animation: none !important; opacity: 1 !important; transform: none !important; }
   .section-title .tw { transition: none !important; opacity: 1 !important; transform: none !important; }
   .zoom-img { transition: none !important; transform: none !important; filter: none !important; }
-  .story-media { transform: none !important; }
   /* unpin the gallery so no horizontal scroll-jacking, just a stacked column */
   #gallery { height: auto !important; }
   .gallery-sticky { position: relative !important; height: auto !important; }
@@ -1666,22 +1663,18 @@ footer {
      up and over it. Swap the <img> for the commented <video> below
      for a muted autoplay clip of a technician at work.            -->
 <section id="story">
-  <div class="story-pin">
-    <img class="story-media" src="aircon.png" alt="A PapaFix technician at work in a Batangas home" />
-    <!-- Optional: replace the <img> above with a muted autoplay video —
-    <video class="story-media" autoplay muted loop playsinline poster="aircon.png">
-      <source src="story.mp4" type="video/mp4" />
-    </video>
-    -->
-    <div class="story-veil"></div>
-  </div>
+  <img class="story-media" src="aircon.png" alt="A PapaFix technician at work in a Batangas home" />
+  <!-- Optional: replace the <img> above with a muted autoplay video —
+  <video class="story-media" autoplay muted loop playsinline poster="aircon.png">
+    <source src="story.mp4" type="video/mp4" />
+  </video>
+  -->
+  <div class="story-veil"></div>
   <div class="story-copy">
-    <div class="story-inner">
-      <div class="story-text reveal">
-        <div class="story-eyebrow">Real people, real work</div>
-        <h2 class="story-h">Behind every booking is a <em>neighbor</em> who knows the job.</h2>
-        <p class="story-p">Our technicians live in the same Batangas towns you do — screened face-to-face, rated by the people next door, and held to one standard: fix it right the first time. No call centers, no strangers. Just a verified local at your door, fast.</p>
-      </div>
+    <div class="story-text reveal">
+      <div class="story-eyebrow">Real people, real work</div>
+      <h2 class="story-h">Behind every booking is a <em>neighbor</em> who knows the job.</h2>
+      <p class="story-p">Our technicians live in the same Batangas towns you do — screened face-to-face, rated by the people next door, and held to one standard: fix it right the first time. No call centers, no strangers. Just a verified local at your door, fast.</p>
     </div>
   </div>
 </section>
@@ -2232,7 +2225,7 @@ footer {
   </div>
 </section>
 
-<!-- ─── LIFESTYLE GALLERY ─────────────────────────────────────────
+<!-- ─── FOUNDERS GALLERY ──────────────────────────────────────────
      Sticky horizontal scroll (scroll maps to translateX).
      Driven by its own IIFE (#galleryHstrip); on mobile / reduced-
      motion it stacks vertically via CSS.                          -->
@@ -2242,65 +2235,51 @@ footer {
       <div class="gallery-hstrip" id="galleryHstrip">
 
         <div class="gallery-intro">
-          <div class="section-eyebrow">In the field</div>
-          <h2 class="section-title">Life with PapaFix, around Batangas</h2>
-          <p class="section-sub">Real homes, real technicians, real neighborhoods — a look at the people and places we show up for every day.</p>
+          <div class="section-eyebrow">The Founders</div>
+          <h2 class="section-title">The people behind PapaFix</h2>
+          <p class="section-sub">PapaFix is homegrown — built by four founders who believe booking a trusted repair in Batangas should be as easy as booking a ride.</p>
         </div>
 
+        <!-- Founder photos: drop in the files below (portrait, ~800px wide
+             is plenty). Until a photo exists, the card shows a monogram
+             placeholder instead. -->
         <div class="gallery-card">
-          <img src="electrical.png" alt="PapaFix electrician on a job" loading="lazy" onerror="this.closest('.gallery-card').style.display='none'"/>
+          <div class="g-ph" aria-hidden="true">RT</div>
+          <img src="founder-rai.png" alt="Rai Taan, PapaFix founder" loading="lazy" onerror="this.remove()"/>
           <div class="g-veil"></div>
           <div class="gallery-cap">
-            <div class="g-t">Certified electricians</div>
-            <div class="g-s">Panels &amp; rewiring · Tanauan</div>
+            <div class="g-t">Rai Taan</div>
+            <div class="g-s">Founder</div>
           </div>
         </div>
 
         <div class="gallery-card">
-          <img src="aircon.png" alt="Aircon technician servicing a unit" loading="lazy" onerror="this.closest('.gallery-card').style.display='none'"/>
+          <div class="g-ph" aria-hidden="true">CM</div>
+          <img src="founder-clarence.png" alt="Clarence Meneses, PapaFix founder" loading="lazy" onerror="this.remove()"/>
           <div class="g-veil"></div>
           <div class="gallery-cap">
-            <div class="g-t">Aircon, season-ready</div>
-            <div class="g-s">Deep clean &amp; recharge · Malvar</div>
+            <div class="g-t">Clarence Meneses</div>
+            <div class="g-s">Founder</div>
           </div>
         </div>
 
         <div class="gallery-card">
-          <img src="tanauan.jpg" alt="Tanauan City, Batangas" loading="lazy" onerror="this.closest('.gallery-card').style.display='none'"/>
+          <div class="g-ph" aria-hidden="true">HQ</div>
+          <img src="founder-hanna.png" alt="Hanna Quilloy, PapaFix founder" loading="lazy" onerror="this.remove()"/>
           <div class="g-veil"></div>
           <div class="gallery-cap">
-            <div class="g-t">Tanauan City</div>
-            <div class="g-s">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              Home turf
-            </div>
+            <div class="g-t">Hanna Quilloy</div>
+            <div class="g-s">Founder</div>
           </div>
         </div>
 
         <div class="gallery-card">
-          <img src="plumbing.png" alt="Plumber fixing a leak" loading="lazy" onerror="this.closest('.gallery-card').style.display='none'"/>
+          <div class="g-ph" aria-hidden="true">AM</div>
+          <img src="founder-albert.png" alt="Engr. Albert Molinyawe, PapaFix founder" loading="lazy" onerror="this.remove()"/>
           <div class="g-veil"></div>
           <div class="gallery-cap">
-            <div class="g-t">Leaks, sorted same-day</div>
-            <div class="g-s">Pipe work &amp; drainage · Santo Tomas</div>
-          </div>
-        </div>
-
-        <div class="gallery-card">
-          <img src="carpentry.png" alt="Carpenter at work" loading="lazy" onerror="this.closest('.gallery-card').style.display='none'"/>
-          <div class="g-veil"></div>
-          <div class="gallery-cap">
-            <div class="g-t">Custom woodwork</div>
-            <div class="g-s">Cabinets, doors &amp; flooring</div>
-          </div>
-        </div>
-
-        <div class="gallery-card">
-          <img src="cleaning.png" alt="Home cleaning service" loading="lazy" onerror="this.closest('.gallery-card').style.display='none'"/>
-          <div class="g-veil"></div>
-          <div class="gallery-cap">
-            <div class="g-t">Homes that feel new</div>
-            <div class="g-s">Deep cleans &amp; move-in/out</div>
+            <div class="g-t">Engr. Albert Molinyawe</div>
+            <div class="g-s">Founder</div>
           </div>
         </div>
 
