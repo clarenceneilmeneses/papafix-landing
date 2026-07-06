@@ -292,7 +292,6 @@ nav {
   animation-delay: calc(var(--intro-base) + .4s);
 }
 @keyframes heroPhoneIn { to { transform: translateY(0); opacity: 1; } }
-.hero-phone { width: 80%; max-width: 440px; max-height: 78vh; object-fit: contain; border-radius: 24px; filter: drop-shadow(0 40px 80px rgba(242,107,29,.28)) drop-shadow(0 10px 30px rgba(10,15,30,.15)); }
 .hero-bg-shape {
   position: absolute; inset: 0;
   background: radial-gradient(ellipse 80% 80% at 60% 40%, rgba(242,107,29,.12) 0%, transparent 70%);
@@ -313,6 +312,266 @@ nav {
   padding:3px 8px; border-radius:100px;
 }
 .fc-badge-dot { width:5px; height:5px; background:#2d8a4e; border-radius:50%; }
+
+/* ═══════════════════════════════════════════════════════════════
+   PHONE MOCKUPS — pure HTML/CSS reproductions of the real app UI.
+   Tokens come from the official UI guides (papafix-*-ui-guide.pdf):
+   customer app primary #3B8EEF (blue) · technician app #F07C1A
+   (orange) · ink #1a1f2e · success #22c55e. Screens scale via the
+   em-based font-size set on .phone-screen per phone size.
+═══════════════════════════════════════════════════════════════ */
+.phone {
+  --app-blue: #3B8EEF; --app-orange: #F07C1A; --app-green: #22c55e;
+  --app-ink: #1a1f2e; --app-muted: #7c8598; --app-bg: #f1f3f8;
+  position: relative; width: 300px; aspect-ratio: 9 / 19.5;
+  background: #0a0f1e; border-radius: 44px; padding: 10px;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.07),
+              0 30px 60px -14px rgba(10,15,30,.4),
+              0 12px 28px rgba(10,15,30,.16);
+  flex-shrink: 0;
+}
+.phone-screen {
+  position: relative; width: 100%; height: 100%; overflow: hidden;
+  background: var(--app-bg); border-radius: 36px;
+  display: flex; flex-direction: column;
+  font-family: 'DM Sans', sans-serif; font-size: 13px;
+  color: var(--app-ink); text-align: left; line-height: 1.35;
+}
+.phone-notch {
+  position: absolute; top: 9px; left: 50%; transform: translateX(-50%);
+  width: 72px; height: 18px; background: #0a0f1e; border-radius: 11px; z-index: 40;
+}
+.phone-status {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 30;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 20px 0;
+  font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
+  color: var(--app-ink); pointer-events: none;
+}
+.ps-right { display: flex; align-items: center; gap: 5px; }
+.ps-sig { display: flex; align-items: flex-end; gap: 1.5px; }
+.ps-sig i { width: 2.5px; background: currentColor; border-radius: 1px; }
+.ps-sig i:nth-child(1) { height: 3px; } .ps-sig i:nth-child(2) { height: 5px; }
+.ps-sig i:nth-child(3) { height: 7px; } .ps-sig i:nth-child(4) { height: 9px; }
+.ps-batt { width: 17px; height: 8px; border: 1px solid currentColor; border-radius: 2.5px; position: relative; opacity: .9; }
+.ps-batt::before { content: ''; position: absolute; inset: 1px 4px 1px 1px; background: currentColor; border-radius: 1px; }
+.ps-batt::after { content: ''; position: absolute; right: -3px; top: 1.5px; width: 1.5px; height: 3px; background: currentColor; border-radius: 0 1px 1px 0; }
+.phone-home {
+  position: absolute; bottom: 7px; left: 50%; transform: translateX(-50%);
+  width: 90px; height: 4px; border-radius: 2px; background: rgba(26,31,46,.22); z-index: 40;
+}
+
+/* ── customer LIVE TRACKING screen (hero) ──────────────────── */
+.track-map { position: relative; flex: 1; min-height: 0; }
+.track-map svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.track-body { flex-shrink: 0; padding: 0 14px 26px; display: flex; flex-direction: column; }
+.track-card {
+  background: white; border-radius: 14px; padding: 1em 1.05em;
+  margin-top: -2.6em; position: relative; z-index: 5;
+  box-shadow: 0 10px 30px rgba(26,31,46,.14);
+  display: flex; align-items: center; gap: .75em;
+}
+.tc-ava {
+  width: 2.9em; height: 2.9em; border-radius: 50%; flex-shrink: 0;
+  background: #e3edfd; color: var(--app-blue);
+  font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1em;
+  display: flex; align-items: center; justify-content: center;
+}
+.tc-name { font-weight: 700; font-size: .95em; line-height: 1.2; }
+.tc-meta { font-size: .74em; color: var(--app-muted); margin-top: 2px; }
+.tc-meta b { color: #f59e0b; font-weight: 600; }
+.tc-eta { margin-left: auto; text-align: right; flex-shrink: 0; }
+.tc-eta b { display: block; font-family: 'Sora', sans-serif; font-size: 1.25em; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; }
+.tc-eta span { font-size: .68em; color: var(--app-muted); }
+.track-call {
+  margin-top: .9em; width: 100%; border: none; cursor: default; pointer-events: none;
+  background: var(--app-blue); color: white; border-radius: 100px;
+  padding: .85em 0; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: .92em;
+  display: flex; align-items: center; justify-content: center; gap: .55em;
+  box-shadow: 0 8px 20px rgba(59,142,239,.35);
+}
+.track-call svg { width: 1em; height: 1em; }
+.track-ref { margin-top: .8em; text-align: center; font-size: .7em; color: var(--app-muted); }
+
+/* Floating chips around the hero phone reuse .hero-float-card */
+.hero-phone-stage { position: relative; }
+.hero-phone-cap { margin-top: 1.1rem; text-align: center; font-size: .72rem; color: var(--ink-faint); }
+.fc-check {
+  width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+  background: #e9f7ef; color: #22c55e;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.fc-check svg { width: 11px; height: 11px; }
+.fc-mono { font-family: 'DM Mono', monospace; font-weight: 500; font-size: .95rem; color: var(--ink); margin-bottom: 4px; }
+
+/* ── technician INCOMING JOBS screen (banner) ──────────────── */
+.phone-tech { width: 260px; border-radius: 40px; }
+.phone-tech .phone-screen { border-radius: 32px; font-size: 11.5px; }
+.tj-head {
+  display: flex; align-items: center; gap: .55em;
+  padding: 44px 14px 10px;
+  font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.3em; letter-spacing: -.02em;
+}
+.tj-count {
+  min-width: 1.55em; height: 1.55em; padding: 0 .3em; border-radius: 100px;
+  background: var(--app-orange); color: white;
+  font-family: 'DM Sans', sans-serif; font-size: .62em; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.tj-card {
+  background: white; border-radius: 14px; padding: 1em 1.05em;
+  margin: 0 12px .8em; box-shadow: 0 4px 16px rgba(26,31,46,.07);
+}
+.tj-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: .55em; }
+.tj-tag {
+  background: #fdeedd; color: var(--app-orange);
+  font-size: .62em; font-weight: 700; letter-spacing: .07em;
+  padding: .35em .9em; border-radius: 100px;
+}
+.tj-timer { font-family: 'DM Mono', monospace; font-size: .85em; font-weight: 500; color: var(--app-orange); }
+.tj-title { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.05em; margin-bottom: .2em; }
+.tj-line { font-size: .8em; color: var(--app-muted); }
+.tj-quote { font-size: .74em; color: var(--app-muted); font-style: italic; margin-top: .4em; }
+.tj-actions { display: flex; gap: .6em; margin-top: .85em; }
+.tj-btn {
+  flex: 1; text-align: center; border-radius: 100px; padding: .62em 0;
+  font-size: .8em; font-weight: 600;
+}
+.tj-decline { border: 1.5px solid #dde2ec; color: var(--app-muted); }
+.tj-confirm { background: var(--app-orange); color: white; box-shadow: 0 6px 16px rgba(240,124,26,.35); }
+.tj-tabbar {
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 10;
+  background: white; border-top: 1px solid #edf0f5; border-radius: 0 0 30px 30px;
+  display: flex; padding: .6em 0 1.6em;
+}
+.tj-tab {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  font-size: .62em; color: var(--app-muted); position: relative;
+}
+.tj-tab svg { width: 1.7em; height: 1.7em; }
+.tj-tab-active { color: var(--app-orange); font-weight: 600; }
+.tj-tab-badge {
+  position: absolute; top: -3px; right: 26%;
+  min-width: 1.5em; height: 1.5em; border-radius: 100px;
+  background: var(--app-orange); color: white;
+  font-size: .78em; font-style: normal; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ── technician banner layout (3 columns) ──────────────────── */
+.tech-banner {
+  background: linear-gradient(135deg, #0a0f1e 0%, #0f1f50 100%);
+  border-radius: var(--r-xl); padding: 3.5rem 3.5rem 3rem;
+  display: grid; grid-template-columns: 1.1fr .85fr auto;
+  gap: 2.5rem; align-items: center;
+  position: relative; overflow: hidden;
+}
+.tb-pattern { position: absolute; inset: 0; background: repeating-linear-gradient(45deg, rgba(242,107,29,.04) 0, rgba(242,107,29,.04) 1px, transparent 1px, transparent 30px); pointer-events: none; }
+.tb-glow { position: absolute; right: -60px; top: -60px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(242,107,29,.15) 0%, transparent 70%); pointer-events: none; }
+.tb-text, .tb-mid, .tb-phone-col { position: relative; z-index: 1; }
+.tb-badge-row { display: flex; align-items: center; gap: .8rem; margin-bottom: 1rem; }
+.tb-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(242,107,29,.2); border: 1px solid rgba(242,107,29,.3);
+  color: rgba(255,255,255,.8); font-size: .68rem; font-weight: 600;
+  padding: 4px 12px; border-radius: 100px; letter-spacing: .08em; text-transform: uppercase;
+}
+.tb-logo { width: 38px; height: 41px; object-fit: contain; filter: drop-shadow(0 4px 12px rgba(0,0,0,.4)); }
+.tb-perks { list-style: none; display: flex; flex-direction: column; gap: .7rem; margin-bottom: 1.5rem; }
+.tb-perks li { display: flex; align-items: center; gap: 9px; font-size: .82rem; color: rgba(255,255,255,.65); }
+.tb-perks svg { flex-shrink: 0; }
+.tb-phone-col { display: flex; flex-direction: column; align-items: center; }
+.phone-tech { transform: rotate(-4deg); transition: transform .5s cubic-bezier(.16,1,.3,1); }
+.tb-phone-col:hover .phone-tech { transform: rotate(0deg); }
+.tb-phone-cap { margin-top: 1.4rem; text-align: center; font-size: .72rem; color: rgba(255,255,255,.45); max-width: 24ch; line-height: 1.5; }
+
+/* ── "A LOOK INSIDE THE APP" — three mini customer screens ─── */
+#app { padding: 110px 0 100px; background: var(--off-white); }
+.app-header { text-align: center; }
+.app-header .section-sub { margin: 1rem auto 0; }
+.app-row { display: flex; gap: 2.75rem; margin-top: 3.5rem; align-items: flex-start; overflow-x: auto; scrollbar-width: none; padding: .5rem 5vw 1rem; }
+.app-row::-webkit-scrollbar { display: none; }
+/* auto margins center the row when it fits and keep the first shot
+   reachable when it overflows (justify-content:center would clip it) */
+.app-shot { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+.app-shot:first-child { margin-left: auto; }
+.app-shot:last-child { margin-right: auto; }
+.app-cap { margin-top: 1.1rem; font-size: .78rem; line-height: 1.55; color: var(--ink-light); text-align: center; max-width: 26ch; }
+.phone-mini { width: 230px; border-radius: 36px; padding: 8px; }
+.phone-mini .phone-screen { border-radius: 29px; font-size: 10.5px; }
+.phone-mini .phone-notch { width: 58px; height: 15px; top: 8px; }
+.phone-mini .phone-status { padding: 9px 16px 0; font-size: 8.5px; }
+.phone-mini .phone-home { width: 74px; bottom: 6px; }
+
+.app-scr { padding: 40px 13px 24px; display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.scr-h { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.45em; letter-spacing: -.02em; line-height: 1.15; }
+.scr-sub { font-size: .82em; color: var(--app-muted); margin: .35em 0 1.2em; }
+.scr-label { font-family: 'DM Mono', monospace; font-size: .62em; font-weight: 500; letter-spacing: .1em; color: var(--app-muted); margin: 1.2em 0 .5em; }
+.scr-btn {
+  margin-top: auto; text-align: center; background: var(--app-blue); color: white;
+  border-radius: 100px; padding: .9em 0; font-weight: 600; font-size: .92em;
+  box-shadow: 0 8px 20px rgba(59,142,239,.35);
+}
+/* booking category list */
+.bk-item {
+  display: flex; align-items: center; gap: .8em;
+  background: white; border-radius: 14px; padding: 1em .95em; margin-bottom: .7em;
+  box-shadow: 0 3px 12px rgba(26,31,46,.06);
+}
+.bk-ic {
+  width: 2.7em; height: 2.7em; border-radius: 10px; flex-shrink: 0;
+  background: #e3edfd; color: var(--app-blue);
+  display: flex; align-items: center; justify-content: center;
+}
+.bk-ic svg { width: 1.3em; height: 1.3em; }
+.bk-item b { display: block; font-size: .92em; font-weight: 700; }
+.bk-item i { display: block; font-style: normal; font-size: .72em; color: var(--app-muted); margin-top: 1px; }
+.bk-chev { margin-left: auto; color: #c3cad8; font-size: 1.1em; }
+/* confirm booking */
+.cf-card { background: white; border-radius: 14px; padding: .9em .95em; box-shadow: 0 3px 12px rgba(26,31,46,.06); }
+.cf-tech { display: flex; align-items: center; gap: .7em; }
+.cf-row { display: flex; justify-content: space-between; gap: 1em; padding: .4em 0; font-size: .8em; }
+.cf-row + .cf-row { border-top: 1px solid #f0f2f7; }
+.cf-row span { font-family: 'DM Mono', monospace; font-size: .78em; letter-spacing: .08em; color: var(--app-muted); padding-top: .2em; }
+.cf-row b { font-weight: 600; text-align: right; }
+.cf-note { display: flex; gap: .5em; align-items: flex-start; font-size: .72em; color: var(--app-muted); margin-top: 1em; }
+.cf-note svg { width: 1.2em; height: 1.2em; flex-shrink: 0; color: var(--app-blue); }
+/* payment */
+.pay-check {
+  width: 3.4em; height: 3.4em; border-radius: 50%; margin-bottom: .8em;
+  background: #e9f7ef; color: var(--app-green);
+  display: flex; align-items: center; justify-content: center;
+}
+.pay-check svg { width: 1.6em; height: 1.6em; }
+.pay-row { display: flex; justify-content: space-between; align-items: baseline; padding: .5em 0; font-size: .82em; }
+.pay-row + .pay-row { border-top: 1px solid #f0f2f7; }
+.pay-row span { color: var(--app-muted); }
+.pay-row b { font-family: 'DM Mono', monospace; font-weight: 500; }
+.pay-total { border-top: 1.5px solid #e4e8f0 !important; }
+.pay-total span { color: var(--app-ink); font-weight: 700; }
+.pay-total b { font-weight: 500; font-size: 1.1em; }
+.pay-methods { text-align: center; font-size: .7em; color: var(--app-muted); margin-top: .8em; }
+
+/* ── phone mockup responsive + reduced motion ──────────────── */
+@media (max-height: 780px) and (min-width: 901px) {
+  .phone-hero { width: 260px; }
+  .phone-hero .phone-screen { font-size: 11.5px; }
+}
+@media (max-width: 1080px) {
+  .tech-banner { grid-template-columns: 1fr 1fr; }
+  .tb-phone-col { grid-column: 1 / -1; margin-top: 1rem; }
+}
+@media (max-width: 900px) {
+  .phone-hero { width: 250px; }
+  .phone-hero .phone-screen { font-size: 11px; }
+  .tech-banner { grid-template-columns: 1fr; padding: 2.5rem 1.75rem 2.5rem; gap: 2rem; }
+  .app-row { gap: 1.75rem; scroll-snap-type: x mandatory; }
+  .app-shot { scroll-snap-align: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-float-card { animation: none !important; }
+  .phone-tech { transform: none !important; transition: none !important; }
+}
 
 /* ─── COMMON ─────────────────────────────────────────────────── */
 section { position: relative; }
@@ -1185,7 +1444,81 @@ footer {
   <div class="hero-right">
     <div class="hero-bg-shape"></div>
     <div class="hero-phone-wrap">
-      <img src="papafix-logo.png" class="hero-phone" alt="PapaFix — all your home repair needs, covered"/>
+      <div class="hero-phone-stage">
+
+        <!-- Customer app · Live Tracking screen (per papafix-customer-ui-guide.pdf) -->
+        <div class="phone phone-hero" role="img" aria-label="Preview of the PapaFix customer app live-tracking screen: technician Mark Reyes, rated 4.8, is 8 minutes away on a live map, with a Call Technician button below.">
+          <div class="phone-screen" aria-hidden="true">
+            <div class="phone-notch"></div>
+            <div class="phone-status"><span>9:41</span><span class="ps-right">5G<span class="ps-sig"><i></i><i></i><i></i><i></i></span><span class="ps-batt"></span></span></div>
+
+            <div class="track-map">
+              <svg class="pf-anim" viewBox="0 0 280 400" preserveAspectRatio="xMidYMid slice">
+                <rect width="280" height="400" fill="#ebe7df"/>
+                <!-- street grid -->
+                <g stroke="#f7f4ed" stroke-width="11" stroke-linecap="round">
+                  <path d="M-10 90 H290"/>
+                  <path d="M-10 220 H290"/>
+                  <path d="M62 -10 V410"/>
+                  <path d="M204 -10 V410"/>
+                  <path d="M-10 372 L290 292"/>
+                </g>
+                <g stroke="#f2eee5" stroke-width="4.5" stroke-linecap="round">
+                  <path d="M-10 150 H290"/>
+                  <path d="M132 -10 V410"/>
+                  <path d="M246 -10 V410"/>
+                </g>
+                <!-- blue route: home (bottom-left) to technician -->
+                <path id="pfRoute" d="M42 362 C 62 312, 152 322, 172 268 S 122 178, 162 132 S 230 96, 238 66" fill="none" stroke="#3B8EEF" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- origin (customer home) -->
+                <circle cx="42" cy="362" r="8" fill="#3B8EEF" opacity=".22"/>
+                <circle cx="42" cy="362" r="5.5" fill="#3B8EEF"/>
+                <circle cx="42" cy="362" r="2.2" fill="white"/>
+                <!-- technician marker, drifting slowly along the route -->
+                <g>
+                  <circle r="14" fill="white" stroke="#3B8EEF" stroke-width="2.5"/>
+                  <text y="4.5" text-anchor="middle" font-family="Sora, 'DM Sans', sans-serif" font-size="12" font-weight="700" fill="#3B8EEF">M</text>
+                  <animateMotion dur="18s" repeatCount="indefinite" keyPoints="1;0.55;1" keyTimes="0;0.5;1" calcMode="linear" rotate="0">
+                    <mpath href="#pfRoute"/>
+                  </animateMotion>
+                </g>
+              </svg>
+            </div>
+
+            <div class="track-body">
+              <div class="track-card">
+                <div class="tc-ava">M</div>
+                <div>
+                  <div class="tc-name">Mark Reyes</div>
+                  <div class="tc-meta"><b>★ 4.8</b> · Verified technician</div>
+                </div>
+                <div class="tc-eta"><b>8 min</b><span>away</span></div>
+              </div>
+              <button class="track-call" type="button" tabindex="-1">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                Call Technician
+              </button>
+              <div class="track-ref">Booking #A1B2 · Air Conditioner</div>
+            </div>
+            <div class="phone-home"></div>
+          </div>
+        </div>
+
+        <!-- floating UI chips (hidden <600px via .hero-float-card) -->
+        <div class="hero-float-card hero-float-1" aria-hidden="true">
+          <div class="fc-title" style="display:flex;align-items:center;gap:7px;">
+            <span class="fc-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            QR Verified
+          </div>
+          <div class="fc-sub">Identity confirmed</div>
+        </div>
+        <div class="hero-float-card hero-float-2" aria-hidden="true">
+          <div class="fc-mono">₱850.00</div>
+          <div class="fc-sub">Upfront estimate — no surprises</div>
+        </div>
+
+      </div>
+      <p class="hero-phone-cap">Actual app design — launching soon on Google Play</p>
     </div>
   </div>
 </section>
@@ -2570,6 +2903,30 @@ if (overlay) {
   window.addEventListener('resize', layout, { passive: true });
   layout();
   requestAnimationFrame(tick);
+}());
+
+/* ═══ APP MOCKUP ANIMATIONS ═════════════════════════════════════
+   SMIL map marker (hero phone) + technician job countdowns.
+   Both freeze under prefers-reduced-motion; the countdown only
+   swaps text inside a fixed-width DM Mono span — no layout thrash. */
+(function () {
+  var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (REDUCED) {
+    document.querySelectorAll('svg.pf-anim').forEach(function (s) {
+      if (s.pauseAnimations) s.pauseAnimations();
+    });
+    return;
+  }
+  var timers = document.querySelectorAll('.job-timer[data-from]');
+  if (!timers.length) return;
+  var tick = 0;
+  setInterval(function () {
+    tick = (tick + 1) % 5;             // e.g. 4:32 → 4:28, then loop
+    timers.forEach(function (el) {
+      var s = parseInt(el.getAttribute('data-from'), 10) - tick;
+      el.textContent = Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2);
+    });
+  }, 1000);
 }());
 
 /* ═══ WAITLIST FORM ═════════════════════════════════════════════
