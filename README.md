@@ -54,21 +54,26 @@ A **single-page static marketing site**. There is no build step, framework, or b
 
 ```
 index.html                    # The entire landing page (markup + inline <style> + inline <script>)
-PapaFix_Logo_FINAL_2048.png   # Source master — official customer/brand logo (orange)
-papafix-technician logo.png   # Source master — technician app logo (blue)
-papafix-logo-1024.png         # Brand logo, og:image size
-papafix-logo-480.webp         # Brand logo for in-page use (intro, nav, footer)
-papafix-logo-180.png          # apple-touch-icon
-papafix-logo-32.png           # favicon
-papafix-tech-logo-360.webp    # Technician logo (banner badge + technician modal)
-papafix-*-ui-guide.pdf        # Official app UI guides — source of truth for the
-                              #   CSS phone mockups (colors, copy, screen layouts)
-*.png / *.jpg                 # Service / lifestyle / city photos
-papafix-logo.png              # Old brand logo — no longer referenced
-papafix-icon-1024.png         # Old icon — no longer referenced
-hero.png                      # Legacy hero mockup — no longer referenced (safe to delete)
 README.md                     # This file
+assets/
+  brand/
+    app-logo.png              # Source master — official customer/brand logo (2048×2048)
+    tech-logo.png             # Source master — technician app logo (2048×2048)
+    app-logo-1024.png         # og:image size (derived from master)
+    app-logo-480.png          # In-page use: intro, nav, footer
+    app-logo-180.png          # apple-touch-icon
+    app-logo-32.png           # favicon
+    tech-logo-360.png         # Technician logo (banner badge + technician modal)
+  img/
+    services/                 # 8-category card photos (+ roofing.png, currently unused)
+    cities/                   # Coverage photos: tanauan, malvar, santotomas
+    founders/                 # Founder portrait photos (founder-*.png)
+docs/
+  papafix-*-ui-guide.pdf      # Official app UI guides — source of truth for the
+                              #   CSS phone mockups (colors, copy, screen layouts)
 ```
+
+Sized logo derivatives are generated from the masters (old pre-rebrand logo files were deleted in the repo but remain in git history). Regenerate derivatives from the masters whenever the logo changes.
 
 ### Sections of the page (in order)
 
@@ -77,7 +82,7 @@ Intro loader → sticky nav → hero (customer-app phone mockup) → trust bar �
 ### Notable implementation details
 
 - **Custom scroll animations** (no library): hero word reveal, image zoom-in, a sticky horizontal founders gallery, and section build-ins. (Services used to be a scroll-jacked horizontal strip and the story band used to be a pinned 200vh section; both were flattened to keep total scroll length sane — don't reintroduce them.)
-- **Founders gallery** expects `founder-albert.png`, `founder-rai.png`, `founder-clarence.png`, `founder-hanna.png`, `founder-francis.png` (portrait photos, ~800px wide). Until a file exists, its card shows a monogram placeholder. Albert Molinyawe (Founder) comes first; the other four are co-founders.
+- **Founders gallery** expects `assets/img/founders/founder-albert.png`, `founder-rai.png`, `founder-clarence.png`, `founder-hanna.png`, `founder-francis.png` (portrait photos, ~800px wide). Until a file exists, its card shows a monogram placeholder. Albert Molinyawe (Founder) comes first; the other four are co-founders.
 - **Intro overlay** plays once on load, then sweeps away.
 - **App mockups are pure HTML/CSS** — a reusable `.phone` frame component (Android-style: bezel, punch-hole camera, status bar, gesture bar — the app ships on Google Play only) renders real screens from the official UI guides: live tracking in the hero, booking/confirm/payment in "A Look Inside the App", and Incoming Jobs in the technician banner. Customer screens use the app's blue `#3B8EEF`, technician screens the orange `#F07C1A` (these are *app* tokens, deliberately not the site brand variables). The hero map marker (SMIL) and job countdowns pause under `prefers-reduced-motion`. No screenshots or images are used.
 - Fully responsive; mobile collapses the two-column layouts, makes the app-screens row swipeable (scroll-snap), and hides some desktop-only flourishes.
@@ -88,7 +93,7 @@ Intro loader → sticky nav → hero (customer-app phone mockup) → trust bar �
 - **Ink / text:** `#0a0f1e`. **Background:** `#f7f9fc`.
 - **Fonts:** Sora (headings/wordmark), DM Sans (body), DM Mono (labels) — loaded from Google Fonts.
 - **Google Play button** uses Google's official brand colors on hover — leave those as-is.
-- **Service cards** each carry their own accent color (a deliberate rainbow) — that variety is intentional and is *not* the brand accent.
+- **Service cards** share one neutral dark surface with the brand orange as the only accent (an earlier per-card rainbow treatment was deliberately removed — don't reintroduce it).
 
 > When changing brand color, update the `:root` variables and the shared shadow token `rgba(242,107,29,…)` together so shadows/borders stay in sync.
 
