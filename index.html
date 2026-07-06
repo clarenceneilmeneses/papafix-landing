@@ -2395,37 +2395,72 @@ footer {
 <!-- ─── BECOME A TECHNICIAN BANNER ─────────────────────────────── -->
 <section style="padding:0;background:var(--off-white);">
   <div class="container">
-    <div class="reveal" style="background:linear-gradient(135deg,#0a0f1e 0%,#0f1f50 100%);border-radius:var(--r-xl);padding:3.5rem 4rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;overflow:hidden;position:relative;margin-bottom:0;">
+    <div class="reveal tech-banner">
       <!-- Background pattern -->
-      <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(242,107,29,.04) 0,rgba(242,107,29,.04) 1px,transparent 1px,transparent 30px);pointer-events:none;"></div>
-      <div style="position:absolute;right:-60px;top:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(242,107,29,.15) 0%,transparent 70%);pointer-events:none;"></div>
-      <div style="position:relative;z-index:1;max-width:480px;">
-        <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(242,107,29,.2);border:1px solid rgba(242,107,29,.3);color:rgba(255,255,255,.8);font-size:.68rem;font-weight:600;padding:4px 12px;border-radius:100px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1rem;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-          For Technicians
+      <div class="tb-pattern"></div>
+      <div class="tb-glow"></div>
+
+      <div class="tb-text">
+        <div class="tb-badge-row">
+          <div class="tb-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            For Technicians
+          </div>
+          <img src="papafix-tech-logo-360.webp" class="tb-logo" width="38" height="41" alt="PapaFix Technician app logo" loading="lazy"/>
         </div>
         <h3 style="font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(1.6rem,3vw,2.4rem);color:white;letter-spacing:-.04em;line-height:1.1;margin-bottom:.75rem;">Earn more.<br/>Work on your terms.</h3>
         <p style="font-size:.92rem;color:rgba(255,255,255,.55);line-height:1.7;font-weight:300;">Are you a skilled electrician, plumber, or repair technician in Batangas? Join PapaFix and get a steady stream of jobs — no middleman, flexible hours, fair pay.</p>
       </div>
-      <div style="position:relative;z-index:1;display:flex;flex-direction:column;gap:.75rem;align-items:flex-start;">
-        <div style="display:flex;gap:.65rem;flex-wrap:wrap;">
-          <div style="display:flex;align-items:center;gap:7px;font-size:.78rem;color:rgba(255,255,255,.65);">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
-            Flexible schedule
-          </div>
-          <div style="display:flex;align-items:center;gap:7px;font-size:.78rem;color:rgba(255,255,255,.65);">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
-            Fast payouts
-          </div>
-          <div style="display:flex;align-items:center;gap:7px;font-size:.78rem;color:rgba(255,255,255,.65);">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
-            Local jobs only
-          </div>
-        </div>
+
+      <div class="tb-mid">
+        <ul class="tb-perks">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>Flexible schedule</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>Fast payouts</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>Local jobs only</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>See the job before you accept</li>
+        </ul>
         <a href="#" onclick="event.preventDefault();openTechModal()" style="display:inline-flex;align-items:center;gap:8px;background:var(--brand);color:white;padding:.75rem 1.5rem;border-radius:var(--r-md);font-family:'Sora',sans-serif;font-weight:600;font-size:.88rem;text-decoration:none;transition:background .2s,transform .2s;white-space:nowrap;" onmouseover="this.style.background='var(--brand-mid)';this.style.transform='translateY(-2px)'" onmouseout="this.style.background='var(--brand)';this.style.transform=''">
           Apply as a Technician
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
+      </div>
+
+      <!-- Technician app · Incoming Jobs screen (per papafix-technician-ui-guide.pdf) -->
+      <div class="tb-phone-col">
+        <div class="phone phone-tech" role="img" aria-label="Preview of the PapaFix Technician app incoming-jobs screen: two job requests with countdown timers and Confirm or Decline buttons, plus a bottom tab bar.">
+          <div class="phone-screen" aria-hidden="true">
+            <div class="phone-notch"></div>
+            <div class="phone-status"><span>9:41</span><span class="ps-right">5G<span class="ps-sig"><i></i><i></i><i></i><i></i></span><span class="ps-batt"></span></span></div>
+
+            <div class="tj-head">Incoming Jobs <span class="tj-count">2</span></div>
+
+            <div class="tj-card">
+              <div class="tj-row"><span class="tj-tag">APPLIANCES</span><span class="tj-timer job-timer" data-from="272">4:32</span></div>
+              <div class="tj-title">Air Conditioner</div>
+              <div class="tj-line">Juan Dela Cruz</div>
+              <div class="tj-line">123 Mabini St, Santo Tomas</div>
+              <div class="tj-quote">"AC not cooling, makes loud noise…"</div>
+              <div class="tj-actions"><span class="tj-btn tj-decline">Decline</span><span class="tj-btn tj-confirm">Confirm</span></div>
+            </div>
+
+            <!-- second card intentionally runs behind the tab bar (cropped) -->
+            <div class="tj-card">
+              <div class="tj-row"><span class="tj-tag">PLUMBING</span><span class="tj-timer job-timer" data-from="108">1:48</span></div>
+              <div class="tj-title">Leaking Faucet</div>
+              <div class="tj-line">Ana Cruz</div>
+              <div class="tj-actions"><span class="tj-btn tj-decline">Decline</span><span class="tj-btn tj-confirm">Confirm</span></div>
+            </div>
+
+            <div class="tj-tabbar">
+              <span class="tj-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Home</span>
+              <span class="tj-tab tj-tab-active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>Jobs<i class="tj-tab-badge">2</i></span>
+              <span class="tj-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Schedule</span>
+              <span class="tj-tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile</span>
+            </div>
+            <div class="phone-home"></div>
+          </div>
+        </div>
+        <p class="tb-phone-cap">The PapaFix Technician app — real jobs, your schedule.</p>
       </div>
     </div>
   </div>
@@ -2978,6 +3013,8 @@ if (overlay) {
     <button class="tech-modal-close" onclick="closeTechModal()" aria-label="Close">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
+
+    <img src="papafix-tech-logo-360.webp" width="56" height="60" alt="PapaFix Technician app logo" style="display:block;width:56px;height:60px;object-fit:contain;margin-bottom:.9rem;" loading="lazy"/>
 
     <div class="tech-modal-badge">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
