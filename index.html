@@ -2923,11 +2923,17 @@ if (overlay) {
   if (!form || !msg) return;
 
   var ENDPOINT = 'https://formsubmit.co/ajax/clarenceneilpamplona@gmail.com';
+  var TIMEOUT_MS = 15000;
 
   function show(text, ok) {
     msg.style.color = ok ? 'var(--brand)' : 'var(--brand-deep)';
     msg.textContent = text;
     msg.style.display = 'block';
+  }
+
+  function reset(btn) {
+    btn.disabled = false;
+    btn.textContent = 'Notify Me';
   }
 
   form.addEventListener('submit', function (e) {
@@ -2943,8 +2949,16 @@ if (overlay) {
     btn.textContent = 'Joining…';
     msg.style.display = 'none';
 
+    // FormSubmit has been observed hanging indefinitely (it never closes the
+    // connection) rather than returning an error. Without this abort the button
+    // sticks on "Joining…" forever and the visitor has no idea what happened.
+    var ctrl    = new AbortController();
+    var timedOut = false;
+    var timer   = setTimeout(function () { timedOut = true; ctrl.abort(); }, TIMEOUT_MS);
+
     fetch(ENDPOINT, {
       method: 'POST',
+      signal: ctrl.signal,
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({
         email: email,
@@ -2954,16 +2968,21 @@ if (overlay) {
         _honey: form.querySelector('input[name="_honey"]').value
       })
     }).then(function (res) {
+      // FormSubmit sometimes replies with two concatenated JSON objects, which
+      // is unparseable — treat any parse failure as a rejection, not a success.
       return res.json().catch(function () { return {}; });
     }).then(function (data) {
       // `success` comes back as either true or the string "true".
       if (String(data.success) !== 'true') throw new Error(data.message || 'rejected');
+      clearTimeout(timer);
       form.style.display = 'none';
       show("✓ You're on the list! We'll email you the moment PapaFix launches in your city.", true);
     }).catch(function () {
-      btn.disabled = false;
-      btn.textContent = 'Notify Me';
-      show('Something went wrong — please try again, or email us at clarenceneilpamplona@gmail.com.', false);
+      clearTimeout(timer);
+      reset(btn);
+      show(timedOut
+        ? 'That took too long — our signup service is not responding. Please email us at clarenceneilpamplona@gmail.com and we\'ll add you.'
+        : 'Something went wrong — please try again, or email us at clarenceneilpamplona@gmail.com.', false);
     });
   });
 }());
