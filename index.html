@@ -1,20 +1,95 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-PH">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>PapaFix — Home Repairs, Done Right</title>
 <meta name="description" content="PapaFix is Batangas' first on-demand home repair app — launching soon in Tanauan, Malvar, and Santo Tomas. Verified electricians, plumbers, aircon technicians and more, with live tracking and upfront pricing. Join the waitlist." />
+<!-- Canonical host is papafixph.com. The Vercel + GitHub Pages deploys are
+     mirrors; this tag is what stops Google indexing them as duplicates. -->
+<link rel="canonical" href="https://papafixph.com/" />
+<meta name="robots" content="index, follow, max-image-preview:large" />
 <meta property="og:title" content="PapaFix — Home Repairs, Done Right" />
 <meta property="og:description" content="On-demand home repair, launching soon in Batangas. Join the waitlist to be first in line when PapaFix arrives in Tanauan, Malvar, and Santo Tomas." />
 <meta property="og:type" content="website" />
-<!-- Primary deployment is Vercel (GitHub Pages mirror also live) — update both if you move to a custom domain -->
-<meta property="og:url" content="https://papafix-landing.vercel.app/" />
-<meta property="og:image" content="https://papafix-landing.vercel.app/assets/brand/app-logo-1024.png" />
+<meta property="og:url" content="https://papafixph.com/" />
+<meta property="og:image" content="https://papafixph.com/assets/brand/app-logo-1024.png" />
+<meta property="og:image:width" content="1024" />
+<meta property="og:image:height" content="1024" />
+<meta property="og:image:alt" content="PapaFix logo" />
+<meta property="og:site_name" content="PapaFix" />
+<meta property="og:locale" content="en_PH" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="PapaFix — Home Repairs, Done Right" />
 <meta name="twitter:description" content="On-demand home repair, launching soon in Batangas. Join the waitlist to be first in line." />
+<meta name="twitter:image" content="https://papafixph.com/assets/brand/app-logo-1024.png" />
+<meta name="geo.region" content="PH-BTG" />
+<meta name="geo.placename" content="Tanauan, Batangas" />
 <meta name="theme-color" content="#f26b1d" />
+
+<!-- Structured data. Deliberately no aggregateRating / reviewCount and no
+     LocalBusiness street address — PapaFix is pre-launch, has no real ratings
+     yet, and the office address isn't public. Adding either would be fabricated
+     markup and is exactly what earns a Google structured-data penalty. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://papafixph.com/#organization",
+      "name": "PapaFix",
+      "url": "https://papafixph.com/",
+      "email": "clarenceneilpamplona@gmail.com",
+      "description": "Batangas' first on-demand home repair app. Verified local technicians for electrical, plumbing, aircon, appliance, carpentry, painting and cleaning work — with live tracking and upfront pricing.",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://papafixph.com/assets/brand/app-logo-1024.png",
+        "width": 1024,
+        "height": 1024
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Tanauan",
+        "addressRegion": "Batangas",
+        "addressCountry": "PH"
+      },
+      "areaServed": [
+        { "@type": "City", "name": "Tanauan", "containedInPlace": { "@type": "AdministrativeArea", "name": "Batangas" } },
+        { "@type": "City", "name": "Malvar", "containedInPlace": { "@type": "AdministrativeArea", "name": "Batangas" } },
+        { "@type": "City", "name": "Santo Tomas", "containedInPlace": { "@type": "AdministrativeArea", "name": "Batangas" } }
+      ],
+      "knowsAbout": [
+        "Electrical repair", "Plumbing", "Air conditioning service", "Appliance repair",
+        "Carpentry", "Painting", "Home cleaning", "Roofing"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://papafixph.com/#website",
+      "url": "https://papafixph.com/",
+      "name": "PapaFix",
+      "inLanguage": "en-PH",
+      "publisher": { "@id": "https://papafixph.com/#organization" }
+    },
+    {
+      "@type": "MobileApplication",
+      "@id": "https://papafixph.com/#app",
+      "name": "PapaFix",
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "Android 8.0 and up",
+      "publisher": { "@id": "https://papafixph.com/#organization" },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "PHP",
+        "availability": "https://schema.org/PreOrder"
+      }
+    }
+  ]
+}
+</script>
+
 <link rel="icon" type="image/png" sizes="32x32" href="assets/brand/app-logo-32.png" />
 <link rel="apple-touch-icon" href="assets/brand/app-logo-180.png" />
 <link rel="preload" as="image" href="assets/brand/app-logo-480.png" />
@@ -1543,7 +1618,11 @@ footer {
     <div class="reveal" id="waitlist" style="margin-top:2rem;text-align:center;scroll-margin-top:110px;">
       <p style="font-size:.85rem;color:var(--ink-faint);margin-bottom:.75rem;">Be first in line — get notified the moment PapaFix launches near you.</p>
       <form id="waitlistForm" style="display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;">
-        <input type="email" name="email" placeholder="Your email address" required style="padding:.65rem 1rem;border-radius:var(--r-sm);border:1.5px solid var(--border);font-family:'DM Sans',sans-serif;font-size:.9rem;width:260px;outline:none;transition:border-color .2s;" onfocus="this.style.borderColor='var(--brand)'" onblur="this.style.borderColor='var(--border)'"/>
+        <label for="waitlistEmail" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;">Your email address</label>
+        <input id="waitlistEmail" type="email" name="email" placeholder="Your email address" required autocomplete="email" inputmode="email" style="padding:.65rem 1rem;border-radius:var(--r-sm);border:1.5px solid var(--border);font-family:'DM Sans',sans-serif;font-size:.9rem;width:260px;outline:none;transition:border-color .2s;" onfocus="this.style.borderColor='var(--brand)'" onblur="this.style.borderColor='var(--border)'"/>
+        <!-- Spam honeypot: FormSubmit drops any submission where _honey is filled.
+             Hidden from humans, irresistible to bots. -->
+        <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;"/>
         <button type="submit" style="padding:.65rem 1.25rem;background:var(--brand);color:white;border:none;border-radius:var(--r-sm);font-family:'Sora',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer;transition:background .2s,transform .2s;" onmouseover="this.style.background='var(--brand-mid)'" onmouseout="this.style.background='var(--brand)'">Notify Me</button>
       </form>
       <p id="waitlistMsg" style="display:none;margin-top:.75rem;font-size:.85rem;font-weight:600;"></p>
@@ -2497,22 +2576,10 @@ footer {
 
   <div class="footer-links-grid">
     <div>
-      <div class="footer-col-title">Follow Us</div>
-      <div class="footer-social">
-        <a href="#" class="footer-social-btn" aria-label="X (Twitter)">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-        </a>
-        <a href="#" class="footer-social-btn" aria-label="Facebook">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-        </a>
-        <a href="#" class="footer-social-btn" aria-label="Instagram">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-        </a>
-        <a href="#" class="footer-social-btn" aria-label="TikTok">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.72a8.18 8.18 0 0 0 4.78 1.52V6.79a4.85 4.85 0 0 1-1.01-.1z"/></svg>
-        </a>
-      </div>
-      <div style="margin-top:2rem;">
+      <!-- Social icons removed until real accounts exist — dead "#" icons read
+           as a broken site. Re-add with real URLs (target=_blank rel=noopener)
+           when the pages are live; .footer-social-btn styles are still in place. -->
+      <div>
         <div class="footer-col-title">Get the App</div>
         <a href="#waitlist" class="btn-google-play" style="margin-top:.5rem;display:inline-flex;">
           <svg viewBox="0 0 24 24" fill="currentColor" style="width:20px;height:20px;flex-shrink:0;"><path d="M3.18 23.76A2 2 0 0 1 2 22V2a2 2 0 0 1 1.18-1.76l11.33 11.76L3.18 23.76zM22.46 12l-3.03 1.71-3.39-3.51 3.39-3.51 3.04 1.71A2 2 0 0 1 22.46 12zM3.69.54L17.2 7.72 14.01 11 3.69.54zM3.69 23.46l10.32-10.46 3.19 3.28L3.69 23.46z"/></svg>
@@ -2524,36 +2591,32 @@ footer {
     <div>
       <div class="footer-col-title">Services</div>
       <ul class="footer-link-list">
-        <li><a href="#">Electrical</a></li>
-        <li><a href="#">Plumbing</a></li>
-        <li><a href="#">Aircon</a></li>
-        <li><a href="#">Appliance</a></li>
-        <li><a href="#">Carpentry</a></li>
-        <li><a href="#">Painting</a></li>
-        <li><a href="#">Cleaning</a></li>
+        <li><a href="#services">Electrical</a></li>
+        <li><a href="#services">Plumbing</a></li>
+        <li><a href="#services">Aircon</a></li>
+        <li><a href="#services">Appliance</a></li>
+        <li><a href="#services">Carpentry</a></li>
+        <li><a href="#services">Painting</a></li>
+        <li><a href="#services">Cleaning</a></li>
       </ul>
     </div>
 
     <div>
       <div class="footer-col-title">Company</div>
       <ul class="footer-link-list">
-        <li><a href="#">About Us</a></li>
-        <li><a href="#">How It Works</a></li>
-        <li><a href="#">Become a Technician</a></li>
-        <li><a href="#">Partner with Us</a></li>
-        <li><a href="#">Careers</a></li>
-        <li><a href="#">Press</a></li>
+        <li><a href="#story">About Us</a></li>
+        <li><a href="#how">How It Works</a></li>
+        <li><a href="#" onclick="event.preventDefault();openTechModal()">Become a Technician</a></li>
+        <li><a href="mailto:clarenceneilpamplona@gmail.com?subject=PapaFix%20partnership%20enquiry">Partner with Us</a></li>
       </ul>
     </div>
 
     <div>
       <div class="footer-col-title">Support</div>
       <ul class="footer-link-list">
-        <li><a href="#">Help Center</a></li>
-        <li><a href="#">Contact Us</a></li>
-        <li><a href="#">Privacy Policy</a></li>
-        <li><a href="#">Terms of Service</a></li>
-        <li><a href="#">Safety Guidelines</a></li>
+        <li><a href="mailto:clarenceneilpamplona@gmail.com?subject=PapaFix%20support">Contact Us</a></li>
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="terms.html">Terms of Service</a></li>
       </ul>
     </div>
   </div>
@@ -2849,42 +2912,58 @@ if (overlay) {
 /* ═══ WAITLIST FORM ═════════════════════════════════════════════
    Sends signups to the team inbox via FormSubmit's AJAX endpoint.
    NOTE: the first-ever submission triggers a one-time activation
-   email from formsubmit.co — click the link inside it once.      */
+   email from formsubmit.co — click the link inside it once, or every
+   later signup is accepted by the API and then quietly dropped.
+   FormSubmit answers HTTP 200 even when it is refusing to deliver
+   (activation pending, honeypot tripped), so success is read from the
+   JSON body's `success` field, not from res.ok alone. */
 (function () {
   var form = document.getElementById('waitlistForm');
   var msg  = document.getElementById('waitlistMsg');
   if (!form || !msg) return;
 
+  var ENDPOINT = 'https://formsubmit.co/ajax/clarenceneilpamplona@gmail.com';
+
+  function show(text, ok) {
+    msg.style.color = ok ? 'var(--brand)' : 'var(--brand-deep)';
+    msg.textContent = text;
+    msg.style.display = 'block';
+  }
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     var btn   = form.querySelector('button[type="submit"]');
-    var email = form.querySelector('input[name="email"]').value.trim();
-    if (!email) return;
+    var input = form.querySelector('input[name="email"]');
+    var email = input.value.trim();
+
+    // Let the browser's own validation handle the empty/malformed cases.
+    if (!email || !input.checkValidity()) { form.reportValidity(); return; }
+
     btn.disabled = true;
     btn.textContent = 'Joining…';
     msg.style.display = 'none';
 
-    fetch('https://formsubmit.co/ajax/clarenceneilpamplona@gmail.com', {
+    fetch(ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({
         email: email,
         _subject: 'New PapaFix waitlist signup',
         _template: 'table',
-        _captcha: 'false'
+        _captcha: 'false',
+        _honey: form.querySelector('input[name="_honey"]').value
       })
     }).then(function (res) {
-      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json().catch(function () { return {}; });
+    }).then(function (data) {
+      // `success` comes back as either true or the string "true".
+      if (String(data.success) !== 'true') throw new Error(data.message || 'rejected');
       form.style.display = 'none';
-      msg.style.color = 'var(--brand)';
-      msg.textContent = "✓ You're on the list! We'll email you the moment PapaFix launches in your city.";
-      msg.style.display = 'block';
+      show("✓ You're on the list! We'll email you the moment PapaFix launches in your city.", true);
     }).catch(function () {
       btn.disabled = false;
       btn.textContent = 'Notify Me';
-      msg.style.color = 'var(--brand-deep)';
-      msg.textContent = 'Something went wrong — please try again in a moment.';
-      msg.style.display = 'block';
+      show('Something went wrong — please try again, or email us at clarenceneilpamplona@gmail.com.', false);
     });
   });
 }());

@@ -54,8 +54,13 @@ A **single-page static marketing site**. There is no build step, framework, or b
 
 ```
 index.html                    # The entire landing page (markup + inline <style> + inline <script>)
+privacy.html                  # Privacy policy — STARTER DRAFT, needs legal review before launch
+terms.html                    # Terms of service — STARTER DRAFT, needs legal review before launch
+robots.txt                    # Allows all crawlers; points at the sitemap
+sitemap.xml                   # 3 URLs (home + the two legal pages)
 README.md                     # This file
 assets/
+  legal.css                   # Shared styles for privacy.html + terms.html only
   brand/
     app-logo.png              # Source master — official customer/brand logo (2048×2048)
     tech-logo.png             # Source master — technician app logo (2048×2048)
@@ -96,6 +101,20 @@ Intro loader → sticky nav → hero (customer-app phone mockup) → trust bar �
 - **Service cards** share one neutral dark surface with the brand orange as the only accent (an earlier per-card rainbow treatment was deliberately removed — don't reintroduce it).
 
 > When changing brand color, update the `:root` variables and the shared shadow token `rgba(242,107,29,…)` together so shadows/borders stay in sync.
+
+### SEO
+
+The canonical host is **https://papafixph.com/**. The Vercel and GitHub Pages deploys are mirrors — `<link rel="canonical">`, `og:url`, `og:image`, `robots.txt`, and `sitemap.xml` all hardcode the papafixph.com origin so the mirrors don't get indexed as duplicates. **If the domain ever changes, update all five together.**
+
+JSON-LD (`Organization` + `WebSite` + `MobileApplication`) sits in the `<head>`. It deliberately carries **no `aggregateRating`/`reviewCount`, and no `LocalBusiness` street address** — PapaFix is pre-launch with no real ratings, and the office address isn't public. Adding either would be fabricated markup and is what triggers a Google structured-data penalty. Add them when the data is real.
+
+### Known pre-launch gaps
+
+- **The waitlist form needs one-time FormSubmit activation.** The first submission triggers an activation email to the team inbox; until someone clicks that link, FormSubmit accepts signups and silently drops them. The handler reads the JSON `success` field (not just HTTP status) so a pending-activation response surfaces as an error rather than a false "you're on the list".
+- **Social links were removed**, not hidden — no accounts exist yet. The `.footer-social-btn` styles remain; re-add the anchors with real URLs plus `target="_blank" rel="noopener"`.
+- **`privacy.html` / `terms.html` are honest starter drafts, not lawyer-reviewed.** Each ends with a yellow team-facing callout listing what still needs doing — delete those callouts before launch.
+- **Contact links point at a personal Gmail.** Swap for a papafixph.com address (and update the FormSubmit endpoint + JSON-LD `email`) once domain email exists.
+- Footer previously had Careers, Press, Help Center, and Safety Guidelines links with nowhere to go; they're removed until those pages exist.
 
 ### Running / editing
 
