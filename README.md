@@ -104,7 +104,7 @@ Intro loader → sticky nav → hero (customer-app phone mockup) → trust bar �
 
 ### SEO
 
-The canonical host is **https://papafixph.com/**. The Vercel and GitHub Pages deploys are mirrors — `<link rel="canonical">`, `og:url`, `og:image`, `robots.txt`, and `sitemap.xml` all hardcode the papafixph.com origin so the mirrors don't get indexed as duplicates. **If the domain ever changes, update all five together.**
+The canonical host is **https://www.papafixph.com/**. The Vercel and GitHub Pages deploys are mirrors — `<link rel="canonical">`, `og:url`, `og:image`, `robots.txt`, and `sitemap.xml` all hardcode the papafixph.com origin so the mirrors don't get indexed as duplicates. **If the domain ever changes, update all five together.**
 
 JSON-LD (`Organization` + `WebSite` + `MobileApplication`) sits in the `<head>`. It deliberately carries **no `aggregateRating`/`reviewCount`, and no `LocalBusiness` street address** — PapaFix is pre-launch with no real ratings, and the office address isn't public. Adding either would be fabricated markup and is what triggers a Google structured-data penalty. Add them when the data is real.
 
