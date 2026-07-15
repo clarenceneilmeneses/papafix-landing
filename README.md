@@ -110,7 +110,9 @@ JSON-LD (`Organization` + `WebSite` + `MobileApplication`) sits in the `<head>`.
 
 ### Known pre-launch gaps
 
-- **The waitlist form needs one-time FormSubmit activation.** The first submission triggers an activation email to the team inbox; until someone clicks that link, FormSubmit accepts signups and silently drops them. The handler reads the JSON `success` field (not just HTTP status) so a pending-activation response surfaces as an error rather than a false "you're on the list".
+- **The waitlist posts to Web3Forms** (`api.web3forms.com/submit`), migrated off FormSubmit on 2026-07-15 after FormSubmit's `/ajax/` endpoint stopped responding entirely — it held the connection open until Cloudflare returned a 524, was never activated, and sometimes replied with two concatenated JSON objects. The handler reads the JSON `success` field (not just HTTP status), aborts after 15s so a hanging backend can't wedge the button on "Joining…", and treats an unparseable body as a rejection.
+- **The Web3Forms `access_key` in `index.html` is public by design** — it identifies the destination inbox and is not a secret. Restrict it to `papafixph.com` in the Web3Forms dashboard so it can't be reused from another site.
+- **Web3Forms blocks datacenter/server IPs on the free plan**, so the live endpoint cannot be exercised from CI or a sandboxed agent — it returns a CORS-preflight failure (`ERR_FAILED`). Verify signup changes from a real browser on a normal connection; mocked-route tests cover the response handling.
 - **Social links were removed**, not hidden — no accounts exist yet. The `.footer-social-btn` styles remain; re-add the anchors with real URLs plus `target="_blank" rel="noopener"`.
 - **`privacy.html` / `terms.html` are honest starter drafts, not lawyer-reviewed.** Each ends with a yellow team-facing callout listing what still needs doing — delete those callouts before launch.
 - **Contact links point at a personal Gmail.** Swap for a papafixph.com address (and update the FormSubmit endpoint + JSON-LD `email`) once domain email exists.

@@ -1620,9 +1620,9 @@ footer {
       <form id="waitlistForm" style="display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;">
         <label for="waitlistEmail" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;">Your email address</label>
         <input id="waitlistEmail" type="email" name="email" placeholder="Your email address" required autocomplete="email" inputmode="email" style="padding:.65rem 1rem;border-radius:var(--r-sm);border:1.5px solid var(--border);font-family:'DM Sans',sans-serif;font-size:.9rem;width:260px;outline:none;transition:border-color .2s;" onfocus="this.style.borderColor='var(--brand)'" onblur="this.style.borderColor='var(--border)'"/>
-        <!-- Spam honeypot: FormSubmit drops any submission where _honey is filled.
+        <!-- Spam honeypot: Web3Forms drops any submission where botcheck is set.
              Hidden from humans, irresistible to bots. -->
-        <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;"/>
+        <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;"/>
         <button type="submit" style="padding:.65rem 1.25rem;background:var(--brand);color:white;border:none;border-radius:var(--r-sm);font-family:'Sora',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer;transition:background .2s,transform .2s;" onmouseover="this.style.background='var(--brand-mid)'" onmouseout="this.style.background='var(--brand)'">Notify Me</button>
       </form>
       <p id="waitlistMsg" style="display:none;margin-top:.75rem;font-size:.85rem;font-weight:600;"></p>
@@ -2910,19 +2910,27 @@ if (overlay) {
 }());
 
 /* ═══ WAITLIST FORM ═════════════════════════════════════════════
-   Sends signups to the team inbox via FormSubmit's AJAX endpoint.
-   NOTE: the first-ever submission triggers a one-time activation
-   email from formsubmit.co — click the link inside it once, or every
-   later signup is accepted by the API and then quietly dropped.
-   FormSubmit answers HTTP 200 even when it is refusing to deliver
-   (activation pending, honeypot tripped), so success is read from the
-   JSON body's `success` field, not from res.ok alone. */
+   Sends signups to the team inbox via Web3Forms.
+
+   Migrated off FormSubmit 2026-07-15: its /ajax/ endpoint stopped
+   responding entirely (connection held open until Cloudflare returned
+   524), it required a one-time activation that was never completed, and
+   it sometimes replied with two concatenated JSON objects.
+
+   The access_key is public by design — it identifies the destination
+   inbox, it is not a secret. Restrict it to papafixph.com in the
+   Web3Forms dashboard to stop it being reused elsewhere.
+
+   Success is read from the JSON body's `success` field (boolean true or
+   the string "true"), never from res.ok alone — a 200 does not by itself
+   mean the signup was accepted. */
 (function () {
   var form = document.getElementById('waitlistForm');
   var msg  = document.getElementById('waitlistMsg');
   if (!form || !msg) return;
 
-  var ENDPOINT = 'https://formsubmit.co/ajax/clarenceneilpamplona@gmail.com';
+  var ENDPOINT   = 'https://api.web3forms.com/submit';
+  var ACCESS_KEY = '0c3a60c6-04fb-4729-bac1-ddbc15bfa236';
   var TIMEOUT_MS = 15000;
 
   function show(text, ok) {
@@ -2949,27 +2957,27 @@ if (overlay) {
     btn.textContent = 'Joining…';
     msg.style.display = 'none';
 
-    // FormSubmit has been observed hanging indefinitely (it never closes the
-    // connection) rather than returning an error. Without this abort the button
-    // sticks on "Joining…" forever and the visitor has no idea what happened.
-    var ctrl    = new AbortController();
+    // Kept from the FormSubmit era: a form backend that hangs instead of
+    // erroring leaves the button stuck on "Joining…" forever. Never trust a
+    // third-party endpoint to answer promptly, or at all.
+    var ctrl     = new AbortController();
     var timedOut = false;
-    var timer   = setTimeout(function () { timedOut = true; ctrl.abort(); }, TIMEOUT_MS);
+    var timer    = setTimeout(function () { timedOut = true; ctrl.abort(); }, TIMEOUT_MS);
 
     fetch(ENDPOINT, {
       method: 'POST',
       signal: ctrl.signal,
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({
+        access_key: ACCESS_KEY,
+        subject: 'New PapaFix waitlist signup',
+        from_name: 'PapaFix Landing Page',
         email: email,
-        _subject: 'New PapaFix waitlist signup',
-        _template: 'table',
-        _captcha: 'false',
-        _honey: form.querySelector('input[name="_honey"]').value
+        message: 'New waitlist signup from papafixph.com: ' + email,
+        botcheck: form.querySelector('input[name="botcheck"]').checked
       })
     }).then(function (res) {
-      // FormSubmit sometimes replies with two concatenated JSON objects, which
-      // is unparseable — treat any parse failure as a rejection, not a success.
+      // Treat an unparseable body as a rejection, not a success.
       return res.json().catch(function () { return {}; });
     }).then(function (data) {
       // `success` comes back as either true or the string "true".
