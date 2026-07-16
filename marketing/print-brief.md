@@ -7,18 +7,23 @@ Paste this whole file into Claude along with the logo file, then say which piece
 
 ## 1. What PapaFix is
 
-PapaFix is **Batangas' first on-demand home repair app** — think "book it like you'd
-book a ride," but for home repairs. It's built by a homegrown Batangas team and is
+PapaFix is **Batangas' first on-demand aircon service app** — think "book it like you'd
+book a ride," but for aircon care. It's built by a homegrown Batangas team and is
 **launching soon** in **Tanauan, Malvar, and Santo Tomas**, with more areas to follow.
 
-**The problem it solves:** finding a trustworthy repairman in the province today means
-asking around, waiting days, and haggling with no idea if the price is fair. PapaFix
-replaces that with a verified technician you can book in under 90 seconds, watch arrive
-on a live map, and pay at a price you saw upfront.
+**LAUNCH FOCUS: AIRCON.** PapaFix is launching with aircon services first —
+**cleaning, repair, and installation, all brands**. The other home services
+(plumbing, electrical, carpentry, etc.) roll out after launch. All materials must
+lead with aircon; mention other services only as "more services coming after launch."
+
+**The problem it solves:** finding a trustworthy aircon technician in the province
+today means asking around, waiting days, and haggling with no idea if the price is
+fair. PapaFix replaces that with a verified technician you can book in under 90
+seconds, watch arrive on a live map, and pay at a price you saw upfront.
 
 **How the app works (the real 4 steps, from the actual product):**
-1. **Book** — choose from 8 service categories, describe the problem, attach a photo.
-   Takes under 90 seconds.
+1. **Book** — pick your aircon service (cleaning, repair, or installation), describe
+   the problem, attach a photo. Takes under 90 seconds.
 2. **Match** — the app instantly matches you with the nearest available verified
    technician based on location, service type, and schedule.
 3. **Track** — watch your technician travel to you on a live map. No more vague
@@ -26,8 +31,9 @@ on a live map, and pay at a price you saw upfront.
 4. **Verify & rate** — the technician scans a unique QR code to confirm the job is
    done, and you rate the experience 1–5.
 
-**The 8 services:** Electrical • Plumbing • Aircon • Appliance Repair • Carpentry •
-Painting • Roofing • Cleaning
+**Services at launch:** Aircon Cleaning • Aircon Repair • Aircon Installation
+(all brands). **After launch:** Electrical, Plumbing, Appliance Repair, Carpentry,
+Painting, Roofing, Cleaning.
 
 **Why people can trust it:** every technician is vetted and verified, every job is
 QR-confirmed, pricing is upfront (no surprise charges), and you can book instantly or
@@ -51,11 +57,11 @@ a **"coming soon" event**, not a product ad:
   the first").
 - Local pride angle: PapaFix is **homegrown — made in Batangas, for Batangas**. Lean
   into Tanauan / Malvar / Sto. Tomas by name; people respond to seeing their own town.
-- Suggested headline directions (propose your own too, Taglish welcome):
-  - "Sira ang gripo? May PapaFix na."
-  - "Book a repair like you book a ride."
+- Suggested headline directions (propose your own too, Taglish welcome — lead with aircon):
+  - "Sira ang aircon? May PapaFix na."
+  - "Init na init? Malapit na ang PapaFix."
+  - "Book an aircon tech like you book a ride."
   - "Malapit na sa Tanauan, Malvar & Sto. Tomas."
-  - "Home repairs, done right — launching soon."
 
 ## 3. Hard rules (do not break)
 
@@ -67,7 +73,8 @@ a **"coming soon" event**, not a product ad:
 3. No specific prices — say "upfront pricing", never peso amounts.
 4. Only claim what's true (all verifiable on the website): verified/vetted local
    technicians, live map tracking, QR job verification, upfront pricing, book-or-
-   schedule, launching soon in the three cities.
+   schedule, launching soon in the three cities. Aircon is the launch service —
+   never present the other services as available at launch.
 5. English is fine; light Taglish is okay if it feels natural, not forced.
 
 ## 4. Brand kit
@@ -106,16 +113,17 @@ a **"coming soon" event**, not a product ad:
 ### Front (the hook — 3-second read)
 - PapaFix logo + wordmark at top
 - Big promotional headline (pick from the headline bank in §2 or propose better)
-- Sub-line: Batangas' first on-demand home repair app — launching soon in Tanauan,
+- Sub-line: Batangas' first on-demand aircon service app — launching soon in Tanauan,
   Malvar & Sto. Tomas
-- 3–4 service icons max (electrical, plumbing, aircon, appliance) — don't cram all 8
+- 3–4 offering icons max (cleaning, repair, installation, all-brands) — aircon only
 - **QR code + "Join the waitlist — www.papafixph.com"** as the bottom anchor,
   with an early-access hook ("Be first in line when we launch")
 - Brand orange dominant; white/pale-orange background; high contrast
 
 ### Back (the details — 30-second read)
 - "How it works" — the 4 real steps from §1 (Book → Match → Track → Verify & rate)
-- Full services list (all 8, small icons or a simple two-column list)
+- Services: aircon offerings highlighted (cleaning, repair, installation, all brands),
+  with future services shown dimmed/"coming soon"
 - Coverage: "Serving Tanauan, Malvar & Santo Tomas — more areas soon"
 - Trust strip: Verified technicians • Live tracking • Upfront pricing • QR-verified jobs
 - Local pride line: "Homegrown in Batangas 🧡"
@@ -140,7 +148,7 @@ a **"coming soon" event**, not a product ad:
 ### Content (tarps are read from a moving tricycle — keep it brutal-simple)
 - Logo + PapaFix wordmark, large
 - ONE promotional headline only ("Malapit na!" energy), readable from far away
-- One sub-line: "On-demand home repairs • Tanauan • Malvar • Sto. Tomas"
+- One sub-line: "On-demand aircon service • Tanauan • Malvar • Sto. Tomas"
 - Giant QR code (minimum 15 × 15 cm printed) + "JOIN THE WAITLIST" + www.papafixph.com
 - Max 2 colors dominant: brand orange + ink/white. High contrast, no thin fonts.
 - **Legibility rule:** every 1 inch of letter height ≈ readable from 10 ft away.
