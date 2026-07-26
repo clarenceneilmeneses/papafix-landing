@@ -56,11 +56,13 @@ A **single-page static marketing site**. There is no build step, framework, or b
 index.html                    # The entire landing page (markup + inline <style> + inline <script>)
 privacy.html                  # Privacy policy — STARTER DRAFT, needs legal review before launch
 terms.html                    # Terms of service — STARTER DRAFT, needs legal review before launch
+delete-account.html           # Account-deletion instructions — the URL Google Play's Data deletion
+                              #   field requires. Must stay publicly reachable, no login.
 robots.txt                    # Allows all crawlers; points at the sitemap
-sitemap.xml                   # 3 URLs (home + the two legal pages)
+sitemap.xml                   # 4 URLs (home + the three legal pages)
 README.md                     # This file
 assets/
-  legal.css                   # Shared styles for privacy.html + terms.html only
+  legal.css                   # Shared styles for privacy.html, terms.html, delete-account.html
   brand/
     app-logo.png              # Source master — official customer/brand logo (2048×2048)
     tech-logo.png             # Source master — technician app logo (2048×2048)

@@ -71,7 +71,9 @@ body {
   margin: 1.75rem 0 .6rem; color: var(--ink-light);
 }
 .legal-wrap p { color: var(--ink-light); font-weight: 300; margin-bottom: 1rem; }
-.legal-wrap ul { margin: 0 0 1rem 1.25rem; }
+.legal-wrap ul, .legal-wrap ol { margin: 0 0 1rem 1.25rem; }
+.legal-wrap ol { margin-bottom: 1.5rem; }
+.legal-wrap ol li { margin-bottom: 1rem; }
 .legal-wrap li {
   color: var(--ink-light); font-weight: 300;
   margin-bottom: .6rem; padding-left: .35rem;
