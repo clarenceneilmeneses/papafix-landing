@@ -143,7 +143,39 @@ adapt:
 Check that every sentence there matches what the app actually does before submitting — I wrote it from
 your spec, not from the code.
 
-### 3.5 Technician screening documents
+### 3.5 Signup screen needs to link the Terms and Privacy Policy
+
+Section 5 of the published policy says consent is given **"when creating an account."** So if the
+signup screen doesn't surface both documents, the policy describes a consent flow that doesn't exist —
+which is a worse problem than any presentation issue, because it's the policy making a claim about the
+app that isn't true.
+
+To be clear about what's *not* being asked: **no modal, no forced full-screen acceptance.** A line under
+the signup button is the normal pattern and is generally accepted:
+
+> By creating an account you agree to the Terms of Service and Privacy Policy
+
+with both titles tappable, pointing at:
+
+- `https://www.papafixph.com/terms`
+- `https://www.papafixph.com/privacy`
+
+A ticked checkbox is stronger evidence of consent if it's cheap to add, but a visible line above the
+button is the common bar. **Please confirm which one the app currently does** — if it's neither, this
+is the smallest item on this list and the one with the most direct bearing on whether the policy is
+accurate.
+
+Also worth adding, if it isn't there: a **Privacy Policy link in app Settings**. Reviewers look for it
+and it costs nothing.
+
+Note this is separate from the background-location disclosure in 3.4. That one *is* a required prominent
+screen shown before the permission prompt. Linking the policy doesn't satisfy it, and the disclosure
+doesn't satisfy this. Both are needed.
+
+*(Website side of the same point is already done — the waitlist form now carries a notice line and a
+Privacy Policy link at the point of collection, rather than relying on the footer.)*
+
+### 3.6 Technician screening documents
 
 The old policy said technicians' government ID and proof of trade are collected during in-person
 screening. Your spec doesn't list them, so they're presumably not in the app database. If we still hold
