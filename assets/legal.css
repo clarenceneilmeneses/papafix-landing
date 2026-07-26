@@ -91,6 +91,14 @@ body {
   font-size: .88rem; color: var(--ink-light); font-weight: 300;
   margin-bottom: 2rem;
 }
+.legal-callout ul { margin: .7rem 0 .2rem 1.1rem; }
+.legal-callout li { font-size: .88rem; margin-bottom: .45rem; }
+.legal-wrap code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: .85em; background: rgba(10,15,30,.06);
+  padding: .1em .38em; border-radius: 4px;
+}
+
 /* team-facing reminder — deliberately louder, meant to be deleted pre-launch */
 .legal-callout-warn {
   background: #fff8e6; border-color: rgba(217,119,6,.25);
