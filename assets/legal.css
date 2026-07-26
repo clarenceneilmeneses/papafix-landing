@@ -83,6 +83,26 @@ body {
 .legal-wrap a { color: var(--brand); text-decoration: none; border-bottom: 1px solid var(--border); }
 .legal-wrap a:hover { border-bottom-color: var(--brand); }
 
+/* ─── TABLES ──────────────────────────────────────────────────── */
+/* wrapper scrolls on narrow screens so the page body never does */
+.legal-table-wrap {
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+  margin: 0 0 1.5rem; border: 1px solid var(--border); border-radius: 12px;
+}
+.legal-wrap table { border-collapse: collapse; width: 100%; min-width: 420px; }
+.legal-wrap th, .legal-wrap td {
+  text-align: left; vertical-align: top; padding: .7rem .9rem;
+  font-size: .85rem; line-height: 1.6;
+  border-bottom: 1px solid var(--border);
+}
+.legal-wrap th {
+  font-family: 'Sora', sans-serif; font-weight: 600; font-size: .76rem;
+  letter-spacing: .02em; color: var(--ink); background: var(--brand-pale);
+  white-space: nowrap;
+}
+.legal-wrap td { color: var(--ink-light); font-weight: 300; }
+.legal-wrap tr:last-child th, .legal-wrap tr:last-child td { border-bottom: 0; }
+
 /* ─── CALLOUTS ────────────────────────────────────────────────── */
 .legal-callout {
   background: var(--brand-pale); border: 1px solid var(--border);

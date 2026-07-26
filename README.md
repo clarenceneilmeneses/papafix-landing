@@ -54,7 +54,8 @@ A **single-page static marketing site**. There is no build step, framework, or b
 
 ```
 index.html                    # The entire landing page (markup + inline <style> + inline <script>)
-privacy.html                  # Privacy policy — STARTER DRAFT, needs legal review before launch
+privacy.html                  # Privacy policy — rebuilt from the mobile dev's data spec, so it
+                              #   reflects what the apps actually collect. Still needs legal review.
 terms.html                    # Terms of service — STARTER DRAFT, needs legal review before launch
 delete-account.html           # Account-deletion instructions — the URL Google Play's Data deletion
                               #   field requires. Must stay publicly reachable, no login.
