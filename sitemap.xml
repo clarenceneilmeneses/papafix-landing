@@ -7,19 +7,19 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.papafixph.com/privacy.html</loc>
+    <loc>https://www.papafixph.com/privacy</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://www.papafixph.com/terms.html</loc>
-    <lastmod>2026-07-15</lastmod>
+    <loc>https://www.papafixph.com/terms</loc>
+    <lastmod>2026-07-26</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://www.papafixph.com/delete-account.html</loc>
+    <loc>https://www.papafixph.com/delete-account</loc>
     <lastmod>2026-07-26</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>

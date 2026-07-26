@@ -60,7 +60,9 @@ terms.html                    # Terms of service — STARTER DRAFT, needs legal 
 delete-account.html           # Account-deletion instructions — the URL Google Play's Data deletion
                               #   field requires. Must stay publicly reachable, no login.
 robots.txt                    # Allows all crawlers; points at the sitemap
-sitemap.xml                   # 4 URLs (home + the three legal pages)
+sitemap.xml                   # 4 URLs (home + the three legal pages), all extensionless
+vercel.json                   # cleanUrls — serves /privacy for privacy.html and 308s the .html
+                              #   form away. See "Clean URLs" below before adding a page.
 README.md                     # This file
 assets/
   legal.css                   # Shared styles for privacy.html, terms.html, delete-account.html
@@ -108,6 +110,12 @@ Intro loader → sticky nav → hero (customer-app phone mockup) → trust bar �
 ### SEO
 
 The canonical host is **https://www.papafixph.com/**. The Vercel and GitHub Pages deploys are mirrors — `<link rel="canonical">`, `og:url`, `og:image`, `robots.txt`, and `sitemap.xml` all hardcode the papafixph.com origin so the mirrors don't get indexed as duplicates. **If the domain ever changes, update all five together.**
+
+### Clean URLs
+
+`vercel.json` sets `cleanUrls: true`, so the legal pages are served at **`/privacy`, `/terms`, `/delete-account`** and Vercel 308-redirects the `.html` form to them. This exists because `/privacy` and `/delete-account` are the URLs the mobile app and the Play Console entries use — a redirect hop on a link Google follows during review is avoidable, so canonical tags, the sitemap, and every internal link use the extensionless form directly.
+
+**When adding a page:** link to it extensionless and set its canonical extensionless. Linking to `foo.html` still works but eats a redirect. Note this only applies on Vercel — the GitHub Pages mirror has no `cleanUrls` equivalent, so extensionless paths 404 there. That's fine while papafixph.com is canonical, but don't hand anyone a github.io legal-page link.
 
 JSON-LD (`Organization` + `WebSite` + `MobileApplication`) sits in the `<head>`. It deliberately carries **no `aggregateRating`/`reviewCount`, and no `LocalBusiness` street address** — PapaFix is pre-launch with no real ratings, and the office address isn't public. Adding either would be fabricated markup and is what triggers a Google structured-data penalty. Add them when the data is real.
 
