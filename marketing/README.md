@@ -12,7 +12,7 @@ Open a folder, send the `.png` to the printer. Nothing here needs editing to be 
 | `print-now/` | Pre-launch pieces. Safe to print today — waitlist CTA, no Play badge |
 | `technician/` | Technician recruitment. Also safe to print today |
 | `hold-until-launch/` | **Do not print yet.** These carry a Google Play badge and say the app is live |
-| `play-store/` | Play Console feature graphics — screen only, see its own `NOTES.md` |
+| `play-store/` | Play Console feature graphics, phone and tablet screenshots — screen only, see its own notes |
 | `social/` | Facebook / Instagram square — screen only |
 | `sources/` | The editable HTML behind every PNG, same filename. See *Editing* below |
 
@@ -78,3 +78,5 @@ a mismatch between pieces is worse than an out-of-date one.
 
 - `print-brief.md` — the campaign brief the printed pieces were written from
 - `play-store/PapaFix_PLAY_Feature_NOTES.md` — Play Console upload notes for the feature graphics
+- `play-store/PapaFix_PLAY_Screenshot_NOTES.md` — the same, for the eight phone screenshots
+- `play-store/PapaFix_PLAY_Tablet_NOTES.md` — the same, for the eight tablet screenshots
