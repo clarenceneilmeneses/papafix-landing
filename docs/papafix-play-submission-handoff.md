@@ -30,8 +30,10 @@ Your data practices went in as written. Five deliberate changes:
 1. **Retention filled in as ten (10) years**, in both documents. It's the BIR preservation ceiling —
    chosen so we can't under-retain while the accountant is still being asked. If it changes, it changes
    in **both** pages or the mismatch is exactly the inconsistency you warned about.
-2. **Contact is `support@papafixph.com`** everywhere, replacing the personal Gmail. See item 3.1 — the
-   mailbox doesn't exist yet.
+2. **Contact is `papafix@nambuilders.com`** everywhere, replacing the personal Gmail, with
+   `customersupport_papafix@nambuilders.com` given as the booking/account support address. This
+   supersedes the earlier `support@papafixph.com` plan, which was never created. See item 3.1 —
+   neither mailbox has been confirmed to receive mail yet.
 3. **Service scope is aircon-first.** Your draft said the platform covers "air conditioning, electrical,
    and plumbing." The rest of our marketing says aircon at launch with other trades to follow, so the
    policy now matches that. Not a correction of your spec — the app may well have the categories built —
@@ -47,11 +49,19 @@ Your `[CONFIRM]` blocks are otherwise resolved or tracked below.
 
 ## 3. Items that need you
 
-### 3.1 Create `support@papafixph.com` — blocking
+### 3.1 Verify the `nambuilders` mailboxes — blocking
 
-Both live pages tell users to email that address. It does not exist, so those requests bounce today.
-Low impact right now (no accounts yet), but an unanswered deletion request is itself a Play policy
-violation and a Data Privacy Act problem, so this must work **before** the URL goes into the Console.
+The live pages now tell users to email `papafix@nambuilders.com` (privacy, deletion, and legal
+requests) and `customersupport_papafix@nambuilders.com` (bookings and accounts). Nobody on the web
+side has confirmed either address actually receives mail. Send a test to both and reply here with the
+result. Low impact right now (no accounts yet), but an unanswered deletion request is itself a Play
+policy violation and a Data Privacy Act problem, so this must work **before** the URL goes into the
+Console.
+
+While whoever owns that mailbox is in there: the waitlist form's Web3Forms access key is still bound
+to Clarence's personal Gmail. The key is public, not a secret, so they can register
+`papafix@nambuilders.com` at web3forms.com, click the one confirmation link, and send the key string
+back — no credentials need to be shared in either direction.
 
 **DNS state, checked 26 July 2026:**
 
@@ -201,7 +211,8 @@ Listed so you know they're tracked and aren't waiting on you:
 ## 5. Settled — no need to re-ask
 
 - Retention: **ten (10) years**, identical in both documents.
-- Contact: **`support@papafixph.com`**.
+- Contact: **`papafix@nambuilders.com`**, with **`customersupport_papafix@nambuilders.com`** for
+  bookings and accounts. (Replaces the earlier `support@papafixph.com` plan.)
 - Positioning: **aircon-first**; electrical and plumbing are "to follow," not current.
 - URLs: **extensionless**.
 - Payments: we collect no card or bank credentials. Don't add anything implying otherwise.

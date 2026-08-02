@@ -4,7 +4,9 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>PapaFix — Aircon Service, Done Right</title>
-<meta name="description" content="Aircon cleaning, repair, and installation for homes in Tanauan, Malvar, and Santo Tomas. See the price before you confirm, watch your technician arrive on a live map, and pay in the app once the work is done. PapaFix launches soon on Google Play. Join the waitlist." />
+<!-- Keep this under ~160 characters. Google truncates around there — the
+     previous 265-character version lost everything after "Santo Tomas." -->
+<meta name="description" content="Aircon cleaning, repair, and installation in Tanauan, Malvar, and Santo Tomas. Upfront pricing, live technician tracking. Launching soon — join the waitlist." />
 <!-- Canonical host is papafixph.com. The Vercel + GitHub Pages deploys are
      mirrors; this tag is what stops Google indexing them as duplicates. -->
 <link rel="canonical" href="https://www.papafixph.com/" />
@@ -977,12 +979,20 @@ footer {
 /* ═══════════════════════════════════════════════════════════════
    TECHNICIAN MODAL
 ═══════════════════════════════════════════════════════════════ */
+/* The overlay is the scroller, not the panel. It used to centre the panel
+   with align-items and no overflow, so on any viewport shorter than the
+   panel the top was clipped off-screen with no way to scroll to it — the
+   close button included. `margin: auto` on the child centres when there is
+   room and falls back to top-aligned + scrollable when there isn't, which
+   align-items: center cannot do. */
 .tech-modal-overlay {
   position: fixed; inset: 0; z-index: 9000;
   background: rgba(10,15,30,.55);
   backdrop-filter: blur(6px);
-  display: flex; align-items: center; justify-content: center;
+  display: flex; align-items: flex-start; justify-content: center;
   padding: 1.5rem;
+  overflow-y: auto; overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   opacity: 0; pointer-events: none;
   transition: opacity .3s cubic-bezier(.16,1,.3,1);
 }
@@ -992,7 +1002,7 @@ footer {
 .tech-modal {
   background: white; border-radius: var(--r-xl);
   padding: 2.5rem; max-width: 460px; width: 100%;
-  position: relative;
+  margin: auto; position: relative;
   transform: translateY(24px) scale(.97);
   transition: transform .35s cubic-bezier(.16,1,.3,1);
   box-shadow: 0 32px 80px rgba(10,15,30,.22), 0 0 0 1px rgba(242,107,29,.08);
@@ -1061,6 +1071,22 @@ footer {
   transition: background .2s, transform .2s;
 }
 .tech-modal-map-btn:hover { background: var(--brand-deep); transform: translateY(-1px); }
+
+/* Small screens and short landscape windows: the panel was ~640px tall
+   against a 667px-tall phone viewport minus 3rem of overlay padding, so
+   it only just missed fitting. Trimming the chrome — padding, radius,
+   title, gaps — buys back ~90px and it fits outright; the overlay above
+   still scrolls if the copy ever grows. */
+@media (max-width: 560px), (max-height: 720px) {
+  .tech-modal-overlay { padding: .875rem; }
+  .tech-modal { padding: 1.6rem 1.25rem 1.5rem; border-radius: var(--r-lg); }
+  .tech-modal-close { top: .7rem; right: .7rem; }
+  .tech-modal-title { font-size: 1.4rem; }
+  .tech-modal-sub { margin-bottom: 1.1rem; }
+  .tech-modal-divider { margin-bottom: 1.1rem; }
+  .tech-modal-info-row { margin-bottom: 1rem; }
+  .tech-modal-note { padding: .8rem .9rem; margin-bottom: 1.15rem; }
+}
 
 /* ═══════════════════════════════════════════════════════════════
    INTERACTIVE STATES
@@ -2707,6 +2733,9 @@ function openTechModal() {
   techModalOpener = document.activeElement;
   m.classList.add('open');
   document.body.style.overflow = 'hidden';
+  // The overlay scrolls now; always open at the top so the close button
+  // is the first thing in view, even on a reopen after scrolling.
+  m.scrollTop = 0;
   const f = techModalFocusables(m);
   if (f.length) f[0].focus();
 }
