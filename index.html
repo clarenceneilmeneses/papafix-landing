@@ -4,13 +4,13 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>PapaFix — Aircon Service, Done Right</title>
-<meta name="description" content="PapaFix is Batangas' first on-demand aircon service app — cleaning, repair, and installation by verified technicians, launching soon in Tanauan, Malvar, and Santo Tomas. Live tracking, upfront pricing, more home services after launch. Join the waitlist." />
+<meta name="description" content="Aircon cleaning, repair, and installation for homes in Tanauan, Malvar, and Santo Tomas. See the price before you confirm, watch your technician arrive on a live map, and pay in the app once the work is done. PapaFix launches soon on Google Play. Join the waitlist." />
 <!-- Canonical host is papafixph.com. The Vercel + GitHub Pages deploys are
      mirrors; this tag is what stops Google indexing them as duplicates. -->
 <link rel="canonical" href="https://www.papafixph.com/" />
 <meta name="robots" content="index, follow, max-image-preview:large" />
 <meta property="og:title" content="PapaFix — Aircon Service, Done Right" />
-<meta property="og:description" content="On-demand aircon cleaning, repair, and installation — launching soon in Batangas. Join the waitlist to be first in line when PapaFix arrives in Tanauan, Malvar, and Santo Tomas." />
+<meta property="og:description" content="Aircon service you can book from your phone, launching soon across Tanauan, Malvar, and Santo Tomas. Join the waitlist and we'll tell you the day it goes live." />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://www.papafixph.com/" />
 <meta property="og:image" content="https://www.papafixph.com/assets/brand/app-logo-1024.png" />
@@ -21,7 +21,7 @@
 <meta property="og:locale" content="en_PH" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="PapaFix — Aircon Service, Done Right" />
-<meta name="twitter:description" content="On-demand aircon cleaning, repair, and installation — launching soon in Batangas. Join the waitlist to be first in line." />
+<meta name="twitter:description" content="Aircon service you can book from your phone. Launching soon in Batangas. Join the waitlist." />
 <meta name="twitter:image" content="https://www.papafixph.com/assets/brand/app-logo-1024.png" />
 <meta name="geo.region" content="PH-BTG" />
 <meta name="geo.placename" content="Tanauan, Batangas" />
@@ -60,8 +60,8 @@
         { "@type": "City", "name": "Santo Tomas", "containedInPlace": { "@type": "AdministrativeArea", "name": "Batangas" } }
       ],
       "knowsAbout": [
-        "Electrical repair", "Plumbing", "Air conditioning service", "Appliance repair",
-        "Carpentry", "Painting", "Home cleaning", "Roofing"
+        "Air conditioning service", "Air conditioner cleaning",
+        "Air conditioner repair", "Air conditioner installation"
       ]
     },
     {
@@ -97,7 +97,11 @@
 <link rel="preload" as="image" href="assets/brand/app-logo-480.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<!-- Weights are the ones actually set in the stylesheet. Sora 300/400/500 and
+     DM Mono 400 were loaded but never used; DM Sans 600/700 were used but never
+     loaded, so every bold label in the phone mockups was browser-synthesised
+     faux bold. Italic moves 300 -> 400 to match the weight .tj-quote inherits. -->
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@500&display=swap" rel="stylesheet" />
 <script>
 /* Skip the intro curtain on repeat views this session — must run before first paint */
 try {
@@ -118,17 +122,60 @@ body { font-family: 'DM Sans', sans-serif; background: #f7f9fc; color: #0a0f1e; 
   --brand:       #f26b1d;
   --brand-mid:   #e15410;
   --brand-deep:  #c2410c;
+  /* Brand as SMALL TEXT on light surfaces. --brand itself is only 2.89:1
+     on off-white, so it fails even the 3:1 large-text bar; it stays a
+     fill colour and an on-dark text colour. */
+  --brand-ink:   #a83606;
   --brand-light: #ffebda;
   --brand-pale:  #fff6ef;
   --off-white:  #f7f9fc;
   --ink:        #0a0f1e;
-  --ink-light:  #3a4165;
-  --ink-faint:  #7a84a8;
+  --ink-light:  #403a33;
+  --ink-faint:  #6b5f52;
   --border:     rgba(242,107,29,.12);
   --shadow-sm:  0 2px 12px rgba(242,107,29,.08);
   --shadow-md:  0 8px 40px rgba(242,107,29,.14);
   --shadow-lg:  0 24px 80px rgba(242,107,29,.18);
   --r-sm: 12px; --r-md: 20px; --r-lg: 32px; --r-xl: 48px;
+
+  /* ─── TYPE SCALE ───────────────────────────────────────────────
+     Roles, not values. Replaces 65 ad-hoc sizes, 19 of which sat
+     between .58 and .95rem — steps of 0.3px that cannot signal
+     different jobs. Ratios here run 1.13–1.22, so any two adjacent
+     roles are distinguishable without reading the copy.
+     The phone mockups scale in `em` off .phone-screen and are
+     deliberately excluded; they are a separate, self-contained ramp. */
+  --t-micro:   .6875rem;  /* 11px · uppercase + .1em tracking only */
+  --t-caption: .75rem;    /* 12px · captions, metadata */
+  --t-ui:      .875rem;   /* 14px · nav, links, chips, tags */
+  --t-body:    1rem;      /* 16px · prose floor */
+  --t-lede:    1.125rem;  /* 18px · hero and section ledes */
+  --t-h3:      1.375rem;  /* 22px · card and bento headings */
+  --t-figure:   1.625rem; /* 26px · secondary stat figures */
+  --t-figure-lg: 2rem;    /* 32px · primary stat figure, prices */
+
+  /* Leading tuned per role and measure, not one ratio everywhere.
+     Light-on-dark gets more air: halation closes up counters. */
+  --lh-display:    1.06;
+  --lh-heading:    1.15;
+  --lh-sub:        1.3;
+  --lh-ui:         1.45;
+  --lh-prose:      1.65;
+  --lh-prose-dark: 1.78;
+
+  /* ─── VERTICAL RHYTHM ──────────────────────────────────────────
+     Section bands, assigned by what the section carries rather than
+     by its position in the template. Before this, #app/#services/
+     #how/#testimonials all sat within 14% of each other, so a
+     two-card section got the same air as an eight-card one.
+     Contrast is bought by pulling the light sections in, not only
+     by pushing the decision moments out — the page ends up shorter.
+     4px base; every band clamps down on narrow screens. */
+  --band-tight: clamp(2.5rem, 4vw, 3rem);    /* connective strips   */
+  --band-sm:    clamp(3rem, 5vw, 4.5rem);    /* few elements        */
+  --band-md:    clamp(3.5rem, 7vw, 5.5rem);  /* standard            */
+  --band-lg:    clamp(4rem, 9vw, 7.5rem);    /* dense explanatory   */
+  --band-xl:    clamp(5rem, 12vw, 10rem);    /* decision moments    */
   /* Hero content waits for the intro curtain; html.no-intro zeroes this */
   --intro-base: 2.5s;
 }
@@ -228,8 +275,8 @@ nav {
 .nav-logo-img { width: 34px; height: 34px; border-radius: 9px; object-fit: contain; }
 
 .nav-links { display: flex; align-items: center; gap: 2rem; }
-.nav-links a { font-size: .875rem; color: var(--ink-light); text-decoration: none; transition: color .2s; }
-.nav-links a:hover { color: var(--brand); }
+.nav-links a { font-size: var(--t-ui); color: var(--ink-light); text-decoration: none; transition: color .2s; }
+.nav-links a:hover { color: var(--brand-ink); }
 .nav-cta-gplay {
   display: inline-flex; align-items: center; gap: 9px;
   background: #0a0f1e; color: white; border: none;
@@ -239,7 +286,7 @@ nav {
   transition: background .2s, transform .2s, box-shadow .2s;
   box-shadow: 0 4px 16px rgba(10,15,30,.25);
 }
-.nav-cta-gplay:hover { background: linear-gradient(135deg, #4285F4, #34A853); transform: translateY(-1px); box-shadow: 0 6px 24px rgba(66,133,244,.35); }
+.nav-cta-gplay:hover, .nav-cta-gplay:focus-visible { background: var(--brand-deep); transform: translateY(-1px); box-shadow: var(--shadow-md); }
 .nav-cta-gplay svg { flex-shrink: 0; }
 .nav-gplay-text { line-height: 1; }
 .nav-gplay-text small { display: block; font-size: .58rem; opacity: .55; letter-spacing: .07em; text-transform: uppercase; margin-bottom: 2px; }
@@ -280,7 +327,7 @@ nav {
   margin-top: .75rem; border: none !important; font-weight: 600 !important;
   font-family: 'Sora', sans-serif; transition: background .2s, box-shadow .2s;
 }
-.mobile-menu-cta:hover { background: linear-gradient(135deg, #4285F4, #34A853) !important; box-shadow: 0 6px 24px rgba(66,133,244,.35); }
+.mobile-menu-cta:hover, .mobile-menu-cta:focus-visible { background: var(--brand-deep) !important; box-shadow: var(--shadow-md); }
 
 @media (max-width: 900px) {
   .nav-hamburger { display: flex; }
@@ -300,7 +347,7 @@ nav {
 }
 .hero-tag {
   display: inline-flex; align-items: center; gap: 8px;
-  background: var(--brand-light); color: var(--brand);
+  background: var(--brand-light); color: var(--brand-ink);
   font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
   padding: 6px 14px; border-radius: 100px; margin-bottom: 2rem; width: fit-content;
   opacity: 0; animation: fadeUp .8s ease forwards; animation-delay: calc(var(--intro-base) + .1s);
@@ -310,18 +357,18 @@ nav {
 
 .hero-h1 {
   font-family: 'Sora', sans-serif; font-weight: 800;
-  font-size: clamp(2.8rem, 4.5vw, 5rem); line-height: 1.04; letter-spacing: -.04em;
-  color: var(--ink); margin-bottom: 1.5rem;
+  font-size: clamp(2.8rem, 4.5vw, 5rem); line-height: var(--lh-display); letter-spacing: -.04em;
+  color: var(--ink); margin-bottom: 2.25rem;
   opacity: 0; animation: fadeUp .8s ease forwards; animation-delay: calc(var(--intro-base) + .3s);
 }
-.hero-h1 em { font-style: normal; color: var(--brand); position: relative; }
+.hero-h1 em { font-style: normal; color: var(--brand-deep); position: relative; }
 .hero-h1 em::after {
   content: ''; position: absolute; left: 0; bottom: 3px; right: 0; height: 4px;
   background: var(--brand); opacity: .2; border-radius: 2px;
 }
 .hero-sub {
-  font-size: 1.05rem; line-height: 1.7; color: var(--ink-light); font-weight: 300;
-  max-width: 44ch; margin-bottom: 3rem;
+  font-size: var(--t-lede); line-height: var(--lh-prose); color: var(--ink-light); font-weight: 400;
+  max-width: 52ch; margin-bottom: 3.5rem;
   opacity: 0; animation: fadeUp .8s ease forwards; animation-delay: calc(var(--intro-base) + .5s);
 }
 .hero-actions {
@@ -335,7 +382,7 @@ nav {
   transition: transform .25s, box-shadow .25s;
   box-shadow: 0 8px 32px rgba(10,15,30,.18);
 }
-.btn-google-play:hover { background: linear-gradient(135deg, #4285F4, #34A853); transform: translateY(-2px); box-shadow: 0 14px 44px rgba(66,133,244,.35); }
+.btn-google-play:hover, .btn-google-play:focus-visible { background: var(--brand-deep); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
 .btn-google-play svg { width: 24px; height: 24px; flex-shrink: 0; }
 .btn-google-play-text { line-height: 1; }
 .btn-google-play-text small { display: block; font-size: .62rem; opacity: .6; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 2px; }
@@ -347,11 +394,11 @@ nav {
   border: 1.5px solid rgba(10,15,30,.12); font-size: .9rem; font-weight: 500;
   transition: border-color .2s, color .2s, background .2s;
 }
-.btn-ghost:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-pale); }
+.btn-ghost:hover { border-color: var(--brand-deep); color: var(--brand-ink); background: var(--brand-pale); }
 .btn-ghost svg { width: 15px; height: 15px; }
 
 .hero-stats {
-  display: flex; gap: 2rem; margin-top: 3.5rem;
+  display: flex; gap: 2rem; margin-top: 4.5rem;
   opacity: 0; animation: fadeUp .8s ease forwards; animation-delay: calc(var(--intro-base) + .9s);
 }
 .hero-stat-num { font-family: 'Sora', sans-serif; font-size: 1.6rem; font-weight: 700; letter-spacing: -.04em; }
@@ -377,18 +424,19 @@ nav {
   position: absolute; background: white; border-radius: var(--r-md);
   box-shadow: var(--shadow-lg); padding: 14px 18px; font-size: .78rem; white-space: nowrap;
 }
-.hero-float-1 { left: -30px; bottom: 18%; animation: float1 4s ease-in-out infinite; }
-.hero-float-2 { right: -20px; bottom: 4%; animation: float2 4.5s 1s ease-in-out infinite; }
+/* Positioning lives on .hero-phone-stage .hero-float-* below; only the drift is set here */
+.hero-float-1 { animation: float1 4s ease-in-out infinite; }
+.hero-float-2 { animation: float2 4.5s 1s ease-in-out infinite; }
 @keyframes float1 { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-10px); } }
 @keyframes float2 { 0%,100% { transform:translateY(0); } 50% { transform:translateY(8px); } }
 .fc-title { font-family:'Sora',sans-serif; font-weight:700; font-size:.85rem; color:var(--ink); margin-bottom:4px; }
 .fc-sub { color:var(--ink-faint); font-size:.72rem; }
 .fc-badge {
   display:inline-flex; align-items:center; gap:5px;
-  background:#e9f5ee; color:#2d8a4e; font-size:.7rem; font-weight:600;
+  background:#e9f5ee; color:#186c37; font-size:.7rem; font-weight:600;
   padding:3px 8px; border-radius:100px;
 }
-.fc-badge-dot { width:5px; height:5px; background:#2d8a4e; border-radius:50%; }
+.fc-badge-dot { width:5px; height:5px; background:#186c37; border-radius:50%; }
 
 /* ═══════════════════════════════════════════════════════════════
    PHONE MOCKUPS — pure HTML/CSS reproductions of the real app UI.
@@ -474,13 +522,15 @@ nav {
 
 /* Floating chips around the hero phone reuse .hero-float-card */
 .hero-phone-stage { position: relative; }
+/* Float-2 sat over the Call Technician button: 48x35px of overlap at
+   1440, 113x35 at 1100 where the old breakpoint pulled it further in.
+   -185px clears the button and keeps a 12px bezel overlap. Below
+   1200px the column is too narrow for chips to flank a 300px phone
+   without covering it, so they step out rather than crowd. */
 .hero-phone-stage .hero-float-1 { left: -130px; bottom: 32%; }
-.hero-phone-stage .hero-float-2 { right: -125px; bottom: 6%; }
-@media (max-width: 1200px) {
-  .hero-phone-stage .hero-float-1 { left: -70px; }
-  .hero-phone-stage .hero-float-2 { right: -60px; }
-}
-.hero-phone-cap { margin-top: 1.1rem; text-align: center; font-size: .72rem; color: var(--ink-faint); }
+.hero-phone-stage .hero-float-2 { right: -185px; bottom: 6%; }
+@media (max-width: 1400px) { .hero-float-card { display: none; } }
+.hero-phone-cap { margin-top: 1.1rem; text-align: center; font-size: var(--t-caption); color: var(--ink-faint); }
 .fc-check {
   width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
   background: #e9f7ef; color: #22c55e;
@@ -547,7 +597,7 @@ nav {
 
 /* ── technician banner layout (3 columns) ──────────────────── */
 .tech-banner {
-  background: linear-gradient(135deg, #0a0f1e 0%, #0f1f50 100%);
+  background: linear-gradient(135deg, #0a0f1e 0%, #3d1a08 100%);
   border-radius: var(--r-xl); padding: 3.5rem 3.5rem 3rem;
   display: grid; grid-template-columns: 1.1fr .85fr auto;
   gap: 2.5rem; align-items: center;
@@ -565,25 +615,34 @@ nav {
 }
 .tb-logo { width: 38px; height: 38px; object-fit: contain; filter: drop-shadow(0 4px 12px rgba(0,0,0,.4)); }
 .tb-perks { list-style: none; display: flex; flex-direction: column; gap: .7rem; margin-bottom: 1.5rem; }
-.tb-perks li { display: flex; align-items: center; gap: 9px; font-size: .82rem; color: rgba(255,255,255,.65); }
-.tb-perks svg { flex-shrink: 0; }
+.tb-perks li { display: flex; align-items: center; gap: 9px; font-size: var(--t-ui); line-height: var(--lh-ui); letter-spacing: .01em; color: rgba(255,255,255,.75); }
+.tb-perks svg { width: 14px; height: 14px; flex-shrink: 0; color: #34d399; }
+.tb-apply {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--brand); color: white;
+  padding: .75rem 1.5rem; border-radius: var(--r-md);
+  font-family: 'Sora', sans-serif; font-weight: 600; font-size: .88rem;
+  text-decoration: none; white-space: nowrap;
+  transition: background .2s, transform .2s;
+}
+.tb-apply:hover, .tb-apply:focus-visible { background: var(--brand-mid); transform: translateY(-2px); }
 .tb-phone-col { display: flex; flex-direction: column; align-items: center; }
 .phone-tech { transform: rotate(-4deg); transition: transform .5s cubic-bezier(.16,1,.3,1); }
 .tb-phone-col:hover .phone-tech { transform: rotate(0deg); }
 .tb-phone-cap { margin-top: 1.4rem; text-align: center; font-size: .72rem; color: rgba(255,255,255,.45); max-width: 24ch; line-height: 1.5; }
 
 /* ── "A LOOK INSIDE THE APP" — three mini customer screens ─── */
-#app { padding: 110px 0 100px; background: var(--off-white); }
+#app { padding: var(--band-sm) 0; background: var(--off-white); }
 .app-header { text-align: center; }
 .app-header .section-sub { margin: 1rem auto 0; }
-.app-row { display: flex; gap: 2.75rem; margin-top: 3.5rem; align-items: flex-start; overflow-x: auto; scrollbar-width: none; padding: .5rem 5vw 1rem; }
+.app-row { display: flex; gap: 2.75rem; margin-top: 2.5rem; align-items: flex-start; overflow-x: auto; scrollbar-width: none; padding: .5rem 5vw 1rem; }
 .app-row::-webkit-scrollbar { display: none; }
 /* auto margins center the row when it fits and keep the first shot
    reachable when it overflows (justify-content:center would clip it) */
 .app-shot { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
 .app-shot:first-child { margin-left: auto; }
 .app-shot:last-child { margin-right: auto; }
-.app-cap { margin-top: 1.1rem; font-size: .78rem; line-height: 1.55; color: var(--ink-light); text-align: center; max-width: 26ch; }
+.app-cap { margin-top: 1.1rem; font-size: var(--t-caption); line-height: var(--lh-ui); color: var(--ink-light); text-align: center; max-width: 26ch; }
 .phone-mini { width: 230px; border-radius: 36px; padding: 8px; }
 .phone-mini .phone-screen { border-radius: 29px; font-size: 11px; }
 .phone-mini .phone-cam { width: 10px; height: 10px; top: 10px; }
@@ -663,22 +722,22 @@ nav {
 /* ─── COMMON ─────────────────────────────────────────────────── */
 section { position: relative; }
 .container { max-width: 1180px; margin: 0 auto; padding: 0 5vw; }
-.section-eyebrow { font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--brand); margin-bottom: .75rem; }
-.section-title { font-family: 'Sora', sans-serif; font-weight: 700; font-size: clamp(2rem, 3.5vw, 3.2rem); letter-spacing: -.04em; line-height: 1.1; color: var(--ink); }
-.section-sub { font-size: 1rem; line-height: 1.7; color: var(--ink-light); font-weight: 300; max-width: 52ch; }
+.section-eyebrow { font-size: var(--t-micro); font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: .75rem; }
+.section-title { font-family: 'Sora', sans-serif; font-weight: 700; font-size: clamp(2rem, 3.5vw, 3.2rem); letter-spacing: -.04em; line-height: var(--lh-heading); color: var(--ink); }
+.section-sub { font-size: var(--t-lede); line-height: var(--lh-prose); color: var(--ink-light); font-weight: 400; max-width: 58ch; }
 .section-divider { height: 1px; background: linear-gradient(to right, transparent, var(--border), transparent); margin: 0 5vw; }
 
 /* ─── TRUST BAR ──────────────────────────────────────────────── */
-#trust { padding: 48px 0; background: white; }
+#trust { padding: var(--band-tight) 0; background: white; }
 .trust-inner { display: flex; align-items: center; justify-content: center; gap: 3rem; flex-wrap: wrap; }
-.trust-item { display: flex; align-items: center; gap: .75rem; font-size: .82rem; color: var(--ink-faint); }
+.trust-item { display: flex; align-items: center; gap: .75rem; font-size: var(--t-ui); line-height: var(--lh-ui); color: var(--ink-faint); }
 .trust-icon { width: 32px; height: 32px; background: var(--brand-light); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.trust-icon svg { width: 15px; height: 15px; color: var(--brand); }
+.trust-icon svg { width: 15px; height: 15px; color: var(--brand-ink); }
 .trust-text strong { color: var(--ink-light); font-weight: 500; }
 .trust-sep { font-size: 1.2rem; color: var(--border); line-height: 1; }
 .trust-exclusive {
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: .72rem; font-weight: 600; color: var(--brand);
+  font-size: .72rem; font-weight: 600; color: var(--brand-ink);
   background: var(--brand-light); padding: 5px 13px; border-radius: 100px;
   margin-left: .5rem;
 }
@@ -688,11 +747,11 @@ section { position: relative; }
    (formerly a scroll-jacked horizontal strip; flattened to a normal
    grid to keep the page's scroll length sane)
 ═══════════════════════════════════════════════════════════════ */
-#services { padding: 120px 0; background: var(--ink); scroll-margin-top: 40px; }
-.services-header { text-align: center; margin-bottom: 3.5rem; }
+#services { padding: var(--band-sm) 0; background: var(--ink); scroll-margin-top: 40px; }
+.services-header { text-align: center; margin-bottom: 2.5rem; }
 .services-header .section-title { color: white; }
 .services-header .section-sub { margin: 1rem auto 0; color: rgba(255,255,255,.55); }
-.services-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
+.services-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; max-width: 760px; margin: 0 auto; }
 .svc-card {
   display: flex; flex-direction: column;
   background: rgba(255,255,255,.04); border-radius: var(--r-md);
@@ -708,9 +767,9 @@ section { position: relative; }
 .svc-card-img { position: relative; height: 140px; flex-shrink: 0; overflow: hidden; border-bottom: 1px solid rgba(255,255,255,.08); }
 .svc-card-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
 .svc-card-body { padding: 1.1rem 1.3rem 1.4rem; display: flex; flex-direction: column; flex: 1; }
-.svc-counter { font-family: 'DM Mono', monospace; font-size: .68rem; color: var(--brand); letter-spacing: .12em; text-transform: uppercase; margin-bottom: .5rem; }
-.svc-card-name { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.15rem; letter-spacing: -.02em; color: white; margin-bottom: .45rem; }
-.svc-card-desc { font-size: .8rem; line-height: 1.6; color: rgba(255,255,255,.5); font-weight: 300; margin-bottom: 1rem; flex: 1; }
+.svc-counter { font-family: 'DM Mono', monospace; font-size: var(--t-micro); color: var(--brand); letter-spacing: .1em; text-transform: uppercase; margin-bottom: .5rem; }
+.svc-card-name { font-family: 'Sora', sans-serif; font-weight: 700; font-size: var(--t-h3); line-height: var(--lh-sub); letter-spacing: -.02em; color: white; margin-bottom: .45rem; }
+.svc-card-desc { font-size: var(--t-body); line-height: var(--lh-prose-dark); letter-spacing: .01em; color: rgba(255,255,255,.62); font-weight: 400; margin-bottom: 1rem; flex: 1; }
 .svc-tags { display: flex; gap: .4rem; flex-wrap: wrap; }
 .svc-tag {
   background: rgba(255,255,255,.08); color: rgba(255,255,255,.75);
@@ -723,8 +782,8 @@ section { position: relative; }
 /* ═══════════════════════════════════════════════════════════════
    HOW IT WORKS — BENTO GRID
 ═══════════════════════════════════════════════════════════════ */
-#how { padding: 120px 0; background: var(--off-white); }
-.bento-header { text-align: center; margin-bottom: 4rem; }
+#how { padding: var(--band-lg) 0; background: var(--off-white); }
+.bento-header { text-align: center; margin-bottom: 4.5rem; }
 .bento-header .section-sub { margin: 1rem auto 0; }
 
 .bento-grid {
@@ -737,32 +796,37 @@ section { position: relative; }
   transition: transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s;
 }
 .bento:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
-.bento-1 { grid-column: span 5; background: var(--brand); }
+.bento-1 { grid-column: span 5; background: var(--brand-deep); }
 .bento-2 { grid-column: span 7; }
 .bento-3 { grid-column: span 4; }
 .bento-4 { grid-column: span 4; }
 .bento-5 { grid-column: span 4; background: var(--ink); }
 .bento-6 { grid-column: span 7; }
 .bento-7 { grid-column: span 5; background: var(--brand-pale); }
+/* Full-width closing card. The grid runs 5+7 / 4+4+4 / 7+5, so a single
+   12-span row is a deliberate break in the rhythm rather than a fourth
+   identical tier. Absorbed from the deleted #features section. */
+.bento-8 { grid-column: span 12; display: grid; grid-template-columns: 1.1fr .9fr; gap: 3rem; align-items: center; }
+.bento-chips { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 1.5rem; }
 
 .bento-step-num {
   font-family: 'Sora', sans-serif; font-weight: 800; font-size: 5rem;
-  line-height: 1; letter-spacing: -.06em; opacity: .12; margin-bottom: -.5rem;
+  line-height: 1; letter-spacing: -.04em; opacity: .12; margin-bottom: -.5rem;
 }
 .bento-1 .bento-step-num, .bento-5 .bento-step-num { opacity: .2; color: white; }
-.bento-label { font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--brand); margin-bottom: .6rem; }
+.bento-label { font-size: var(--t-micro); font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: .6rem; }
 .bento-1 .bento-label, .bento-5 .bento-label { color: rgba(255,255,255,.6); }
-.bento-h { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.2rem; line-height: 1.25; margin-bottom: .6rem; color: var(--ink); }
+.bento-h { font-family: 'Sora', sans-serif; font-weight: 700; font-size: var(--t-h3); line-height: var(--lh-sub); letter-spacing: -.02em; margin-bottom: .6rem; color: var(--ink); }
 .bento-1 .bento-h, .bento-5 .bento-h { color: white; }
-.bento-p { font-size: .85rem; line-height: 1.7; color: var(--ink-light); }
-.bento-1 .bento-p, .bento-5 .bento-p { color: rgba(255,255,255,.7); }
+.bento-p { font-size: var(--t-body); line-height: var(--lh-prose); color: var(--ink-light); max-width: 60ch; }
+.bento-1 .bento-p, .bento-5 .bento-p { color: rgba(255,255,255,.92); }
 
 .bento-icon-wrap {
   width: 48px; height: 48px; border-radius: var(--r-sm);
   background: var(--brand-light); display: flex; align-items: center; justify-content: center;
   margin-bottom: 1rem;
 }
-.bento-icon-wrap svg { width: 22px; height: 22px; color: var(--brand); }
+.bento-icon-wrap svg { width: 22px; height: 22px; color: var(--brand-ink); }
 .bento-1 .bento-icon-wrap { background: rgba(255,255,255,.18); }
 .bento-1 .bento-icon-wrap svg { color: white; }
 .bento-5 .bento-icon-wrap { background: rgba(255,255,255,.1); }
@@ -778,7 +842,7 @@ section { position: relative; }
   background: var(--brand); color: white;
 }
 .avatar:first-child { margin-left: 0; }
-.avatar-more { background: var(--brand-light); color: var(--brand); font-size: .7rem; }
+.avatar-more { background: var(--brand-light); color: var(--brand-ink); font-size: .7rem; }
 
 /* progress bar */
 .progress-bar-wrap { margin-top: 1rem; }
@@ -790,7 +854,7 @@ section { position: relative; }
 .rating-pill {
   display: inline-flex; align-items: center; gap: 8px;
   background: var(--brand-light); padding: 8px 16px; border-radius: 100px;
-  font-family: 'Sora', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--brand);
+  font-family: 'Sora', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--brand-ink);
   margin-top: 1rem;
 }
 .star-icon { color: #f59e0b; }
@@ -815,48 +879,13 @@ section { position: relative; }
 }
 
 /* ─── STATS MARQUEE ──────────────────────────────────────────── */
-#stats { padding: 72px 0; background: var(--ink); color: white; overflow: hidden; }
-.marquee-track { display: flex; animation: marquee 22s linear infinite; }
-.marquee-track:hover { animation-play-state: paused; }
-@keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-.marquee-item {
-  display: flex; align-items: center; gap: 1rem; padding: 0 3rem;
-  border-right: 1px solid rgba(255,255,255,.07); flex-shrink: 0; white-space: nowrap;
-}
-.marquee-num { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 2.4rem; letter-spacing: -.05em; color: white; }
-.marquee-label { font-size: .82rem; color: rgba(255,255,255,.5); line-height: 1.5; }
-.marquee-label span { display: block; color: rgba(255,255,255,.28); font-size: .7rem; }
-
 /* ─── FEATURES ───────────────────────────────────────────────── */
-#features { padding: 120px 0; background: var(--off-white); overflow: hidden; }
-.features-header { text-align: center; margin-bottom: 5rem; }
-.features-header .section-sub { margin: 1rem auto 0; }
+.chip { background: white; border: 1px solid var(--border); padding: 6px 14px; border-radius: 100px; font-size: var(--t-ui); font-weight: 500; color: var(--ink-light); }
+/* dark-surface variant of .chip — used for the footer coverage pills */
+.chip-city { display: inline-flex; align-items: center; gap: 6px; background: rgba(242,107,29,.12); border-color: rgba(242,107,29,.2); color: rgba(255,255,255,.7); font-size: var(--t-caption); }
+.chip-city svg { width: 11px; height: 11px; flex-shrink: 0; }
+.chip-city.is-muted { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.08); color: rgba(255,255,255,.35); }
 
-.feature-row {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 5vw; align-items: center;
-  margin-bottom: 6rem;
-}
-.feature-row.reverse .feature-visual { order: -1; }
-.feature-text-wrap { position: relative; }
-.feature-num {
-  position: absolute; right: 0; top: -1rem;
-  font-family: 'Sora', sans-serif; font-weight: 800; font-size: 8rem;
-  color: var(--brand-light); line-height: 1; letter-spacing: -.06em;
-  pointer-events: none; z-index: 0;
-}
-.feature-text { position: relative; z-index: 1; }
-.feature-eyebrow { font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--brand); margin-bottom: .75rem; }
-.feature-h { font-family: 'Sora', sans-serif; font-weight: 700; font-size: clamp(1.6rem, 2.5vw, 2.2rem); letter-spacing: -.04em; line-height: 1.15; margin-bottom: 1rem; color: var(--ink); }
-.feature-p { font-size: .95rem; line-height: 1.75; color: var(--ink-light); font-weight: 300; max-width: 44ch; }
-.feature-chips { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 1.5rem; }
-.chip { background: white; border: 1px solid var(--border); padding: 6px 14px; border-radius: 100px; font-size: .78rem; font-weight: 500; color: var(--ink-light); }
-
-.feature-visual {
-  border-radius: var(--r-xl); overflow: hidden; position: relative;
-  background: var(--brand-pale); aspect-ratio: 4/3;
-  display: flex; align-items: center; justify-content: center;
-  border: 1px solid var(--border);
-}
 
 /* mockup pieces */
 .mockup-card {
@@ -868,51 +897,21 @@ section { position: relative; }
 .mockup-sub { font-size: .75rem; color: var(--ink-faint); }
 
 /* ─── TESTIMONIALS MASONRY ───────────────────────────────────── */
-#testimonials { padding: 120px 0; background: white; }
-.masonry-header { text-align: center; margin-bottom: 4rem; }
+#testimonials { padding: var(--band-sm) 0; background: white; }
+.masonry-header { text-align: center; margin-bottom: 2.5rem; }
 .masonry-header .section-sub { margin: 1rem auto 0; }
 
-.masonry-grid { columns: 3; column-gap: 1.25rem; }
-.masonry-item { break-inside: avoid; margin-bottom: 1.25rem; }
-.review-card {
-  background: var(--off-white); border: 1px solid var(--border);
-  border-radius: var(--r-md); padding: 1.75rem;
-  transition: transform .3s, box-shadow .3s;
-}
-.review-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-sm); }
-.review-card.blue { background: var(--brand); }
-.review-card.blue .review-text, .review-card.blue .reviewer-name { color: white; }
-.review-card.blue .reviewer-svc { color: rgba(255,255,255,.6); }
-.review-stars { display: flex; gap: 3px; margin-bottom: .75rem; }
-.review-stars svg { width: 14px; height: 14px; color: #f59e0b; }
-.review-card.blue .review-stars svg { color: rgba(255,255,255,.9); }
-.review-text { font-size: .9rem; line-height: 1.7; color: var(--ink-light); margin-bottom: 1.25rem; font-weight: 300; }
-.review-quote { font-size: 3.5rem; line-height: .5; font-family: 'Sora', sans-serif; font-weight: 800; color: var(--brand); opacity: .15; margin-bottom: .5rem; }
-.review-card.blue .review-quote { opacity: .25; color: white; }
-.reviewer { display: flex; align-items: center; gap: 10px; }
-.reviewer-avatar {
-  width: 38px; height: 38px; border-radius: 50%;
-  background: var(--brand-light); display: flex; align-items: center; justify-content: center;
-  font-family: 'Sora', sans-serif; font-weight: 700; font-size: .82rem; color: var(--brand); flex-shrink: 0;
-}
-.review-card.blue .reviewer-avatar { background: rgba(255,255,255,.2); color: white; }
-.reviewer-name { font-family: 'Sora', sans-serif; font-weight: 600; font-size: .88rem; color: var(--ink); }
-.reviewer-svc { font-size: .72rem; color: var(--ink-faint); margin-top: 1px; }
-
 /* ─── CTA SECTION ────────────────────────────────────────────── */
-#cta { padding: 140px 0; background: white; position: relative; overflow: hidden; }
+#cta { padding: var(--band-xl) 0; background: white; position: relative; overflow: hidden; }
 .cta-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 70% at 80% 50%, var(--brand-pale) 0%, transparent 70%); }
 .cta-inner { max-width: 1180px; margin: 0 auto; padding: 0 5vw; display: grid; grid-template-columns: 1fr 1fr; gap: 6vw; align-items: center; position: relative; z-index: 1; }
-.cta-h { font-family: 'Sora', sans-serif; font-weight: 800; font-size: clamp(2.5rem, 4vw, 4.2rem); letter-spacing: -.05em; line-height: 1.0; color: var(--ink); margin-bottom: 1.5rem; }
-.cta-h span { color: var(--brand); }
-.cta-sub { font-size: 1rem; line-height: 1.7; color: var(--ink-light); font-weight: 300; margin-bottom: 2.5rem; }
+.cta-h { font-family: 'Sora', sans-serif; font-weight: 800; font-size: clamp(2.5rem, 4vw, 4.2rem); letter-spacing: -.04em; line-height: var(--lh-display); color: var(--ink); margin-bottom: 2.25rem; }
+.cta-h span { color: var(--brand-deep); }
+.cta-sub { font-size: var(--t-lede); line-height: var(--lh-prose); color: var(--ink-light); font-weight: 400; max-width: 56ch; margin-bottom: 3.25rem; }
 .cta-phones { position: relative; display: flex; align-items: flex-end; justify-content: center; height: 420px; }
-.cta-phone-main { width: 200px; position: relative; z-index: 2; filter: drop-shadow(0 30px 60px rgba(242,107,29,.2)); animation: ctaFloat 4s ease-in-out infinite; }
-.cta-phone-back { width: 170px; position: absolute; left: -40px; bottom: 20px; opacity: .55; z-index: 1; filter: drop-shadow(0 20px 40px rgba(242,107,29,.15)); animation: ctaFloat 4s 1s ease-in-out infinite; }
-@keyframes ctaFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 .cta-meta { display: flex; gap: 1.5rem; margin-top: 1.5rem; flex-wrap: wrap; }
 .cta-meta-item { display: flex; align-items: center; gap: 6px; font-size: .78rem; color: var(--ink-faint); }
-.cta-meta-item svg { width: 14px; height: 14px; color: var(--brand); }
+.cta-meta-item svg { width: 14px; height: 14px; color: var(--brand-ink); }
 
 /* ═══════════════════════════════════════════════════════════════
    FOOTER — LARGE TYPE + NEGATIVE
@@ -938,13 +937,13 @@ footer {
 }
 .footer-bigtype {
   font-family: 'Sora', sans-serif; font-weight: 800;
-  font-size: clamp(4rem, 10vw, 10rem); letter-spacing: -.05em; line-height: .9;
+  font-size: clamp(4rem, 10vw, 6rem); letter-spacing: -.04em; line-height: .95;
   color: white; user-select: none;
 }
 .footer-bigtype .ft-accent { color: var(--brand); }
 .footer-tagline {
-  font-size: 1rem; color: rgba(255,255,255,.45); font-weight: 300;
-  margin-top: 1.5rem; max-width: 48ch;
+  font-size: var(--t-body); line-height: var(--lh-prose-dark); letter-spacing: .01em; color: rgba(255,255,255,.58); font-weight: 400;
+  margin-top: 1.5rem; max-width: 56ch;
 }
 
 /* QR block — top right of footer hero */
@@ -958,14 +957,6 @@ footer {
   padding: 10px;
   box-shadow: 0 8px 32px rgba(0,0,0,.25);
 }
-.footer-qr-placeholder {
-  width: 100%; height: 100%; border-radius: 8px;
-  border: 2px dashed rgba(242,107,29,.3);
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
-  background: var(--brand-pale);
-}
-.footer-qr-placeholder svg { width: 28px; height: 28px; color: var(--brand); opacity: .5; }
-.footer-qr-placeholder span { font-size: .6rem; color: var(--ink-faint); text-align: center; line-height: 1.4; font-weight: 500; letter-spacing: .04em; }
 .footer-qr-label { font-size: .72rem; color: rgba(255,255,255,.4); text-align: center; letter-spacing: .04em; text-transform: uppercase; font-weight: 600; }
 
 /* Footer links grid */
@@ -974,9 +965,9 @@ footer {
   padding-bottom: 3rem; border-bottom: 1px solid rgba(255,255,255,.06);
   margin-bottom: 0;
 }
-.footer-col-title { font-family: 'Sora', sans-serif; font-weight: 600; font-size: .82rem; color: rgba(255,255,255,.6); margin-bottom: 1.25rem; letter-spacing: .04em; text-transform: uppercase; font-size: .7rem; }
+.footer-col-title { font-family: 'Sora', sans-serif; font-weight: 600; font-size: var(--t-micro); color: rgba(255,255,255,.6); margin-bottom: 1.25rem; letter-spacing: .1em; text-transform: uppercase; }
 .footer-link-list { list-style: none; display: flex; flex-direction: column; gap: .6rem; }
-.footer-link-list li a { font-size: .85rem; color: rgba(255,255,255,.4); text-decoration: none; transition: color .2s; }
+.footer-link-list li a { font-size: var(--t-ui); color: rgba(255,255,255,.55); text-decoration: none; transition: color .2s; }
 .footer-link-list li a:hover { color: white; }
 
 /* Social icons */
@@ -1000,7 +991,7 @@ footer {
   display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
   padding: 1.5rem 0;
 }
-.footer-copy { font-size: .75rem; color: rgba(255,255,255,.25); }
+.footer-copy { font-size: var(--t-caption); color: rgba(255,255,255,.55); }
 .footer-badges { display: flex; gap: .75rem; flex-wrap: wrap; }
 .footer-badge {
   display: flex; align-items: center; gap: 6px;
@@ -1043,11 +1034,11 @@ footer {
   cursor: pointer; color: var(--ink-faint);
   transition: background .2s, color .2s;
 }
-.tech-modal-close:hover { background: var(--brand-light); color: var(--brand); }
+.tech-modal-close:hover { background: var(--brand-light); color: var(--brand-ink); }
 
 .tech-modal-badge {
   display: inline-flex; align-items: center; gap: 6px;
-  background: var(--brand-light); color: var(--brand);
+  background: var(--brand-light); color: var(--brand-ink);
   font-size: .68rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
   padding: 5px 12px; border-radius: 100px; margin-bottom: 1rem;
 }
@@ -1057,8 +1048,8 @@ footer {
   margin-bottom: .6rem; line-height: 1.1;
 }
 .tech-modal-sub {
-  font-size: .88rem; line-height: 1.7; color: var(--ink-light);
-  font-weight: 300; margin-bottom: 1.5rem;
+  font-size: var(--t-body); line-height: var(--lh-prose); color: var(--ink-light);
+  font-weight: 400; margin-bottom: 1.5rem; max-width: 58ch;
 }
 .tech-modal-divider {
   height: 1px; background: var(--border); margin-bottom: 1.5rem;
@@ -1086,7 +1077,7 @@ footer {
   margin-bottom: 1.5rem;
 }
 .tech-modal-note p {
-  font-size: .82rem; line-height: 1.65; color: var(--ink-light); font-weight: 300;
+  font-size: var(--t-body); line-height: var(--lh-prose); color: var(--ink-light); font-weight: 400;
 }
 .tech-modal-map-btn {
   display: inline-flex; align-items: center; gap: 8px;
@@ -1095,7 +1086,106 @@ footer {
   font-family: 'Sora', sans-serif; font-weight: 600; font-size: .88rem;
   transition: background .2s, transform .2s;
 }
-.tech-modal-map-btn:hover { background: #1a2035; transform: translateY(-1px); }
+.tech-modal-map-btn:hover { background: var(--brand-deep); transform: translateY(-1px); }
+
+/* ═══════════════════════════════════════════════════════════════
+   INTERACTIVE STATES
+   38 focusable elements; before this only 6 carried a focus style
+   and the rest fell back to the UA ring — which #waitlistEmail also
+   killed with an inline outline:none. One ring, one offset. The
+   offset puts the ring on the parent surface rather than on a
+   filled button, and --brand-mid clears 3:1 on every surface the
+   page uses: off-white 3.64, white 3.83, --ink 4.98, banner 4.06.
+═══════════════════════════════════════════════════════════════ */
+:is(a, button, input, [tabindex]):focus-visible {
+  outline: 3px solid var(--brand-mid);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+/* Keyboard users get the skip link; pointer users never see it. */
+.skip-link {
+  position: absolute; left: 50%; top: 0; transform: translate(-50%, -120%);
+  z-index: 10002; background: var(--ink); color: white;
+  padding: .7rem 1.4rem; border-radius: 0 0 var(--r-sm) var(--r-sm);
+  font-family: 'Sora', sans-serif; font-weight: 600; font-size: var(--t-ui);
+  text-decoration: none; transition: transform .18s ease;
+}
+.skip-link:focus-visible { transform: translate(-50%, 0); }
+
+/* Press feedback — nothing on the page acknowledged a click before. */
+.btn-google-play:active, .nav-cta-gplay:active, .mobile-menu-cta:active,
+.tb-apply:active, .tech-modal-map-btn:active, .back-to-top:active,
+#waitlistForm button[type="submit"]:not(:disabled):active { transform: translateY(1px); }
+
+/* Links that only had a colour hover now also answer the keyboard. */
+.nav-links a:focus-visible, .footer-link-list li a:focus-visible { color: var(--brand-ink); }
+.footer-link-list li a:hover, .footer-link-list li a:focus-visible { color: white; }
+.mobile-menu a:hover, .mobile-menu a:focus-visible { color: var(--brand-ink); }
+.nav-hamburger:hover span { background: var(--brand-deep); }
+.tech-modal-close:focus-visible { background: var(--brand-light); color: var(--brand-ink); }
+.back-to-top:focus-visible { background: var(--brand-deep); }
+
+/* ── SUBMIT: rest / hover / focus / active / disabled+loading ── */
+#waitlistForm button[type="submit"] { position: relative; }
+#waitlistForm button[type="submit"]:disabled {
+  background: var(--ink-faint); cursor: progress; padding-right: 2.5rem;
+}
+#waitlistForm button[type="submit"]:disabled::after {
+  content: ''; position: absolute; right: .95rem; top: 50%;
+  width: 12px; height: 12px; margin-top: -6px;
+  border: 2px solid rgba(255,255,255,.45); border-top-color: white;
+  border-radius: 50%; animation: btnSpin .6s linear infinite;
+}
+@keyframes btnSpin { to { transform: rotate(360deg); } }
+
+/* Success and error were both orange and near-indistinguishable;
+   success also failed contrast at 2.89:1. Now they differ in hue
+   and in wording, and both clear 6:1 on the section background. */
+#waitlistMsg.is-ok    { color: #186c37; }
+#waitlistMsg.is-error { color: #b3261e; }
+
+/* Invalid input only after the user has actually typed something. */
+#waitlistEmail:not(:placeholder-shown):invalid { border-color: #b3261e; }
+
+@media (prefers-reduced-motion: reduce) {
+  #waitlistForm button[type="submit"]:disabled::after { animation: none; }
+  .skip-link { transition: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TAP TARGETS
+   Measured in headless Chrome at 375 / 768 / 1440: 27 controls came
+   in under 44px. Primary controls are sized unconditionally; text
+   links expand only under pointer:coarse so desktop density is kept.
+   Exempt by spec: .privacy-link (inline in a sentence — WCAG 2.5.8
+   inline exception), .track-call (inert mockup art, pointer-events
+   none + tabindex -1), and the 1x1 honeypot input.
+═══════════════════════════════════════════════════════════════ */
+.nav-hamburger { width: 44px; height: 44px; }
+.nav-cta-gplay { min-height: 44px; }
+.nav-links a { display: inline-flex; align-items: center; min-height: 24px; }
+.mobile-menu a { min-height: 44px; box-sizing: border-box; }
+.nav-logo { min-height: 44px; }
+.skip-link { min-height: 44px; display: inline-flex; align-items: center; }
+.mobile-menu-cta { min-height: 44px; }
+.tb-apply { min-height: 44px; }
+.tech-modal-close { width: 44px; height: 44px; }
+.tech-modal-map-btn { min-height: 44px; box-sizing: border-box; }
+#waitlistEmail { min-height: 44px; }
+#waitlistForm button[type="submit"] { min-height: 44px; }
+.footer-qr-block a { display: inline-flex; align-items: center; min-height: 44px; }
+
+/* Footer link columns were 16px tall; give them room without
+   inflating the rhythm — the gap absorbs most of the new padding. */
+.footer-link-list { gap: .15rem; }
+.footer-link-list li a { display: inline-flex; align-items: center; min-height: 28px; }
+
+@media (pointer: coarse) {
+  .nav-links a,
+  .mobile-menu a,
+  .footer-link-list li a { display: flex; align-items: center; min-height: 44px; }
+  .footer-link-list { gap: 0; }
+}
 
 /* ─── SCROLL ANIMATIONS ──────────────────────────────────────── */
 .reveal { opacity: 0; transform: translateY(30px); transition: opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1); }
@@ -1155,8 +1245,44 @@ footer {
   will-change: transform, filter;
 }
 .zoom-img.zoomed { transform: scale(1); filter: blur(0); }
-/* dark backing so the brief sub-1 scale never flashes page-white at edges */
-.coverage-card { background: var(--ink); }
+/* ─── COVERAGE CARDS ─────────────────────────────────────────── */
+/* Was three byte-identical inline-styled blocks with onmouseover/out
+   handlers; the lift is now :hover + :focus-within so it survives
+   keyboard navigation if a link is ever added inside a card. */
+.coverage-card {
+  position: relative; flex: 1;
+  min-width: 220px; max-width: 320px; height: 320px;
+  border-radius: var(--r-lg); overflow: hidden;
+  /* dark backing so the brief sub-1 scale never flashes page-white at edges */
+  background: var(--ink);
+  transition: transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s;
+}
+.coverage-card:hover, .coverage-card:focus-within {
+  transform: translateY(-6px); box-shadow: var(--shadow-lg);
+}
+.coverage-card > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.coverage-veil {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(10,15,30,.85) 0%, rgba(10,15,30,.3) 55%, rgba(10,15,30,.1) 100%);
+}
+.coverage-body { position: absolute; inset: 0; padding: 1.5rem; display: flex; flex-direction: column; justify-content: flex-end; }
+.coverage-status {
+  display: inline-flex; align-items: center; gap: 5px; width: fit-content;
+  background: #e9f5ee; color: #186c37;
+  font-size: .65rem; font-weight: 700; padding: 4px 10px; border-radius: 100px;
+  margin-bottom: .6rem;
+}
+.coverage-status::before { content: ''; width: 5px; height: 5px; background: currentColor; border-radius: 50%; }
+.coverage-name { font-family: 'Sora', sans-serif; font-weight: 700; font-size: var(--t-h3); color: white; line-height: var(--lh-sub); letter-spacing: -.02em; margin-bottom: .25rem; }
+.coverage-region { font-size: var(--t-caption); color: rgba(255,255,255,.68); display: flex; align-items: center; gap: 4px; }
+.coverage-region svg { width: 11px; height: 11px; flex-shrink: 0; }
+
+/* waitlist form — hover/focus moved off inline on* handlers */
+#waitlistEmail:focus { border-color: var(--brand); }
+#waitlistForm button[type="submit"]:hover,
+#waitlistForm button[type="submit"]:focus-visible { background: var(--brand-mid); }
+.privacy-link { color: var(--ink-faint); text-decoration: underline; text-underline-offset: 2px; }
+.privacy-link:hover, .privacy-link:focus-visible { color: var(--brand-ink); }
 
 /* ── (2) FULL-BLEED STORY BANNER (compact — no pinning) ─────── */
 #story { position: relative; background: var(--ink); overflow: hidden; }
@@ -1179,18 +1305,18 @@ footer {
   padding: clamp(4.5rem, 14vh, 8.5rem) 7vw; max-width: 900px;
 }
 .story-eyebrow {
-  font-size: .72rem; font-weight: 600; letter-spacing: .12em;
+  font-size: var(--t-micro); font-weight: 600; letter-spacing: .1em;
   text-transform: uppercase; color: var(--brand); margin-bottom: 1rem;
 }
 .story-h {
   font-family: 'Sora', sans-serif; font-weight: 800;
   font-size: clamp(2.2rem, 4.6vw, 4.2rem); letter-spacing: -.04em;
-  line-height: 1.06; color: white; margin-bottom: 1.4rem;
+  line-height: var(--lh-display); color: white; margin-bottom: 1.4rem;
 }
 .story-h em { font-style: normal; color: var(--brand); }
 .story-p {
-  font-size: 1.05rem; line-height: 1.75; color: rgba(255,255,255,.72);
-  font-weight: 300; max-width: 50ch;
+  font-size: var(--t-lede); line-height: var(--lh-prose-dark); letter-spacing: .01em; color: rgba(255,255,255,.78);
+  font-weight: 400; max-width: 56ch;
 }
 
 /* ── (4) FOUNDERS GALLERY — sticky horizontal scroll ────────── */
@@ -1223,7 +1349,7 @@ footer {
 .g-ph {
   position: absolute; inset: 0;
   display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(160deg, #1c2440 0%, #0a0f1e 80%);
+  background: linear-gradient(160deg, #2a1d14 0%, #0a0f1e 80%);
   font-family: 'Sora', sans-serif; font-weight: 800; font-size: 5rem;
   letter-spacing: -.04em; color: rgba(255,255,255,.1); user-select: none;
 }
@@ -1259,6 +1385,7 @@ footer {
 @media (prefers-reduced-motion: reduce) {
   #intro-overlay { display: none !important; }
   :root { --intro-base: 0s; }
+  .reveal, .reveal-left, .reveal-right { opacity: 1 !important; transform: none !important; transition: none !important; }
   .hero-tag, .hero-h1, .hero-sub, .hero-actions, .hero-stats, .hero-phone-wrap { animation: none !important; opacity: 1 !important; transform: none !important; }
   .hero-word { animation: none !important; opacity: 1 !important; transform: none !important; }
   .section-title .tw { transition: none !important; opacity: 1 !important; transform: none !important; }
@@ -1279,10 +1406,8 @@ footer {
   .hero-float-2 { right: 0; }
   .hero-left { padding: 4rem 6vw 2rem; }
   .hero-h1 { font-size: 2.6rem; }
-  .bento-1,.bento-2,.bento-3,.bento-4,.bento-5,.bento-6,.bento-7 { grid-column: span 12; }
-  .masonry-grid { columns: 2; }
-  .feature-row { grid-template-columns: 1fr; }
-  .feature-row.reverse .feature-visual { order: unset; }
+  .bento-1,.bento-2,.bento-3,.bento-4,.bento-5,.bento-6,.bento-7,.bento-8 { grid-column: span 12; }
+  .bento-8 { grid-template-columns: 1fr; gap: 2rem; }
   .cta-inner { grid-template-columns: 1fr; }
   .cta-phones { display: none; }
   .footer-links-grid { grid-template-columns: 1fr 1fr; }
@@ -1290,7 +1415,6 @@ footer {
   nav .nav-links { display: none; }
 }
 @media (max-width: 600px) {
-  .masonry-grid { columns: 1; }
   .footer-links-grid { grid-template-columns: 1fr; }
   .footer-bigtype { font-size: 3.2rem; }
   .hero-float-card { display: none; }
@@ -1321,6 +1445,15 @@ footer {
 </head>
 <body>
 
+<!-- Icon sprite: these two shapes were repeated inline 6x (pin) and 4x (check)
+     across the coverage cards, footer city pills and technician perk list. -->
+<svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
+  <symbol id="ic-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
+</svg>
+
+<a class="skip-link" href="#hero">Skip to content</a>
+
 <div class="scroll-progress" id="scrollProgress"></div>
 
 <div id="intro-overlay">
@@ -1349,8 +1482,7 @@ footer {
     <a href="#app">The App</a>
     <a href="#services">Services</a>
     <a href="#how">How It Works</a>
-    <a href="#features">Features</a>
-    <a href="#testimonials">Reviews</a>
+    <a href="#testimonials">Be First</a>
   </div>
   <div style="display:flex;align-items:center;gap:.75rem;">
     <a href="#waitlist" class="nav-cta-gplay">
@@ -1360,7 +1492,7 @@ footer {
         <span>Google Play</span>
       </div>
     </a>
-    <button class="nav-hamburger" id="navHamburger" aria-label="Menu">
+    <button class="nav-hamburger" id="navHamburger" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu">
       <span></span><span></span><span></span>
     </button>
   </div>
@@ -1371,11 +1503,10 @@ footer {
   <a href="#app" onclick="closeMobileMenu()">The App</a>
   <a href="#services" onclick="closeMobileMenu()">Services</a>
   <a href="#how" onclick="closeMobileMenu()">How It Works</a>
-  <a href="#features" onclick="closeMobileMenu()">Features</a>
-  <a href="#testimonials" onclick="closeMobileMenu()">Reviews</a>
+  <a href="#testimonials" onclick="closeMobileMenu()">Be First</a>
   <a href="#waitlist" class="mobile-menu-cta" onclick="closeMobileMenu()">
     <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M3.18 23.76A2 2 0 0 1 2 22V2a2 2 0 0 1 1.18-1.76l11.33 11.76L3.18 23.76zM22.46 12l-3.03 1.71-3.39-3.51 3.39-3.51 3.04 1.71A2 2 0 0 1 22.46 12zM3.69.54L17.2 7.72 14.01 11 3.69.54zM3.69 23.46l10.32-10.46 3.19 3.28L3.69 23.46z"/></svg>
-    Coming Soon — Join the Waitlist
+    Coming soon. Join the waitlist
   </a>
 </div>
 
@@ -1386,7 +1517,7 @@ footer {
       Launching Soon in Batangas
     </div>
     <h1 class="hero-h1">Your aircon fixed,<br/><em>fast & right.</em></h1>
-    <p class="hero-sub">Batangas' first on-demand aircon service app. Cleaning, repair, and installation by trusted local technicians in Tanauan, Malvar, and Santo Tomas — tracked live, at your door fast. Launching soon: join the waitlist and be first in line.</p>
+    <p class="hero-sub">Batangas' first on-demand aircon service app. A local technician cleans, repairs, or installs your unit, and you watch them arrive on a live map. We're launching in Tanauan, Malvar, and Santo Tomas. Join the waitlist.</p>
     <div class="hero-actions">
       <a href="#waitlist" class="btn-google-play">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76A2 2 0 0 1 2 22V2a2 2 0 0 1 1.18-1.76l11.33 11.76L3.18 23.76zM22.46 12l-3.03 1.71-3.39-3.51 3.39-3.51 3.04 1.71A2 2 0 0 1 22.46 12zM3.69.54L17.2 7.72 14.01 11 3.69.54zM3.69 23.46l10.32-10.46 3.19 3.28L3.69 23.46z"/></svg>
@@ -1424,10 +1555,10 @@ footer {
       <div class="hero-phone-stage">
 
         <!-- Customer app · Live Tracking screen (per papafix-customer-ui-guide.pdf) -->
-        <div class="phone phone-hero" role="img" aria-label="Preview of the PapaFix customer app live-tracking screen: technician Mark Reyes, rated 4.8, is 8 minutes away on a live map, with a Call Technician button below.">
+        <div class="phone phone-hero" role="img" aria-label="Preview of the PapaFix customer app live-tracking screen: technician Mark Reyes is 8 minutes away on a live map, with a Call Technician button below.">
           <div class="phone-screen" aria-hidden="true">
             <div class="phone-cam"></div>
-            <div class="phone-status"><span>9:41</span><span class="ps-right">5G<span class="ps-sig"><i></i><i></i><i></i><i></i></span><span class="ps-batt"></span></span></div>
+            <div class="phone-status"><span>10:24</span><span class="ps-right">5G<span class="ps-sig"><i></i><i></i><i></i><i></i></span><span class="ps-batt"></span></span></div>
 
             <div class="track-map">
               <svg class="pf-anim" viewBox="0 0 280 400" preserveAspectRatio="xMidYMid slice">
@@ -1467,7 +1598,7 @@ footer {
                 <div class="tc-ava">M</div>
                 <div>
                   <div class="tc-name">Mark Reyes</div>
-                  <div class="tc-meta"><b>★ 4.8</b> · Verified technician</div>
+                  <div class="tc-meta">Verified technician</div>
                 </div>
                 <div class="tc-eta"><b>8 min</b><span>away</span></div>
               </div>
@@ -1475,7 +1606,7 @@ footer {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                 Call Technician
               </button>
-              <div class="track-ref">Booking #A1B2 · Air Conditioner</div>
+              <div class="track-ref">Booking #PF-2984 · Air Conditioner</div>
             </div>
             <div class="phone-home"></div>
           </div>
@@ -1491,11 +1622,11 @@ footer {
         </div>
         <div class="hero-float-card hero-float-2" aria-hidden="true">
           <div class="fc-mono">₱850.00</div>
-          <div class="fc-sub">Upfront estimate — no surprises</div>
+          <div class="fc-sub">You see this before you confirm</div>
         </div>
 
       </div>
-      <p class="hero-phone-cap">Actual app design — launching soon on Google Play</p>
+      <p class="hero-phone-cap">The real app design. Launching soon on Google Play.</p>
     </div>
   </div>
 </section>
@@ -1507,35 +1638,35 @@ footer {
         <div class="trust-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
-        <div class="trust-text"><strong>Verified Technicians</strong><br/>Screened in person</div>
+        <div class="trust-text"><strong>Verified Technicians</strong><br/>ID-checked and screened in person</div>
       </div>
       <div class="trust-sep">·</div>
       <div class="trust-item">
         <div class="trust-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
         </div>
-        <div class="trust-text"><strong>Live GPS Tracking</strong><br/>Real-time updates</div>
+        <div class="trust-text"><strong>Live GPS Tracking</strong><br/>Built into the app</div>
       </div>
       <div class="trust-sep">·</div>
       <div class="trust-item">
         <div class="trust-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
         </div>
-        <div class="trust-text"><strong>Upfront Pricing</strong><br/>No surprise fees</div>
+        <div class="trust-text"><strong>Upfront Pricing</strong><br/>Estimate before you confirm</div>
       </div>
       <div class="trust-sep">·</div>
       <div class="trust-item">
         <div class="trust-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
-        <div class="trust-text"><strong>Fast Response</strong><br/>Nearest tech dispatched first</div>
+        <div class="trust-text"><strong>Nearest Tech First</strong><br/>Dispatch by proximity</div>
       </div>
       <div class="trust-sep">·</div>
       <div class="trust-item">
         <div class="trust-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 8h3v3H7zM14 8h3v3h-3zM7 14h3v3H7z"/></svg>
         </div>
-        <div class="trust-text"><strong>QR Verified</strong><br/>Tamper-proof job record</div>
+        <div class="trust-text"><strong>QR Verified</strong><br/>Check-in and check-out on every job</div>
       </div>
       <div class="trust-sep">·</div>
       <div class="trust-item">
@@ -1549,68 +1680,53 @@ footer {
 </section>
 
 <!-- ─── COVERAGE SECTION ──────────────────────────────────────── -->
-<section id="coverage" style="padding: 80px 0; background: white;">
+<section id="coverage" style="padding: var(--band-md) 0; background: white;">
   <div class="container">
     <div style="text-align:center; margin-bottom: 3rem;">
       <div class="section-eyebrow">Service Area</div>
-      <h2 class="section-title" style="margin-bottom:.75rem;">Proudly rooted in <em style="font-style:normal;color:var(--brand);">Batangas</em></h2>
-      <p class="section-sub" style="margin:0 auto;">We're starting close to home. PapaFix currently serves three cities in Batangas — with more areas coming soon.</p>
+      <h2 class="section-title" style="margin-bottom:.75rem;">Proudly rooted in <em style="font-style:normal;color:var(--brand-deep);">Batangas</em></h2>
+      <p class="section-sub" style="margin:0 auto;">We're starting close to home. Three cities first, then we widen from there.</p>
     </div>
 
     <div class="reveal" style="display:flex; gap:1.5rem; justify-content:center; flex-wrap:wrap; margin-bottom:2.5rem;">
 
       <!-- Tanauan City card -->
-      <div class="coverage-card" style="position:relative;border-radius:var(--r-lg);flex:1;min-width:220px;max-width:320px;height:320px;overflow:hidden;cursor:default;transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 24px 60px rgba(242,107,29,.22)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-        <img src="assets/img/cities/tanauan.jpg" alt="Tanauan City Hall" loading="lazy" class="zoom-img" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;"/>
-        <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(10,15,30,.85) 0%, rgba(10,15,30,.3) 55%, rgba(10,15,30,.1) 100%);"></div>
-        <div style="position:absolute;inset:0;padding:1.5rem;display:flex;flex-direction:column;justify-content:flex-end;">
-          <div style="display:inline-flex;align-items:center;gap:5px;background:#e9f5ee;color:#2d8a4e;font-size:.65rem;font-weight:700;padding:4px 10px;border-radius:100px;width:fit-content;margin-bottom:.6rem;">
-            <span style="width:5px;height:5px;background:#2d8a4e;border-radius:50%;display:inline-block;"></span> Active
-          </div>
-          <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:1.15rem;color:white;line-height:1.2;margin-bottom:.25rem;">Tanauan City</div>
-          <div style="font-size:.75rem;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:4px;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            Batangas
-          </div>
+      <div class="coverage-card">
+        <img src="assets/img/cities/tanauan.jpg" alt="Tanauan City Hall" loading="lazy" class="zoom-img"/>
+        <div class="coverage-veil"></div>
+        <div class="coverage-body">
+          <span class="coverage-status">Launch city</span>
+          <h3 class="coverage-name">Tanauan City</h3>
+          <div class="coverage-region"><svg aria-hidden="true"><use href="#ic-pin"/></svg>Batangas</div>
         </div>
       </div>
 
       <!-- Malvar card -->
-      <div class="coverage-card" style="position:relative;border-radius:var(--r-lg);flex:1;min-width:220px;max-width:320px;height:320px;overflow:hidden;cursor:default;transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 24px 60px rgba(242,107,29,.22)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-        <img src="assets/img/cities/malvar.jpg" alt="Malvar Municipal Hall, Batangas" loading="lazy" class="zoom-img" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;"/>
-        <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(10,15,30,.85) 0%, rgba(10,15,30,.3) 55%, rgba(10,15,30,.1) 100%);"></div>
-        <div style="position:absolute;inset:0;padding:1.5rem;display:flex;flex-direction:column;justify-content:flex-end;">
-          <div style="display:inline-flex;align-items:center;gap:5px;background:#e9f5ee;color:#2d8a4e;font-size:.65rem;font-weight:700;padding:4px 10px;border-radius:100px;width:fit-content;margin-bottom:.6rem;">
-            <span style="width:5px;height:5px;background:#2d8a4e;border-radius:50%;display:inline-block;"></span> Active
-          </div>
-          <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:1.15rem;color:white;line-height:1.2;margin-bottom:.25rem;">Malvar</div>
-          <div style="font-size:.75rem;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:4px;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            Batangas
-          </div>
+      <div class="coverage-card">
+        <img src="assets/img/cities/malvar.jpg" alt="Malvar Municipal Hall, Batangas" loading="lazy" class="zoom-img"/>
+        <div class="coverage-veil"></div>
+        <div class="coverage-body">
+          <span class="coverage-status">Launch city</span>
+          <h3 class="coverage-name">Malvar</h3>
+          <div class="coverage-region"><svg aria-hidden="true"><use href="#ic-pin"/></svg>Batangas</div>
         </div>
       </div>
 
       <!-- Santo Tomas City card -->
-      <div class="coverage-card" style="position:relative;border-radius:var(--r-lg);flex:1;min-width:220px;max-width:320px;height:320px;overflow:hidden;cursor:default;transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 24px 60px rgba(242,107,29,.22)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-        <img src="assets/img/cities/santotomas.jpg" alt="Santo Tomas City Hall" loading="lazy" class="zoom-img" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;"/>
-        <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(10,15,30,.85) 0%, rgba(10,15,30,.3) 55%, rgba(10,15,30,.1) 100%);"></div>
-        <div style="position:absolute;inset:0;padding:1.5rem;display:flex;flex-direction:column;justify-content:flex-end;">
-          <div style="display:inline-flex;align-items:center;gap:5px;background:#e9f5ee;color:#2d8a4e;font-size:.65rem;font-weight:700;padding:4px 10px;border-radius:100px;width:fit-content;margin-bottom:.6rem;">
-            <span style="width:5px;height:5px;background:#2d8a4e;border-radius:50%;display:inline-block;"></span> Active
-          </div>
-          <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:1.15rem;color:white;line-height:1.2;margin-bottom:.25rem;">Santo Tomas City</div>
-          <div style="font-size:.75rem;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:4px;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            Batangas
-          </div>
+      <div class="coverage-card">
+        <img src="assets/img/cities/santotomas.jpg" alt="Santo Tomas City Hall" loading="lazy" class="zoom-img"/>
+        <div class="coverage-veil"></div>
+        <div class="coverage-body">
+          <span class="coverage-status">Launch city</span>
+          <h3 class="coverage-name">Santo Tomas City</h3>
+          <div class="coverage-region"><svg aria-hidden="true"><use href="#ic-pin"/></svg>Batangas</div>
         </div>
       </div>
 
     </div>
 
     <div class="reveal" style="text-align:center;">
-      <div style="display:inline-flex;align-items:center;gap:8px;background:var(--brand-light);color:var(--brand);font-size:.78rem;font-weight:600;padding:8px 20px;border-radius:100px;">
+      <div style="display:inline-flex;align-items:center;gap:8px;background:var(--brand-light);color:var(--brand-ink);font-size:var(--t-ui);font-weight:600;padding:8px 20px;border-radius:100px;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         More cities coming soon
       </div>
@@ -1618,18 +1734,18 @@ footer {
 
     <!-- Waitlist signup — the page's primary pre-launch conversion -->
     <div class="reveal" id="waitlist" style="margin-top:2rem;text-align:center;scroll-margin-top:110px;">
-      <p style="font-size:.85rem;color:var(--ink-faint);margin-bottom:.75rem;">Be first in line — get notified the moment PapaFix launches near you.</p>
+      <p style="font-size:var(--t-ui);color:var(--ink-faint);margin-bottom:.75rem;">Get an email the day we launch in your city.</p>
       <form id="waitlistForm" style="display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap;">
         <label for="waitlistEmail" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;">Your email address</label>
-        <input id="waitlistEmail" type="email" name="email" placeholder="Your email address" required autocomplete="email" inputmode="email" style="padding:.65rem 1rem;border-radius:var(--r-sm);border:1.5px solid var(--border);font-family:'DM Sans',sans-serif;font-size:.9rem;width:260px;outline:none;transition:border-color .2s;" onfocus="this.style.borderColor='var(--brand)'" onblur="this.style.borderColor='var(--border)'"/>
+        <input id="waitlistEmail" type="email" name="email" placeholder="Your email address" required autocomplete="email" inputmode="email" style="padding:.65rem 1rem;border-radius:var(--r-sm);border:1.5px solid var(--border);font-family:'DM Sans',sans-serif;font-size:var(--t-body);width:260px;transition:border-color .2s;"/>
         <!-- Spam honeypot: Web3Forms drops any submission where botcheck is set.
              Hidden from humans, irresistible to bots. -->
         <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;"/>
-        <button type="submit" style="padding:.65rem 1.25rem;background:var(--brand);color:white;border:none;border-radius:var(--r-sm);font-family:'Sora',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer;transition:background .2s,transform .2s;" onmouseover="this.style.background='var(--brand-mid)'" onmouseout="this.style.background='var(--brand)'">Notify Me</button>
+        <button type="submit" style="padding:.65rem 1.25rem;background:var(--brand);color:white;border:none;border-radius:var(--r-sm);font-family:'Sora',sans-serif;font-weight:600;font-size:var(--t-ui);cursor:pointer;transition:background .2s,transform .2s;">Notify Me</button>
       </form>
-      <p id="waitlistMsg" style="display:none;margin-top:.75rem;font-size:.85rem;font-weight:600;"></p>
+      <p id="waitlistMsg" role="status" aria-live="polite" style="display:none;margin-top:.75rem;font-size:var(--t-ui);font-weight:600;"></p>
       <!-- Data Privacy Act expects notice where the data is collected, not only in the footer. -->
-      <p style="margin-top:.85rem;font-size:.72rem;line-height:1.6;color:var(--ink-faint);">We'll only email you about the launch — nothing else. See our <a href="/privacy" style="color:var(--ink-faint);text-decoration:underline;text-underline-offset:2px;" onmouseover="this.style.color='var(--brand)'" onmouseout="this.style.color='var(--ink-faint)'">Privacy Policy</a>.</p>
+      <p style="margin-top:.85rem;font-size:var(--t-caption);line-height:1.6;color:var(--ink-faint);">We'll only email you about the launch — nothing else. See our <a href="/privacy" class="privacy-link">Privacy Policy</a>.</p>
     </div>
   </div>
 </section>
@@ -1643,7 +1759,7 @@ footer {
     <div class="app-header reveal">
       <div class="section-eyebrow">The App</div>
       <h2 class="section-title">Book it like you'd book a ride</h2>
-      <p class="section-sub">Three taps from problem to booked technician. These are the actual screens of the PapaFix customer app.</p>
+      <p class="section-sub">Three taps, problem to booked technician. These are the actual screens of the PapaFix customer app.</p>
     </div>
   </div>
 
@@ -1651,33 +1767,23 @@ footer {
 
     <!-- (a) Booking — category selection -->
     <div class="app-shot">
-      <div class="phone phone-mini" role="img" aria-label="PapaFix app booking screen: 'What needs fixing?' with Appliances, Electrical and Plumbing categories.">
+      <div class="phone phone-mini" role="img" aria-label="PapaFix app booking screen: 'What needs fixing?' with the Aircon service category.">
         <div class="phone-screen" aria-hidden="true">
           <div class="phone-cam"></div>
-          <div class="phone-status"><span>9:41</span><span class="ps-right">5G<span class="ps-sig"><i></i><i></i><i></i><i></i></span><span class="ps-batt"></span></span></div>
+          <div class="phone-status"><span>10:24</span><span class="ps-right">5G<span class="ps-sig"><i></i><i></i><i></i><i></i></span><span class="ps-batt"></span></span></div>
           <div class="app-scr">
             <div class="scr-h">What needs fixing?</div>
             <div class="scr-sub">Choose a service category.</div>
             <div class="bk-item">
-              <span class="bk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="5" y1="10" x2="19" y2="10"/><line x1="9" y1="5.5" x2="9" y2="7"/><line x1="9" y1="13.5" x2="9" y2="16"/></svg></span>
-              <span><b>Appliances</b><i>Fridge, AC, washer &amp; more</i></span>
-              <span class="bk-chev">›</span>
-            </div>
-            <div class="bk-item">
-              <span class="bk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
-              <span><b>Electrical</b><i>Wiring, outlets, breakers</i></span>
-              <span class="bk-chev">›</span>
-            </div>
-            <div class="bk-item">
-              <span class="bk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></span>
-              <span><b>Plumbing</b><i>Leaks, drains, fixtures</i></span>
+              <span class="bk-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07"/><circle cx="12" cy="12" r="4"/></svg></span>
+              <span><b>Aircon</b><i>Cleaning, repair &amp; installation</i></span>
               <span class="bk-chev">›</span>
             </div>
           </div>
           <div class="phone-home"></div>
         </div>
       </div>
-      <p class="app-cap">Pick the service — plain-language categories, no jargon.</p>
+      <p class="app-cap">Pick what you need in plain language.</p>
     </div>
 
     <!-- (b) Confirm booking -->
@@ -1685,7 +1791,7 @@ footer {
       <div class="phone phone-mini" role="img" aria-label="PapaFix app confirm-booking screen showing the assigned technician, job details and a Confirm Booking button.">
         <div class="phone-screen" aria-hidden="true">
           <div class="phone-cam"></div>
-          <div class="phone-status"><span>9:41</span><span class="ps-right">5G<span class="ps-sig"><i></i><i></i><i></i><i></i></span><span class="ps-batt"></span></span></div>
+          <div class="phone-status"><span>10:24</span><span class="ps-right">5G<span class="ps-sig"><i></i><i></i><i></i><i></i></span><span class="ps-batt"></span></span></div>
           <div class="app-scr">
             <div class="scr-h">Confirm Booking</div>
             <div class="scr-sub">Review before sending the request.</div>
@@ -1694,13 +1800,13 @@ footer {
               <div class="tc-ava">M</div>
               <div>
                 <div class="tc-name">Mark Reyes</div>
-                <div class="tc-meta"><b>★ 4.8</b> · Est. arrival: ~12 min</div>
+                <div class="tc-meta">Est. arrival: ~12 min</div>
               </div>
             </div>
             <div class="scr-label">JOB DETAILS</div>
             <div class="cf-card">
-              <div class="cf-row"><span>SERVICE</span><b>Appliances</b></div>
-              <div class="cf-row"><span>ISSUE</span><b>Air Conditioner</b></div>
+              <div class="cf-row"><span>SERVICE</span><b>Aircon</b></div>
+              <div class="cf-row"><span>ISSUE</span><b>Not cooling</b></div>
               <div class="cf-row"><span>ADDRESS</span><b>123 Mabini St, Santo Tomas</b></div>
             </div>
             <div class="cf-note">
@@ -1712,7 +1818,7 @@ footer {
           <div class="phone-home"></div>
         </div>
       </div>
-      <p class="app-cap">See who's coming and what it costs — before you commit.</p>
+      <p class="app-cap">See who's coming and what it costs before you confirm.</p>
     </div>
 
     <!-- (c) Payment -->
@@ -1720,7 +1826,7 @@ footer {
       <div class="phone phone-mini" role="img" aria-label="PapaFix app payment screen: job completed, fee breakdown totalling ₱850 and a Pay button with GCash, Maya and card options.">
         <div class="phone-screen" aria-hidden="true">
           <div class="phone-cam"></div>
-          <div class="phone-status"><span>9:41</span><span class="ps-right">5G<span class="ps-sig"><i></i><i></i><i></i><i></i></span><span class="ps-batt"></span></span></div>
+          <div class="phone-status"><span>10:24</span><span class="ps-right">5G<span class="ps-sig"><i></i><i></i><i></i><i></i></span><span class="ps-batt"></span></span></div>
           <div class="app-scr">
             <div class="pay-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
             <div class="scr-h">Job Completed</div>
@@ -1759,9 +1865,9 @@ footer {
   <div class="story-veil"></div>
   <div class="story-copy">
     <div class="story-text reveal">
-      <div class="story-eyebrow">Real people, real work</div>
+      <div class="story-eyebrow">Who shows up</div>
       <h2 class="story-h">Behind every booking is a <em>neighbor</em> who knows the job.</h2>
-      <p class="story-p">Our technicians live in the same Batangas towns you do — screened face-to-face, rated by the people next door, and held to one standard: fix it right the first time. No call centers, no strangers. Just a verified local at your door, fast.</p>
+      <p class="story-p">The technicians we're onboarding live in the same Batangas towns you do. Every one is screened face-to-face before their first job, and every job will be rated by the neighbor who booked it. When you book, a name and a face come with it.</p>
     </div>
   </div>
 </section>
@@ -1769,9 +1875,9 @@ footer {
 <section id="services">
   <div class="container">
     <div class="services-header reveal">
-      <div class="section-eyebrow">8 Categories</div>
-      <h2 class="section-title">Everything your home needs</h2>
-      <p class="section-sub">We're launching with aircon — cleaning, repair, and installation by verified local technicians. More home services roll out after launch.</p>
+      <div class="section-eyebrow">Our first service</div>
+      <h2 class="section-title">Aircon, start to finish</h2>
+      <p class="section-sub">Cleaning, repair, installation, and the annual service that keeps a unit from dying in April. Other trades come later, once we can staff them properly.</p>
     </div>
 
     <div class="services-grid">
@@ -1779,80 +1885,20 @@ footer {
       <div class="svc-card reveal" data-delay="1">
         <div class="svc-card-img"><img src="assets/img/services/aircon.png" class="zoom-img" loading="lazy" alt="Aircon technician at work"/></div>
         <div class="svc-card-body">
-          <div class="svc-counter">01 / 08</div>
+          <div class="svc-counter">At launch</div>
           <h3 class="svc-card-name">Aircon</h3>
-          <p class="svc-card-desc">Our launch specialty — cleaning, installation, refrigerant recharging, and preventive maintenance for all brands.</p>
-          <div class="svc-tags"><span class="svc-tag">At Launch</span><span class="svc-tag">Deep Clean</span><span class="svc-tag">Installation</span><span class="svc-tag">All Brands</span></div>
+          <p class="svc-card-desc">Cleaning, installation, refrigerant recharging, and preventive maintenance, whatever brand or type of unit you have.</p>
+          <div class="svc-tags"><span class="svc-tag">Cleaning</span><span class="svc-tag">Repair</span><span class="svc-tag">Installation</span><span class="svc-tag">All Brands</span></div>
         </div>
       </div>
 
       <div class="svc-card reveal" data-delay="2">
         <div class="svc-card-img"><img src="assets/img/services/electrical.png" class="zoom-img" loading="lazy" alt="Electrician at work"/></div>
         <div class="svc-card-body">
-          <div class="svc-counter">02 / 08</div>
+          <div class="svc-counter">After launch</div>
           <h3 class="svc-card-name">Electrical</h3>
-          <p class="svc-card-desc">Wiring, outlets, panels, circuit breakers, and full safety inspections by certified electricians.</p>
-          <div class="svc-tags"><span class="svc-tag">Rewiring</span><span class="svc-tag">Outlets</span><span class="svc-tag">Safety Check</span></div>
-        </div>
-      </div>
-
-      <div class="svc-card reveal" data-delay="3">
-        <div class="svc-card-img"><img src="assets/img/services/plumbing.png" class="zoom-img" loading="lazy" alt="Plumber at work"/></div>
-        <div class="svc-card-body">
-          <div class="svc-counter">03 / 08</div>
-          <h3 class="svc-card-name">Plumbing</h3>
-          <p class="svc-card-desc">Leaks, pipe repairs, drainage, faucets, and water pressure fixes done right the first time.</p>
-          <div class="svc-tags"><span class="svc-tag">Leak Repair</span><span class="svc-tag">Pipe Work</span><span class="svc-tag">Faucets</span></div>
-        </div>
-      </div>
-
-      <div class="svc-card reveal" data-delay="4">
-        <div class="svc-card-img"><img src="assets/img/services/appliance.png" class="zoom-img" loading="lazy" alt="Appliance repair technician at work"/></div>
-        <div class="svc-card-body">
-          <div class="svc-counter">04 / 08</div>
-          <h3 class="svc-card-name">Appliance</h3>
-          <p class="svc-card-desc">Washing machines, refrigerators, ovens, and full appliance diagnostics — repaired, not replaced.</p>
-          <div class="svc-tags"><span class="svc-tag">Refrigerators</span><span class="svc-tag">Washers</span><span class="svc-tag">Diagnostics</span></div>
-        </div>
-      </div>
-
-      <div class="svc-card reveal" data-delay="1">
-        <div class="svc-card-img"><img src="assets/img/services/carpentry.png" class="zoom-img" loading="lazy" alt="Carpenter at work"/></div>
-        <div class="svc-card-body">
-          <div class="svc-counter">05 / 08</div>
-          <h3 class="svc-card-name">Carpentry</h3>
-          <p class="svc-card-desc">Cabinets, doors, furniture assembly, flooring installations, and custom woodwork.</p>
-          <div class="svc-tags"><span class="svc-tag">Cabinets</span><span class="svc-tag">Flooring</span><span class="svc-tag">Assembly</span></div>
-        </div>
-      </div>
-
-      <div class="svc-card reveal" data-delay="2">
-        <div class="svc-card-img"><img src="assets/img/services/painting.png" class="zoom-img" loading="lazy" alt="Painter at work"/></div>
-        <div class="svc-card-body">
-          <div class="svc-counter">06 / 08</div>
-          <h3 class="svc-card-name">Painting</h3>
-          <p class="svc-card-desc">Interior and exterior painting, touch-ups, waterproofing, and textured finishes done to spec.</p>
-          <div class="svc-tags"><span class="svc-tag">Interior</span><span class="svc-tag">Exterior</span><span class="svc-tag">Touch-ups</span></div>
-        </div>
-      </div>
-
-      <div class="svc-card reveal" data-delay="3">
-        <div class="svc-card-img"><img src="assets/img/services/cleaning.png" class="zoom-img" loading="lazy" alt="Cleaner at work"/></div>
-        <div class="svc-card-body">
-          <div class="svc-counter">07 / 08</div>
-          <h3 class="svc-card-name">Cleaning</h3>
-          <p class="svc-card-desc">Deep cleans, move-in/out, post-renovation, and regular housekeeping tailored to your space.</p>
-          <div class="svc-tags"><span class="svc-tag">Deep Clean</span><span class="svc-tag">Move In/Out</span><span class="svc-tag">Regular</span></div>
-        </div>
-      </div>
-
-      <div class="svc-card reveal" data-delay="4">
-        <div class="svc-card-img"><img src="assets/img/services/more.png" class="zoom-img" loading="lazy" alt="Worker at work"/></div>
-        <div class="svc-card-body">
-          <div class="svc-counter">08 / 08</div>
-          <h3 class="svc-card-name">And More</h3>
-          <p class="svc-card-desc">Roofing, tiling, locksmith, pest control, and fully custom requests — one app for it all.</p>
-          <div class="svc-tags"><span class="svc-tag">Roofing</span><span class="svc-tag">Locksmith</span><span class="svc-tag">Pest Control</span></div>
+          <p class="svc-card-desc">The next trade we're adding. You can't book it yet. Join the waitlist and we'll tell you when it opens.</p>
+          <div class="svc-tags"><span class="svc-tag">Coming next</span></div>
         </div>
       </div>
 
@@ -1864,8 +1910,8 @@ footer {
   <div class="container">
     <div class="bento-header reveal">
       <div class="section-eyebrow">The Process</div>
-      <h2 class="section-title">Four steps to a fixed home</h2>
-      <p class="section-sub">We've stripped out every friction point. From tap to fix in under 30 minutes.</p>
+      <h2 class="section-title">First tap to final rating</h2>
+      <p class="section-sub">Four steps stand between a broken aircon and a technician on the way.</p>
     </div>
 
     <div class="bento-grid">
@@ -1874,12 +1920,12 @@ footer {
         <div class="bento-step-num">01</div>
         <div class="bento-label">Step One</div>
         <div class="bento-h">Choose your service &amp; describe the problem</div>
-        <div class="bento-p">Pick aircon cleaning, repair, or installation — describe the issue, attach a photo. Takes under 90 seconds.</div>
+        <div class="bento-p">Pick cleaning, repair, or installation. Describe what's wrong and attach a photo if it helps.</div>
         <div style="margin-top:1.5rem;display:flex;gap:.5rem;flex-wrap:wrap;">
-          <span style="background:rgba(255,255,255,.18);color:white;padding:5px 12px;border-radius:100px;font-size:.72rem;font-weight:500;">Cleaning</span>
-          <span style="background:rgba(255,255,255,.18);color:white;padding:5px 12px;border-radius:100px;font-size:.72rem;font-weight:500;">Repair</span>
-          <span style="background:rgba(255,255,255,.18);color:white;padding:5px 12px;border-radius:100px;font-size:.72rem;font-weight:500;">Installation</span>
-          <span style="background:rgba(255,255,255,.18);color:white;padding:5px 12px;border-radius:100px;font-size:.72rem;font-weight:500;">+more soon</span>
+          <span style="background:rgba(255,255,255,.18);color:white;padding:5px 12px;border-radius:100px;font-size:var(--t-caption);font-weight:500;">Cleaning</span>
+          <span style="background:rgba(255,255,255,.18);color:white;padding:5px 12px;border-radius:100px;font-size:var(--t-caption);font-weight:500;">Repair</span>
+          <span style="background:rgba(255,255,255,.18);color:white;padding:5px 12px;border-radius:100px;font-size:var(--t-caption);font-weight:500;">Installation</span>
+          <span style="background:rgba(255,255,255,.18);color:white;padding:5px 12px;border-radius:100px;font-size:var(--t-caption);font-weight:500;">+more soon</span>
         </div>
       </div>
 
@@ -1887,17 +1933,13 @@ footer {
         <div class="bento-step-num">02</div>
         <div class="bento-label">Step Two</div>
         <div class="bento-h">Get matched with a nearby verified technician</div>
-        <div class="bento-p">Our algorithm instantly matches you with the closest available specialist based on your location, service type, and availability slots.</div>
+        <div class="bento-p">We look at who's closest, who's free, and who handles your kind of job. The best fit gets the request.</div>
         <div class="avatar-stack">
           <div class="avatar">MJ</div>
           <div class="avatar">RL</div>
           <div class="avatar">AP</div>
           <div class="avatar">KB</div>
           <div class="avatar avatar-more">✓</div>
-        </div>
-        <div class="progress-bar-wrap">
-          <div class="progress-label"><span>Matching</span><span class="fill-pct">0%</span></div>
-          <div class="progress-bar"><div class="progress-fill" data-width="88"></div></div>
         </div>
       </div>
 
@@ -1907,7 +1949,7 @@ footer {
         </div>
         <div class="bento-label">Step Three</div>
         <div class="bento-h">Track in real-time</div>
-        <div class="bento-p">Watch your technician travel to you on a live map. No more vague "5 minutes away."</div>
+        <div class="bento-p">Watch your technician travel to you on a live map, with an ETA that updates as they move.</div>
         <div style="margin-top:1rem;height:90px;border-radius:12px;background:var(--brand-pale);position:relative;overflow:hidden;border:1px solid var(--border);">
           <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(242,107,29,.05) 0,transparent 1px,transparent 20px),repeating-linear-gradient(90deg,rgba(242,107,29,.05) 0,transparent 1px,transparent 20px);"></div>
           <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);">
@@ -1926,7 +1968,7 @@ footer {
         </div>
         <div class="bento-label">Step Four</div>
         <div class="bento-h">QR verify &amp; rate your experience</div>
-        <div class="bento-p">Technician scans a unique QR code to confirm job completion. Rate 1–5.</div>
+        <div class="bento-p">Your technician scans a code to close the job, then you rate them one to five.</div>
         <div class="qr-visual" id="qrVis">
           <!-- Decorative real-looking QR -->
           <svg viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;" shape-rendering="crispEdges">
@@ -2025,11 +2067,11 @@ footer {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
         </div>
         <div class="bento-label">Transparent Pricing</div>
-        <div class="bento-h">Upfront estimates, no surprises</div>
-        <div class="bento-p">See the estimated fee before confirming. Final payment only after the job is done to your satisfaction.</div>
+        <div class="bento-h">You see the price before you confirm</div>
+        <div class="bento-p">The estimate appears on the confirmation screen, and payment only happens once the work is finished.</div>
         <div style="margin-top:1.25rem;display:flex;align-items:baseline;gap:.4rem;">
-          <span style="font-family:'Sora',sans-serif;font-weight:800;font-size:2.4rem;color:white;letter-spacing:-.04em;">₱450</span>
-          <span style="font-size:.8rem;color:rgba(255,255,255,.45);">sample estimate</span>
+          <span style="font-family:'Sora',sans-serif;font-weight:800;font-size:var(--t-figure-lg);color:white;letter-spacing:-.04em;">₱850</span>
+          <span style="font-size:var(--t-ui);color:rgba(255,255,255,.45);">sample estimate</span>
         </div>
       </div>
 
@@ -2039,17 +2081,17 @@ footer {
         </div>
         <div class="bento-label">Your History</div>
         <div class="bento-h">Full booking history &amp; inspection reports</div>
-        <div class="bento-p">Every job logged with detailed inspection checklists, technician notes, photos, and timestamps.</div>
+        <div class="bento-p">Every job leaves a record: the checklist, the technician's notes, photos, and a timestamp.</div>
         <div style="margin-top:1.25rem;display:flex;flex-direction:column;gap:.5rem;">
           <div style="display:flex;align-items:center;gap:.75rem;background:var(--brand-pale);border-radius:10px;padding:.6rem 1rem;">
             <svg viewBox="0 0 24 24" fill="none" stroke="#f26b1d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;flex-shrink:0;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            <div style="flex:1;"><div style="font-size:.78rem;font-weight:600;color:var(--ink);">Electrical – Outlet repair</div><div style="font-size:.68rem;color:var(--ink-faint);">Sample booking · ₱650</div></div>
-            <span style="font-size:.7rem;background:#e9f5ee;color:#2d8a4e;padding:3px 8px;border-radius:100px;font-weight:600;flex-shrink:0;">Done</span>
+            <div style="flex:1;"><div style="font-size:var(--t-ui);font-weight:600;color:var(--ink);">Electrical – Outlet repair</div><div style="font-size:var(--t-micro);color:var(--ink-faint);">Sample booking</div></div>
+            <span style="font-size:var(--t-micro);background:#e9f5ee;color:#186c37;padding:3px 8px;border-radius:100px;font-weight:600;flex-shrink:0;">Done</span>
           </div>
           <div style="display:flex;align-items:center;gap:.75rem;background:var(--brand-pale);border-radius:10px;padding:.6rem 1rem;">
             <svg viewBox="0 0 24 24" fill="none" stroke="#f26b1d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;flex-shrink:0;"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07"/><circle cx="12" cy="12" r="4"/></svg>
-            <div style="flex:1;"><div style="font-size:.78rem;font-weight:600;color:var(--ink);">Aircon – Deep cleaning</div><div style="font-size:.68rem;color:var(--ink-faint);">Sample booking · ₱900</div></div>
-            <span style="font-size:.7rem;background:#e9f5ee;color:#2d8a4e;padding:3px 8px;border-radius:100px;font-weight:600;flex-shrink:0;">Done</span>
+            <div style="flex:1;"><div style="font-size:var(--t-ui);font-weight:600;color:var(--ink);">Aircon – Deep cleaning</div><div style="font-size:var(--t-micro);color:var(--ink-faint);">Sample booking</div></div>
+            <span style="font-size:var(--t-micro);background:#e9f5ee;color:#186c37;padding:3px 8px;border-radius:100px;font-weight:600;flex-shrink:0;">Done</span>
           </div>
         </div>
       </div>
@@ -2057,237 +2099,32 @@ footer {
       <div class="bento bento-7 reveal" data-delay="2">
         <div class="bento-label">Safety First</div>
         <div class="bento-h">Every technician is verified</div>
-        <div class="bento-p">ID-checked and screened in person before their first job — and QR-verified at your door, so you always know who's coming.</div>
+        <div class="bento-p">ID-checked and screened in person before their first job, and at your door the QR scan confirms it's the same person who was cleared.</div>
         <div class="rating-pill">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
           Verified &amp; QR-checked
         </div>
       </div>
 
-    </div>
-  </div>
-</section>
-
-<section id="stats">
-  <div style="overflow:hidden;display:flex;">
-    <div class="marquee-track">
-      <div class="marquee-item"><div class="marquee-num">8</div><div class="marquee-label">Service Categories<span>One app for everything</span></div></div>
-      <div class="marquee-item"><div class="marquee-num">3</div><div class="marquee-label">Cities Covered<span>Batangas — and growing</span></div></div>
-      <div class="marquee-item"><div class="marquee-num">Verified</div><div class="marquee-label">Technicians<span>Screened before every job</span></div></div>
-      <div class="marquee-item"><div class="marquee-num">Upfront</div><div class="marquee-label">Pricing<span>See the estimate before you book</span></div></div>
-      <div class="marquee-item"><div class="marquee-num">Live</div><div class="marquee-label">Tracking<span>Watch your tech on the way</span></div></div>
-      <div class="marquee-item"><div class="marquee-num">QR</div><div class="marquee-label">Verified at the Door<span>Know exactly who's coming</span></div></div>
-      <div class="marquee-item"><div class="marquee-num">Soon</div><div class="marquee-label">On Google Play<span>Join the waitlist to get notified</span></div></div>
-      <div class="marquee-item"><div class="marquee-num">8</div><div class="marquee-label">Service Categories<span>One app for everything</span></div></div>
-      <div class="marquee-item"><div class="marquee-num">3</div><div class="marquee-label">Cities Covered<span>Batangas — and growing</span></div></div>
-      <div class="marquee-item"><div class="marquee-num">Verified</div><div class="marquee-label">Technicians<span>Screened before every job</span></div></div>
-      <div class="marquee-item"><div class="marquee-num">Upfront</div><div class="marquee-label">Pricing<span>See the estimate before you book</span></div></div>
-      <div class="marquee-item"><div class="marquee-num">Live</div><div class="marquee-label">Tracking<span>Watch your tech on the way</span></div></div>
-      <div class="marquee-item"><div class="marquee-num">QR</div><div class="marquee-label">Verified at the Door<span>Know exactly who's coming</span></div></div>
-      <div class="marquee-item"><div class="marquee-num">Soon</div><div class="marquee-label">On Google Play<span>Join the waitlist to get notified</span></div></div>
-    </div>
-  </div>
-</section>
-
-<section id="features">
-  <div class="container">
-    <div class="features-header reveal">
-      <div class="section-eyebrow">Platform Features</div>
-      <h2 class="section-title">Built for peace of mind</h2>
-      <p class="section-sub">Every feature exists to make the entire repair experience trustworthy, transparent, and stress-free.</p>
-    </div>
-
-    <div class="feature-row">
-      <div class="feature-text-wrap reveal-left">
-        <div class="feature-num">01</div>
-        <div class="feature-text">
-          <div class="feature-eyebrow">Live Tracking</div>
-          <h3 class="feature-h">Know exactly where your technician is, always</h3>
-          <p class="feature-p">Real-time GPS tracking means no more vague messages. Watch every move on a live map until they arrive at your door.</p>
-          <div class="feature-chips">
-            <span class="chip">GPS Live Map</span>
-            <span class="chip">ETA Estimate</span>
-            <span class="chip">Status Updates</span>
-            <span class="chip">Push Notifications</span>
-          </div>
-        </div>
-      </div>
-      <div class="feature-visual reveal-right">
-        <div style="width:85%;position:relative;">
-          <div style="position:relative;height:260px;border-radius:16px;overflow:hidden;background:var(--brand-pale);">
-            <div style="position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(242,107,29,.05) 0,transparent 1px,transparent 30px),repeating-linear-gradient(90deg,rgba(242,107,29,.05) 0,transparent 1px,transparent 30px);"></div>
-            <svg style="position:absolute;inset:0;width:100%;height:100%;" viewBox="0 0 400 260" preserveAspectRatio="none">
-              <path d="M40 130 Q120 60 200 130 Q280 200 360 130" stroke="rgba(242,107,29,.12)" stroke-width="12" fill="none" stroke-linecap="round"/>
-              <path d="M40 130 Q120 60 200 130 Q280 200 360 130" stroke="rgba(242,107,29,.4)" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="10 6"/>
-            </svg>
-            <div style="position:absolute;top:38%;left:30%;transform:translate(-50%,-50%);">
-              <div style="width:36px;height:36px;background:var(--brand);border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 6px 18px rgba(242,107,29,.45);display:flex;align-items:center;justify-content:center;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;transform:rotate(45deg);"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-              </div>
-              <div class="map-ripple" style="width:36px;height:36px;position:absolute;top:0;left:0;"></div>
-              <div class="map-ripple" style="width:36px;height:36px;position:absolute;top:0;left:0;"></div>
-            </div>
-            <div style="position:absolute;top:55%;left:68%;transform:translate(-50%,-50%);">
-              <div style="width:32px;height:32px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(10,15,30,.12);">
-                <svg viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-              </div>
-            </div>
-            <div style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);background:white;border-radius:12px;padding:10px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 6px 24px rgba(10,15,30,.12);white-space:nowrap;">
-              <div style="width:8px;height:8px;background:#34d399;border-radius:50%;"></div>
-              <span style="font-family:'Sora',sans-serif;font-weight:700;font-size:.9rem;color:var(--ink);">12 min away</span>
-              <span style="font-size:.72rem;color:var(--ink-faint);">Mario S.</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="feature-row reverse">
-      <div class="feature-text-wrap reveal-right">
-        <div class="feature-num">02</div>
-        <div class="feature-text">
-          <div class="feature-eyebrow">QR Verification</div>
-          <h3 class="feature-h">Every job verified, nothing left to chance</h3>
-          <p class="feature-p">A unique QR token is generated for every booking. The technician scans it on-site to confirm arrival and again to mark completion — a tamper-proof audit trail.</p>
-          <div class="feature-chips">
-            <span class="chip">Unique per Booking</span>
-            <span class="chip">Mismatch Alerts</span>
-            <span class="chip">Timestamped</span>
-            <span class="chip">Inspection Checklist</span>
-          </div>
-        </div>
-      </div>
-      <div class="feature-visual reveal-left" style="background:var(--ink);border-color:rgba(255,255,255,.07);">
-        <div style="padding:2rem;width:85%;">
-          <div style="background:rgba(255,255,255,.05);border-radius:16px;padding:1.5rem;text-align:center;border:1px solid rgba(255,255,255,.08);">
-            <div style="font-family:'Sora',sans-serif;font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:1rem;">Booking #PF-2984</div>
-            <div style="width:140px;height:140px;background:white;border-radius:12px;margin:0 auto 1rem;padding:8px;overflow:hidden;">
-              <svg viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;" shape-rendering="crispEdges">
-                <rect x="0" y="0" width="7" height="7" fill="#0a0f1e"/>
-                <rect x="1" y="1" width="5" height="5" fill="white"/>
-                <rect x="2" y="2" width="3" height="3" fill="#0a0f1e"/>
-                <rect x="14" y="0" width="7" height="7" fill="#0a0f1e"/>
-                <rect x="15" y="1" width="5" height="5" fill="white"/>
-                <rect x="16" y="2" width="3" height="3" fill="#0a0f1e"/>
-                <rect x="0" y="14" width="7" height="7" fill="#0a0f1e"/>
-                <rect x="1" y="15" width="5" height="5" fill="white"/>
-                <rect x="2" y="16" width="3" height="3" fill="#0a0f1e"/>
-                <rect x="8" y="6" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="10" y="6" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="12" y="6" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="6" y="8" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="6" y="10" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="6" y="12" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="8" y="8" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="10" y="8" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="13" y="8" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="15" y="8" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="17" y="8" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="19" y="8" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="7" y="9" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="9" y="9" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="12" y="9" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="14" y="9" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="16" y="9" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="18" y="9" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="20" y="9" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="8" y="10" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="11" y="10" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="13" y="10" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="15" y="10" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="17" y="10" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="19" y="10" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="7" y="11" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="9" y="11" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="12" y="11" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="14" y="11" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="16" y="11" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="18" y="11" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="20" y="11" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="8" y="12" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="10" y="12" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="13" y="12" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="15" y="12" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="17" y="12" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="19" y="12" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="7" y="13" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="9" y="13" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="11" y="13" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="14" y="13" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="16" y="13" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="18" y="13" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="20" y="13" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="8" y="14" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="10" y="14" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="12" y="14" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="15" y="14" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="17" y="14" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="19" y="14" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="7" y="15" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="9" y="15" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="13" y="15" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="16" y="15" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="18" y="15" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="20" y="15" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="8" y="16" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="11" y="16" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="14" y="16" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="17" y="16" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="19" y="16" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="7" y="17" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="10" y="17" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="13" y="17" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="15" y="17" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="18" y="17" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="20" y="17" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="8" y="18" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="12" y="18" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="16" y="18" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="19" y="18" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="7" y="19" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="9" y="19" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="11" y="19" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="14" y="19" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="17" y="19" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="20" y="19" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="8" y="20" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="10" y="20" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="13" y="20" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="15" y="20" width="1" height="1" fill="#0a0f1e"/>
-                <rect x="18" y="20" width="1" height="1" fill="#0a0f1e"/>
-              </svg>
-            </div>
-            <div style="font-size:.75rem;color:rgba(255,255,255,.45);">Scan to verify arrival</div>
-            <div style="margin-top:.75rem;display:inline-flex;align-items:center;gap:6px;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.2);border-radius:100px;padding:5px 12px;">
-              <div style="width:6px;height:6px;background:#34d399;border-radius:50%;"></div>
-              <span style="font-size:.72rem;font-weight:600;color:#34d399;">Verified</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="feature-row">
-      <div class="feature-text-wrap reveal-left">
-        <div class="feature-num">03</div>
-        <div class="feature-text">
-          <div class="feature-eyebrow">Availability &amp; Scheduling</div>
-          <h3 class="feature-h">Book now or schedule for later</h3>
-          <p class="feature-p">Need someone immediately? Book on-demand. Prefer a specific time? Browse technician availability calendars and lock in your preferred slot with one tap.</p>
-          <div class="feature-chips">
+      <!-- Absorbed from the deleted #features section: the only row there
+           that wasn't already covered by Step Three and Step Four above. -->
+      <div class="bento bento-8 reveal" data-delay="3">
+        <div>
+          <div class="bento-label">Availability</div>
+          <div class="bento-h">Book it now, or book it before summer</div>
+          <div class="bento-p">Need someone today? Book on demand. Prefer a specific morning? Open the technician's calendar and take the slot you want.</div>
+          <div class="bento-chips">
             <span class="chip">On-Demand Booking</span>
             <span class="chip">Schedule in Advance</span>
             <span class="chip">Slot Selection</span>
           </div>
         </div>
-      </div>
-      <div class="feature-visual reveal-right">
-        <div style="padding:1.5rem;width:90%;">
+        <div>
           <div class="mockup-card" style="margin-bottom:.75rem;">
             <div class="mockup-title">Book Now</div>
             <div class="mockup-sub">Available technicians nearby</div>
             <div style="margin-top:.75rem;">
-              <div style="background:var(--brand);color:white;display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:100px;font-size:.75rem;font-weight:600;font-family:'Sora',sans-serif;">
+              <div style="background:var(--brand);color:white;display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:100px;font-size:var(--t-caption);font-weight:600;font-family:'Sora',sans-serif;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                 Confirm
               </div>
@@ -2296,18 +2133,19 @@ footer {
           <div class="mockup-card">
             <div class="mockup-title">Schedule</div>
             <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:.75rem;">
-              <div style="text-align:center;font-size:.6rem;color:var(--ink-faint);">M</div><div style="text-align:center;font-size:.6rem;color:var(--ink-faint);">T</div><div style="text-align:center;font-size:.6rem;color:var(--ink-faint);">W</div><div style="text-align:center;font-size:.6rem;color:var(--ink-faint);">T</div><div style="text-align:center;font-size:.6rem;color:var(--ink-faint);">F</div><div style="text-align:center;font-size:.6rem;color:var(--ink-faint);">S</div><div style="text-align:center;font-size:.6rem;color:var(--ink-faint);">S</div>
-              <div style="text-align:center;font-size:.68rem;color:var(--ink-faint);padding:4px;border-radius:5px;">2</div>
-              <div style="text-align:center;font-size:.68rem;color:var(--ink-faint);padding:4px;border-radius:5px;">3</div>
-              <div style="text-align:center;font-size:.68rem;color:var(--ink-faint);padding:4px;border-radius:5px;">4</div>
-              <div style="text-align:center;font-size:.68rem;background:var(--brand);color:white;padding:4px;border-radius:5px;font-weight:600;">5</div>
-              <div style="text-align:center;font-size:.68rem;color:var(--ink-faint);padding:4px;border-radius:5px;">6</div>
-              <div style="text-align:center;font-size:.68rem;color:var(--ink-faint);padding:4px;border-radius:5px;">7</div>
-              <div style="text-align:center;font-size:.68rem;color:var(--ink-faint);padding:4px;border-radius:5px;">8</div>
+              <div style="text-align:center;font-size:var(--t-micro);color:var(--ink-faint);">M</div><div style="text-align:center;font-size:var(--t-micro);color:var(--ink-faint);">T</div><div style="text-align:center;font-size:var(--t-micro);color:var(--ink-faint);">W</div><div style="text-align:center;font-size:var(--t-micro);color:var(--ink-faint);">T</div><div style="text-align:center;font-size:var(--t-micro);color:var(--ink-faint);">F</div><div style="text-align:center;font-size:var(--t-micro);color:var(--ink-faint);">S</div><div style="text-align:center;font-size:var(--t-micro);color:var(--ink-faint);">S</div>
+              <div style="text-align:center;font-size:var(--t-micro);color:var(--ink-faint);padding:4px;border-radius:5px;">2</div>
+              <div style="text-align:center;font-size:var(--t-micro);color:var(--ink-faint);padding:4px;border-radius:5px;">3</div>
+              <div style="text-align:center;font-size:var(--t-micro);color:var(--ink-faint);padding:4px;border-radius:5px;">4</div>
+              <div style="text-align:center;font-size:var(--t-micro);background:var(--brand);color:white;padding:4px;border-radius:5px;font-weight:600;">5</div>
+              <div style="text-align:center;font-size:var(--t-micro);color:var(--ink-faint);padding:4px;border-radius:5px;">6</div>
+              <div style="text-align:center;font-size:var(--t-micro);color:var(--ink-faint);padding:4px;border-radius:5px;">7</div>
+              <div style="text-align:center;font-size:var(--t-micro);color:var(--ink-faint);padding:4px;border-radius:5px;">8</div>
             </div>
           </div>
         </div>
       </div>
+
     </div>
   </div>
 </section>
@@ -2322,9 +2160,8 @@ footer {
       <div class="gallery-hstrip" id="galleryHstrip">
 
         <div class="gallery-intro">
-          <div class="section-eyebrow">The Founders</div>
           <h2 class="section-title">The people behind PapaFix</h2>
-          <p class="section-sub">PapaFix is homegrown — a Batangas team who believe booking a trusted repair should be as easy as booking a ride.</p>
+          <p class="section-sub">We're a Batangas team. We think booking a repair should be as easy as booking a ride, so we built the app we wanted.</p>
         </div>
 
         <!-- Founder photos: drop in the files below (portrait, ~800px wide
@@ -2390,7 +2227,7 @@ footer {
     <div class="masonry-header reveal">
       <div class="section-eyebrow">Reviews</div>
       <h2 class="section-title">Be among our first customers</h2>
-      <p class="section-sub">PapaFix is just launching in Batangas. We're onboarding our first verified technicians now — book early and your feedback will help shape the service. Real reviews from real neighbors will appear here as they come in.</p>
+      <p class="section-sub">PapaFix is just launching in Batangas. We're onboarding our first technicians now, so early bookings genuinely shape how this works. Reviews will appear here once there are some to show.</p>
     </div>
 
     <div class="reveal" style="max-width:720px;margin:0 auto;text-align:center;background:var(--brand-pale);border:1px solid var(--border);border-radius:var(--r-xl);padding:3.5rem 2.5rem;">
@@ -2398,7 +2235,7 @@ footer {
         <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       </div>
       <h3 style="font-family:'Sora',sans-serif;font-weight:700;font-size:clamp(1.4rem,2.5vw,1.9rem);letter-spacing:-.03em;color:var(--ink);margin-bottom:.75rem;">Your review could be the first</h3>
-      <p style="font-size:.95rem;line-height:1.7;color:var(--ink-light);font-weight:300;max-width:44ch;margin:0 auto 2rem;">Join the waitlist today — when PapaFix launches in your city, you could book one of our very first jobs and write the review that starts it all.</p>
+      <p style="font-size:var(--t-lede);line-height:var(--lh-prose);color:var(--ink-light);font-weight:400;max-width:52ch;margin:0 auto 2rem;">Join the waitlist. When we launch in your city you could book one of the first jobs, and write the first review.</p>
       <a href="#waitlist" class="btn-google-play" style="display:inline-flex;">
         <svg viewBox="0 0 24 24" fill="currentColor" style="width:24px;height:24px;flex-shrink:0;"><path d="M3.18 23.76A2 2 0 0 1 2 22V2a2 2 0 0 1 1.18-1.76l11.33 11.76L3.18 23.76zM22.46 12l-3.03 1.71-3.39-3.51 3.39-3.51 3.04 1.71A2 2 0 0 1 22.46 12zM3.69.54L17.2 7.72 14.01 11 3.69.54zM3.69 23.46l10.32-10.46 3.19 3.28L3.69 23.46z"/></svg>
         <div class="btn-google-play-text"><small>Join the</small><span>Waitlist</span></div>
@@ -2424,17 +2261,17 @@ footer {
           <img src="assets/brand/tech-logo-360.png" class="tb-logo" width="38" height="38" alt="PapaFix Technician app logo" loading="lazy"/>
         </div>
         <h3 style="font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(1.6rem,3vw,2.4rem);color:white;letter-spacing:-.04em;line-height:1.1;margin-bottom:.75rem;">Earn more.<br/>Work on your terms.</h3>
-        <p style="font-size:.92rem;color:rgba(255,255,255,.55);line-height:1.7;font-weight:300;">Are you a skilled electrician, plumber, or repair technician in Batangas? Join PapaFix and get a steady stream of jobs — no middleman, flexible hours, fair pay.</p>
+        <p style="font-size:var(--t-body);line-height:var(--lh-prose-dark);letter-spacing:.01em;color:rgba(255,255,255,.7);font-weight:400;max-width:54ch;">Are you a skilled electrician, plumber, or repair technician in Batangas? Set your own hours, and see the job before you accept it.</p>
       </div>
 
       <div class="tb-mid">
         <ul class="tb-perks">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>Flexible schedule</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>Fast payouts</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>Local jobs only</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>See the job before you accept</li>
+          <li><svg aria-hidden="true"><use href="#ic-check"/></svg>Flexible schedule</li>
+          <li><svg aria-hidden="true"><use href="#ic-check"/></svg>Fast payouts</li>
+          <li><svg aria-hidden="true"><use href="#ic-check"/></svg>Local jobs only</li>
+          <li><svg aria-hidden="true"><use href="#ic-check"/></svg>See the job before you accept</li>
         </ul>
-        <a href="#" onclick="event.preventDefault();openTechModal()" style="display:inline-flex;align-items:center;gap:8px;background:var(--brand);color:white;padding:.75rem 1.5rem;border-radius:var(--r-md);font-family:'Sora',sans-serif;font-weight:600;font-size:.88rem;text-decoration:none;transition:background .2s,transform .2s;white-space:nowrap;" onmouseover="this.style.background='var(--brand-mid)';this.style.transform='translateY(-2px)'" onmouseout="this.style.background='var(--brand)';this.style.transform=''">
+        <a href="#" onclick="event.preventDefault();openTechModal()" class="tb-apply">
           Apply as a Technician
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
@@ -2445,7 +2282,7 @@ footer {
         <div class="phone phone-tech" role="img" aria-label="Preview of the PapaFix Technician app incoming-jobs screen: two job requests with countdown timers and Confirm or Decline buttons, plus a bottom tab bar.">
           <div class="phone-screen" aria-hidden="true">
             <div class="phone-cam"></div>
-            <div class="phone-status"><span>9:41</span><span class="ps-right">5G<span class="ps-sig"><i></i><i></i><i></i><i></i></span><span class="ps-batt"></span></span></div>
+            <div class="phone-status"><span>10:24</span><span class="ps-right">5G<span class="ps-sig"><i></i><i></i><i></i><i></i></span><span class="ps-batt"></span></span></div>
 
             <div class="tj-head">Incoming Jobs <span class="tj-count">2</span></div>
 
@@ -2475,7 +2312,7 @@ footer {
             <div class="phone-home"></div>
           </div>
         </div>
-        <p class="tb-phone-cap">The PapaFix Technician app — real jobs, your schedule.</p>
+        <p class="tb-phone-cap">The technician side of PapaFix, built for the people doing the work.</p>
       </div>
     </div>
   </div>
@@ -2486,8 +2323,8 @@ footer {
   <div class="cta-inner">
     <div class="reveal-left">
       <div class="section-eyebrow">Launching Soon</div>
-      <h2 class="cta-h">Your home,<br/><span>sorted fast.</span></h2>
-      <p class="cta-sub">PapaFix is launching in Tanauan, Malvar, and Santo Tomas. Join the waitlist and be one of the first Batangas homeowners to try it the day we go live on Google Play.</p>
+      <h2 class="cta-h">Your aircon,<br/><span>sorted.</span></h2>
+      <p class="cta-sub">Tanauan, Malvar, and Santo Tomas go first, and if you're on the waitlist you'll hear from us the day the app goes live on Google Play.</p>
       <a href="#waitlist" class="btn-google-play">
         <svg viewBox="0 0 24 24" fill="currentColor" style="width:24px;height:24px;flex-shrink:0;"><path d="M3.18 23.76A2 2 0 0 1 2 22V2a2 2 0 0 1 1.18-1.76l11.33 11.76L3.18 23.76zM22.46 12l-3.03 1.71-3.39-3.51 3.39-3.51 3.04 1.71A2 2 0 0 1 22.46 12zM3.69.54L17.2 7.72 14.01 11 3.69.54zM3.69 23.46l10.32-10.46 3.19 3.28L3.69 23.46z"/></svg>
         <div class="btn-google-play-text"><small>Coming soon on</small><span>Google Play</span></div>
@@ -2511,18 +2348,18 @@ footer {
       <!-- Stat cards visual -->
       <div style="position:relative;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;gap:1rem;">
         <div style="background:white;border-radius:var(--r-md);padding:1.5rem 1.75rem;border:1px solid var(--border);box-shadow:0 8px 32px rgba(242,107,29,.09);">
-          <div style="font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);margin-bottom:.5rem;">Now Launching in Batangas</div>
-          <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.9rem;color:var(--ink);letter-spacing:-.04em;">3 Cities</div>
-          <div style="font-size:.8rem;color:var(--ink-faint);margin-top:4px;">Tanauan · Malvar · Santo Tomas</div>
+          <div style="font-size:var(--t-micro);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);margin-bottom:.5rem;">Now Launching in Batangas</div>
+          <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:var(--t-figure-lg);color:var(--ink);letter-spacing:-.04em;">3 Cities</div>
+          <div style="font-size:var(--t-ui);color:var(--ink-faint);margin-top:4px;">Tanauan · Malvar · Santo Tomas</div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
           <div style="background:var(--brand);border-radius:var(--r-md);padding:1.25rem 1.5rem;">
-            <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.6rem;color:white;letter-spacing:-.04em;">8</div>
-            <div style="font-size:.72rem;color:rgba(255,255,255,.65);margin-top:3px;">Service Types</div>
+            <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:var(--t-figure);color:white;letter-spacing:-.04em;">Aircon</div>
+            <div style="font-size:var(--t-caption);color:rgba(255,255,255,.65);margin-top:3px;">At launch</div>
           </div>
           <div style="background:var(--ink);border-radius:var(--r-md);padding:1.25rem 1.5rem;">
-            <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.6rem;color:white;letter-spacing:-.04em;">Live</div>
-            <div style="font-size:.72rem;color:rgba(255,255,255,.5);margin-top:3px;">Job Tracking</div>
+            <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:var(--t-figure);color:white;letter-spacing:-.04em;">Live</div>
+            <div style="font-size:var(--t-caption);color:rgba(255,255,255,.5);margin-top:3px;">Job Tracking</div>
           </div>
         </div>
         <div style="background:white;border-radius:var(--r-md);padding:1.25rem 1.75rem;border:1px solid var(--border);display:flex;align-items:center;gap:1rem;">
@@ -2530,8 +2367,8 @@ footer {
             <svg viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           </div>
           <div>
-            <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:.88rem;color:var(--ink);">100% Verified Technicians</div>
-            <div style="font-size:.72rem;color:var(--ink-faint);margin-top:2px;">Background-checked before every job</div>
+            <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:var(--t-body);color:var(--ink);">Verified Technicians</div>
+            <div style="font-size:var(--t-caption);color:var(--ink-faint);margin-top:2px;">ID-checked and screened in person before their first job</div>
           </div>
         </div>
       </div>
@@ -2548,25 +2385,14 @@ footer {
     <div class="footer-bigtype">
       Papa<span class="ft-accent">Fix</span>
     </div>
-    <p class="footer-tagline">Batangas' first on-demand aircon service platform — built for Tanauan, Malvar, and Santo Tomas. Real technicians, real-time tracking, fair prices.</p>
+    <p class="footer-tagline">Batangas' first on-demand aircon service platform, built for Tanauan, Malvar, and Santo Tomas.</p>
 
     <!-- Coverage cities in footer -->
     <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1.75rem;">
-      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(242,107,29,.12);border:1px solid rgba(242,107,29,.2);color:rgba(255,255,255,.7);font-size:.72rem;font-weight:500;padding:5px 13px;border-radius:100px;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        Tanauan City
-      </div>
-      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(242,107,29,.12);border:1px solid rgba(242,107,29,.2);color:rgba(255,255,255,.7);font-size:.72rem;font-weight:500;padding:5px 13px;border-radius:100px;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        Malvar
-      </div>
-      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(242,107,29,.12);border:1px solid rgba(242,107,29,.2);color:rgba(255,255,255,.7);font-size:.72rem;font-weight:500;padding:5px 13px;border-radius:100px;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="11" height="11"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        Santo Tomas City
-      </div>
-      <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.35);font-size:.72rem;font-weight:500;padding:5px 13px;border-radius:100px;">
-        + More coming soon
-      </div>
+      <div class="chip chip-city"><svg aria-hidden="true"><use href="#ic-pin"/></svg>Tanauan City</div>
+      <div class="chip chip-city"><svg aria-hidden="true"><use href="#ic-pin"/></svg>Malvar</div>
+      <div class="chip chip-city"><svg aria-hidden="true"><use href="#ic-pin"/></svg>Santo Tomas City</div>
+      <div class="chip chip-city is-muted">+ More coming soon</div>
     </div>
 
     <div class="footer-qr-block">
@@ -2574,7 +2400,7 @@ footer {
         <img src="assets/brand/app-logo-480.png" alt="PapaFix" style="width:100%;height:100%;object-fit:contain;border-radius:8px;"/>
       </div>
       <div class="footer-qr-label">Coming soon on<br/>Google Play</div>
-      <a href="#waitlist" style="font-size:.78rem;font-weight:600;color:var(--brand);text-decoration:none;">Join the waitlist &#8594;</a>
+      <a href="#waitlist" style="font-size:var(--t-ui);font-weight:600;color:var(--brand);text-decoration:none;">Join the waitlist &#8594;</a>
     </div>
   </div>
 
@@ -2595,13 +2421,9 @@ footer {
     <div>
       <div class="footer-col-title">Services</div>
       <ul class="footer-link-list">
-        <li><a href="#services">Electrical</a></li>
-        <li><a href="#services">Plumbing</a></li>
-        <li><a href="#services">Aircon</a></li>
-        <li><a href="#services">Appliance</a></li>
-        <li><a href="#services">Carpentry</a></li>
-        <li><a href="#services">Painting</a></li>
-        <li><a href="#services">Cleaning</a></li>
+        <li><a href="#services">Aircon Cleaning</a></li>
+        <li><a href="#services">Aircon Repair</a></li>
+        <li><a href="#services">Aircon Installation</a></li>
       </ul>
     </div>
 
@@ -2630,10 +2452,6 @@ footer {
     <div class="footer-copy">© 2026 PapaFix. All rights reserved. Made in the Philippines.</div>
     <div class="footer-badges">
       <div class="footer-badge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        SSL Secured
-      </div>
-      <div class="footer-badge">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         Verified Techs
       </div>
@@ -2653,12 +2471,14 @@ const mobileMenu = document.getElementById('mobileMenu');
 function closeMobileMenu() {
   hamburger.classList.remove('open');
   mobileMenu.classList.remove('open');
+  hamburger.setAttribute('aria-expanded', 'false');
 }
 
 if (hamburger) {
   hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('open');
-    mobileMenu.classList.toggle('open');
+    const open = hamburger.classList.toggle('open');
+    mobileMenu.classList.toggle('open', open);
+    hamburger.setAttribute('aria-expanded', String(open));
   });
   // Close when clicking outside
   document.addEventListener('click', (e) => {
@@ -2683,7 +2503,7 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
 
 document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => observer.observe(el));
-document.querySelectorAll('.bento, .feature-row').forEach((el, i) => {
+document.querySelectorAll('.bento').forEach((el, i) => {
   el.style.transitionDelay = (i % 4) * 0.07 + 's';
   observer.observe(el);
 });
@@ -2698,14 +2518,6 @@ window.addEventListener('scroll', () => {
     nav.style.background = 'rgba(247,249,252,.72)';
     nav.style.boxShadow = '0 6px 26px rgba(10,15,30,.07)';
   }
-}, { passive: true });
-
-/* ═══ PARALLAX ══════════════════════════════════════════════════ */
-window.addEventListener('scroll', () => {
-  const sy = window.scrollY;
-  document.querySelectorAll('.feature-num').forEach(el => {
-    el.style.transform = `translateY(${sy * .04}px)`;
-  });
 }, { passive: true });
 
 /* ═══ SCROLL PROGRESS + BACK TO TOP ════════════════════════════ */
@@ -2939,7 +2751,10 @@ if (overlay) {
   var TIMEOUT_MS = 15000;
 
   function show(text, ok) {
-    msg.style.color = ok ? 'var(--brand)' : 'var(--brand-deep)';
+    // Presentation only — the fetch and timeout logic below is untouched.
+    // Was an inline colour: success --brand (2.89:1, failed AA) and error
+    // --brand-deep, two oranges that read as the same message.
+    msg.className = ok ? 'is-ok' : 'is-error';
     msg.textContent = text;
     msg.style.display = 'block';
   }
@@ -3060,16 +2875,42 @@ if (overlay) {
 
 <script>
 /* ═══ TECHNICIAN MODAL ══════════════════════════════════════════ */
+/* The dialog already declared aria-modal="true", but nothing enforced it:
+   focus never moved in, Tab walked straight out to the page behind, and
+   closing dropped the caret at the top of the document. */
+var techModalOpener = null;
+function techModalFocusables(m) {
+  return Array.prototype.filter.call(
+    m.querySelectorAll('a[href], button, input, [tabindex]:not([tabindex="-1"])'),
+    function (el) { return el.offsetParent !== null; }
+  );
+}
 function openTechModal() {
   const m = document.getElementById('techModal');
+  techModalOpener = document.activeElement;
   m.classList.add('open');
   document.body.style.overflow = 'hidden';
+  const f = techModalFocusables(m);
+  if (f.length) f[0].focus();
 }
 function closeTechModal() {
   const m = document.getElementById('techModal');
+  if (!m.classList.contains('open')) return;
   m.classList.remove('open');
   document.body.style.overflow = '';
+  // Return the caret to whatever opened the dialog.
+  if (techModalOpener && techModalOpener.focus) techModalOpener.focus();
+  techModalOpener = null;
 }
+// Trap Tab inside the dialog while it is open.
+document.getElementById('techModal').addEventListener('keydown', function (e) {
+  if (e.key !== 'Tab') return;
+  const f = techModalFocusables(this);
+  if (!f.length) return;
+  const first = f[0], last = f[f.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+});
 // Close on overlay click
 document.getElementById('techModal').addEventListener('click', function(e) {
   if (e.target === this) closeTechModal();
