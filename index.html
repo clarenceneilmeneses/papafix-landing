@@ -1380,6 +1380,11 @@ footer {
 /* Light enough to sit the shape off the page without bleeding orange
    into the boundaries — the old 0 3px 10px/.28 muddied them. */
 .cvm-cells { filter: drop-shadow(0 2px 7px rgba(194,65,12,.16)); }
+/* Animating the viewBox re-rasterises everything under this filter on
+   every frame, and 93 filtered paths is what made the camera crawl on a
+   phone. The shadow is worth 0.16 of alpha, not a stuttering zoom — it is
+   dropped for the flight and back before the map settles. */
+.cvm.is-flying .cvm-cells { filter: none; }
 .cvm-cells > g { transition: opacity .4s cubic-bezier(.16,1,.3,1); }
 .cvm-b {
   fill: var(--brand);
@@ -1392,6 +1397,9 @@ footer {
      below the city casing above, not compete with it */
   stroke: rgba(255,255,255,.6); stroke-width: 1.1;
   transform-box: fill-box; transform-origin: 50% 50%;
+  /* kills the 300ms double-tap wait on the cells, which read as the map
+     ignoring the first tap */
+  touch-action: manipulation;
   /* the outgoing cell has to still be cooling as the next one warms, or
      the loop reads as a series of switches rather than one moving light */
   transition: fill .5s cubic-bezier(.16,1,.3,1),
@@ -1401,6 +1409,49 @@ footer {
 /* darker fill alone is legible but quiet at barangay size; the white
    keyline is what actually picks one cell out of ninety-three */
 .cvm-b.is-hot { fill: var(--brand-deep); stroke: #fff; stroke-width: 2.4; }
+
+/* ── the city names, on the map ───────────────────────────────── */
+/* The outline of three Batangas LGUs is not a shape anyone outside
+   Batangas can name, so without these the map only reads for people who
+   already know where they are — who are not the ones asking. The cards
+   beside it name the three, but a name in a list and a name on a shape
+   are not the same act of recognition.
+   HTML rather than SVG text for the same reason the pin is: they hold
+   their size while the camera moves, instead of ballooning on zoom. */
+.cvm-name {
+  position: absolute; z-index: 1; pointer-events: none;
+  transform: translate(-50%, -50%);
+  font-family: 'Sora', sans-serif; font-weight: 700;
+  font-size: clamp(.6rem, 1.3vw, .82rem); letter-spacing: -.01em;
+  color: #fff; white-space: nowrap;
+  /* white on --brand is 2.4:1, under any text floor. The shadow is not
+     decoration — it is what carries the name over the orange. */
+  text-shadow: 0 1px 2px rgba(92,30,4,.7), 0 0 12px rgba(92,30,4,.45);
+  transition: opacity .35s ease;
+}
+/* Zoomed to one barangay you can no longer see the city the label names,
+   and the verdict line has already said it. */
+.cvm-name.is-off { opacity: 0; }
+
+/* ── the barangay dots ───────────────────────────────────────── */
+/* Hovering a city answers the question the single walking pin cannot:
+   how many pieces is this? Forty-eight, for Tanauan. Unlabelled on
+   purpose — 48 labels is a thicket, and the one under the pointer is
+   already named by the pin.
+   SVG circles, not HTML: they ride the viewBox natively, so the camera
+   never has to re-project 93 absolutely-positioned nodes per frame. */
+.cvm-dot {
+  fill: #fff; stroke: var(--brand-deep); stroke-width: 1.2;
+  opacity: 0; pointer-events: none;
+  transform-box: fill-box; transform-origin: 50% 50%; transform: scale(.4);
+  transition: opacity .26s ease, transform .26s cubic-bezier(.16,1,.3,1);
+}
+/* a shallow stagger, so the dots read as landing on the city rather than
+   as one block switching on */
+.cvm-dots.is-on > g.is-city .cvm-dot {
+  opacity: 1; transform: none;
+  transition-delay: calc(var(--k, 0) * 5ms);
+}
 
 /* ── coverage bloom ───────────────────────────────────────────── */
 /* Cells are filled by default, so with JS off the finished map renders.
@@ -1508,12 +1559,17 @@ footer {
   background: white; border: 1px solid var(--border); border-radius: var(--r-md);
   box-shadow: 0 12px 34px rgba(10,15,30,.14);
   max-height: 17rem; overflow-y: auto;
+  /* flicking the results must not hand the scroll to the page behind
+     once the list bottoms out, and the list is not a pan surface */
+  overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
 }
 .cvu-list[hidden] { display: none; }
 .cvu-opt {
   display: flex; align-items: baseline; justify-content: space-between; gap: .75rem;
-  padding: 9px 12px; border-radius: 12px; cursor: pointer;
+  /* 44px min, so a thumb hits the row and not the gap between two */
+  padding: 11px 12px; min-height: 44px; border-radius: 12px; cursor: pointer;
   font-size: var(--t-ui); color: var(--ink);
+  touch-action: manipulation;
 }
 /* four names — San Jose, San Juan, San Fernando, Santiago — exist in two
    of the three localities, so an option is never just a barangay name */
@@ -1582,10 +1638,11 @@ footer {
 @media (prefers-reduced-motion: reduce) {
   /* every motion above resolves to its end state; the search is
      unaffected either way */
-  .cvm-b, .cvm-pin, .cvm-pin::after, .cvm-pin-label,
+  .cvm-b, .cvm-pin, .cvm-pin::after, .cvm-pin-label, .cvm-dot, .cvm-name,
   .cvm-edge, .cvm-cells > g { transition: none !important; transition-delay: 0s !important; }
   .cvm-pin::after { transform: scale(1); }
   .cvm-pin-label { transform: translateX(-50%); }
+  .cvm-dots.is-on > g.is-city .cvm-dot { transform: none; }
   .cvm-b:hover { transform: none; }
 }
 
@@ -2050,8 +2107,21 @@ footer {
               <use href="#cvm-malvar-e" class="cvm-edge" data-city="malvar"/>
               <use href="#cvm-santo-e" class="cvm-edge" data-city="santo"/>
             </g>
+
+            <!-- Above the borders, and filled by the script from the same
+                 data-x/data-y the pin rides, so there is no second copy of
+                 93 coordinates to drift. Decorative: the names are all in
+                 the <desc> already. -->
+            <g class="cvm-dots" aria-hidden="true"></g>
           </svg>
           <span class="cvm-pin" aria-hidden="true"><span class="cvm-pin-label"></span></span>
+          <!-- Re-projected by the script from each group's data-cx/data-cy
+               on every camera frame, like the pin. The inline percentages
+               are those same centroids through the home viewBox, so with
+               JS off the names still land on their cities. -->
+          <span class="cvm-name" data-city="tanauan" aria-hidden="true" style="left:32.710%;top:36.988%">Tanauan City</span>
+          <span class="cvm-name" data-city="malvar" aria-hidden="true" style="left:53.313%;top:66.858%">Malvar</span>
+          <span class="cvm-name" data-city="santo" aria-hidden="true" style="left:67.253%;top:45.458%">Santo Tomas City</span>
         </div>
       </div>
 
@@ -3143,6 +3213,8 @@ window.addEventListener('scroll', () => {
   if (!cells.length) return;
   var groups = Array.prototype.slice.call(cellG.querySelectorAll('g[data-city]'));
   var cards  = Array.prototype.slice.call(wrap.querySelectorAll('.cvu-card'));
+  var names  = Array.prototype.slice.call(wrap.querySelectorAll('.cvm-name'));
+  var dotG   = svg.querySelector('.cvm-dots');
 
   var input   = document.getElementById('cvuInput');
   var list    = document.getElementById('cvuList');
@@ -3164,11 +3236,25 @@ window.addEventListener('scroll', () => {
     pin.style.left = ((x - view[0]) / view[2] * 100).toFixed(3) + '%';
     pin.style.top  = ((y - view[1]) / view[3] * 100).toFixed(3) + '%';
   }
+  // The city names are HTML over an SVG, so they carry the same debt the
+  // pin does: they live in the frame's percentage space and have to be
+  // re-derived from the live viewBox whenever it moves.
+  function nameAt() {
+    for (var k = 0; k < names.length; k++) {
+      var n = names[k];
+      n.style.left = ((n._x - view[0]) / view[2] * 100).toFixed(3) + '%';
+      n.style.top  = ((n._y - view[1]) / view[3] * 100).toFixed(3) + '%';
+    }
+  }
   function setView(v) {
     view = v;
     svg.setAttribute('viewBox', v[0].toFixed(2) + ' ' + v[1].toFixed(2) + ' ' +
                                 v[2].toFixed(2) + ' ' + v[3].toFixed(2));
     if (lit) pinAt(lit);
+    nameAt();
+  }
+  function atHome() {
+    return Math.abs(view[0] - HOME[0]) < 0.5 && Math.abs(view[2] - HOME[2]) < 0.5;
   }
 
   // A cell's frame: padded, floored so a two-street poblacion barangay
@@ -3195,6 +3281,7 @@ window.addEventListener('scroll', () => {
     if (camRAF) { cancelAnimationFrame(camRAF); camRAF = null; }
     if (REDUCED) { setView(target); return; }   // jump-cut, never a lerp
     var from = view.slice(), t0 = null, DUR = 500;
+    svg.classList.add('is-flying');             // see .cvm.is-flying
     camRAF = requestAnimationFrame(function frame(ts) {
       if (t0 === null) t0 = ts;
       var p = Math.min(1, (ts - t0) / DUR);
@@ -3203,7 +3290,44 @@ window.addEventListener('scroll', () => {
                from[1] + (target[1] - from[1]) * e,
                from[2] + (target[2] - from[2]) * e,
                from[3] + (target[3] - from[3]) * e]);
-      camRAF = p < 1 ? requestAnimationFrame(frame) : null;
+      if (p < 1) { camRAF = requestAnimationFrame(frame); return; }
+      camRAF = null;
+      svg.classList.remove('is-flying');
+    });
+  }
+
+  /* ── city names and barangay dots, built off the cells ───────
+     Both are derived from geometry already in the DOM — the group
+     centroids for the names, each cell's data-x/data-y for the dots — so
+     there is no second copy of the coordinates to fall out of step with
+     the map. */
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  var byCity = {};
+  groups.forEach(function (g) { byCity[g.getAttribute('data-city')] = g; });
+
+  names.forEach(function (n) {
+    var g = byCity[n.getAttribute('data-city')];
+    n._x = g ? parseFloat(g.getAttribute('data-cx')) : 0;
+    n._y = g ? parseFloat(g.getAttribute('data-cy')) : 0;
+  });
+  nameAt();
+
+  if (dotG) {
+    groups.forEach(function (g) {
+      var gg = document.createElementNS(SVGNS, 'g');
+      gg.setAttribute('data-city', g.getAttribute('data-city'));
+      Array.prototype.forEach.call(g.querySelectorAll('.cvm-b'), function (el, k) {
+        var c = document.createElementNS(SVGNS, 'circle');
+        c.setAttribute('class', 'cvm-dot');
+        c.setAttribute('cx', el.getAttribute('data-x'));
+        c.setAttribute('cy', el.getAttribute('data-y'));
+        // ~2 user units to the pixel at the overview, so this lands near
+        // a 4px dot — readable without turning 48 of them into a rash
+        c.setAttribute('r', '4.2');
+        c.style.setProperty('--k', String(k));
+        gg.appendChild(c);
+      });
+      dotG.appendChild(gg);
     });
   }
 
@@ -3408,7 +3532,13 @@ window.addEventListener('scroll', () => {
       c.className = 'cvu-opt-city';
       c.textContent = it.city;
       li.appendChild(n); li.appendChild(c);
-      li.addEventListener('pointerdown', function (e) { e.preventDefault(); choose(it); });
+      // pointerdown fires the instant a finger lands, which meant a flick
+      // to scroll the results picked whatever it started on — the reason
+      // the list had to be pressed rather than tapped. mousedown only
+      // holds focus (so the field does not blur out from under the tap);
+      // the choice waits for a real click, which a scroll cancels.
+      li.addEventListener('mousedown', function (e) { e.preventDefault(); });
+      li.addEventListener('click', function () { choose(it); });
       list.appendChild(li);
     });
     active = -1;
@@ -3430,6 +3560,13 @@ window.addEventListener('scroll', () => {
   function emphasise(key) {
     groups.forEach(function (g) { g.classList.toggle('is-city', g.getAttribute('data-city') === key); });
     cards.forEach(function (c) { c.classList.toggle('is-city', c.getAttribute('data-city') === key); });
+    if (!dotG) return;
+    Array.prototype.forEach.call(dotG.children, function (g) {
+      g.classList.toggle('is-city', g.getAttribute('data-city') === key);
+    });
+    // Zoomed in, the dots would be boulders and the one cell on screen is
+    // already the answer — they belong to the overview only.
+    dotG.classList.toggle('is-on', !!key && !cellG.classList.contains('is-focused'));
   }
 
   // The answer lands first; the camera is decoration that follows it.
@@ -3444,6 +3581,7 @@ window.addEventListener('scroll', () => {
     cellG.classList.remove('is-lifting');
     cellG.classList.add('is-focused');
     emphasise(it.cityKey);
+    names.forEach(function (n) { n.classList.add('is-off'); });
     reset.hidden = false;
     flyTo(frameOf(it.el));
   }
@@ -3472,18 +3610,30 @@ window.addEventListener('scroll', () => {
   function toOverview() {
     cellG.classList.remove('is-focused', 'is-lifting');
     emphasise(null);
+    names.forEach(function (n) { n.classList.remove('is-off'); });
+    tapped = null; lifted = null; queued = null;
     reset.hidden = true;
-    flyTo(HOME.slice());
+    // Deleting a query one character at a time used to re-fly home on
+    // every keystroke; there is nothing to fly back from if we are there.
+    if (!atHome() || camRAF) flyTo(HOME.slice());
   }
 
   if (input && list && verdict && reset) {
-    input.addEventListener('input', function () {
-      park();
+    // One pass per frame, not one per keystroke: a fast typist was
+    // re-running the index and rebuilding six rows between every letter,
+    // and on a phone that lands on top of the camera's own rAF.
+    var qRAF = null;
+    function runQuery() {
       var q = input.value.trim();
       if (!q) { closeList(); say([]); toOverview(); return; }
       results = search(q);
       if (results.length) { renderList(results); openList(); }
       else { closeList(); if (q.length >= 2) noMatch(q); }
+    }
+    input.addEventListener('input', function () {
+      park();
+      if (qRAF) return;
+      qRAF = requestAnimationFrame(function () { qRAF = null; runQuery(); });
     });
 
     input.addEventListener('keydown', function (e) {
@@ -3494,6 +3644,9 @@ window.addEventListener('scroll', () => {
         if (n) { openList(); setActive((active - 1 + n) % n); e.preventDefault(); }
       } else if (k === 'Enter') {
         e.preventDefault();
+        // Enter can land in the same frame as the keystroke before it —
+        // flush the pending pass so it never acts on a stale result set.
+        if (qRAF) { cancelAnimationFrame(qRAF); qRAF = null; runQuery(); }
         if (!list.hidden && active >= 0) choose(results[active]);
         else if (results.length) choose(results[0]);
         else if (input.value.trim()) noMatch(input.value.trim());
@@ -3505,7 +3658,13 @@ window.addEventListener('scroll', () => {
       }
     });
 
-    input.addEventListener('blur', function () { setTimeout(closeList, 120); });
+    // Was a 120ms race against the tap that caused the blur. focusout
+    // knows where focus went, so the list can close on the answer instead
+    // of on a timer that sometimes beat it.
+    input.addEventListener('focusout', function (e) {
+      if (e.relatedTarget && list.contains(e.relatedTarget)) return;
+      closeList();
+    });
     reset.addEventListener('click', function () { toOverview(); input.focus(); });
 
     // Escape works from anywhere while the camera is in, not just the field
@@ -3518,16 +3677,10 @@ window.addEventListener('scroll', () => {
   // grouped by city in the first place.
   cards.forEach(function (card) {
     var key = card.getAttribute('data-city');
-    card.addEventListener('pointerenter', function () {
-      if (cellG.classList.contains('is-focused')) return;
-      cellG.classList.add('is-lifting');
-      emphasise(key);
-    });
-    card.addEventListener('pointerleave', function () {
-      if (cellG.classList.contains('is-focused')) return;
-      cellG.classList.remove('is-lifting');
-      emphasise(null);
-    });
+    // Same two calls the map uses, so a card and a hovered barangay can
+    // never disagree about which city is up.
+    card.addEventListener('pointerenter', function () { liftCity(key); });
+    card.addEventListener('pointerleave', function () { unbrowse(); });
   });
 
   /* ── pointer on the map ──────────────────────────────────────── */
@@ -3535,23 +3688,95 @@ window.addEventListener('scroll', () => {
     var el = e.target;
     return el && el.classList && el.classList.contains('cvm-b') ? el : null;
   }
+  function cityOf(el) {
+    var g = el.parentNode;
+    return g && g.getAttribute ? g.getAttribute('data-city') : null;
+  }
+
+  // Naming one barangay and lifting its whole city are the same gesture:
+  // the pin says which one, the dots and the dimming say what it is part
+  // of. Kept on its own guard rather than the pin's, because the walk may
+  // already be sitting on the cell you just arrived at — the pin has
+  // nothing to do there but the city still has to come up.
+  var lifted = null;
+  function liftCity(key) {
+    if (key === lifted || cellG.classList.contains('is-focused')) return;
+    lifted = key;
+    cellG.classList.add('is-lifting');
+    emphasise(key);
+  }
+  function browse(el) {
+    park();
+    if (el !== lit) show(el, true);
+    liftCity(cityOf(el));
+  }
+  function unbrowse() {
+    lifted = null; queued = null;
+    if (cellG.classList.contains('is-focused')) return;
+    cellG.classList.remove('is-lifting');
+    emphasise(null);
+  }
+
+  // One pass per frame. The old handler wrote pin styles and reset the
+  // park timer on every single pointermove, which on a 120Hz phone is
+  // work the compositor never gets a break from.
+  var moveRAF = null, queued = null;
   svg.addEventListener('pointermove', function (e) {
+    // Touch has no hover: a finger only reports movement while it is
+    // pressed, which is exactly why the map had to be held to be read.
+    // Touch browses by tapping instead — see pointerdown.
+    if (e.pointerType === 'touch') return;
     var el = cellOf(e);
-    if (!el) return;
-    park(); show(el, true);
+    if (!el || el === queued) return;
+    queued = el;
+    if (moveRAF) return;
+    moveRAF = requestAnimationFrame(function () {
+      moveRAF = null;
+      if (queued) browse(queued);
+    });
   });
+
+  // First tap on a cell names it, a second tap on the same one zooms in.
+  // A mouse gets both from one click, because hovering has already done
+  // the naming by the time the button goes down.
+  var tapped = null, byTouch = false;
   svg.addEventListener('pointerdown', function (e) {
+    byTouch = e.pointerType === 'touch';
+    var el = cellOf(e);
+    if (!el) { tapped = null; unbrowse(); return; }
+    if (byTouch) browse(el);          // named the moment the finger lands
+  });
+  // The zoom hangs off click, not pointerdown: a finger that lands on a
+  // barangay and then swipes is scrolling the page, and click is the one
+  // event that knows the difference.
+  svg.addEventListener('click', function (e) {
     var el = cellOf(e);
     if (!el) return;
-    park(); show(el, true);
+    browse(el);
+    if (byTouch && tapped !== el) { tapped = el; return; }
+    tapped = null;
     for (var k = 0; k < INDEX.length; k++) if (INDEX[k].el === el) { choose(INDEX[k]); return; }
   });
-  svg.addEventListener('pointerleave', function () {
+
+  svg.addEventListener('pointerleave', function (e) {
+    // A touch pointer is destroyed on lift, so this fires immediately
+    // after every tap. Honouring it would clear the tap we just recorded
+    // and take the dots away with it.
+    if (e.pointerType === 'touch') return;
+    tapped = null;
+    unbrowse();
     if ((input && input.value.trim()) || cellG.classList.contains('is-focused')) return;
     held = false;
     i = (cells.indexOf(lit) + 1) % cells.length;
     start();
   });
+
+  // Which leaves the touch case: a tap anywhere off the map puts it back.
+  document.addEventListener('pointerdown', function (e) {
+    if (!byTouch || svg.contains(e.target)) return;
+    tapped = null;
+    unbrowse();
+  }, true);
 
   /* ── gating: nothing ticks or blooms off screen ──────────────── */
   if (REDUCED) {
