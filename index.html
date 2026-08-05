@@ -188,8 +188,19 @@ nav {
   border: 1px solid rgba(242,107,29,.10);
   border-radius: 100px;
   box-shadow: 0 6px 26px rgba(10,15,30,.07);
-  transition: background .3s, box-shadow .3s, border-color .3s;
+  transition: background .3s, box-shadow .3s, border-color .3s,
+              opacity .5s ease, visibility .5s;
 }
+/* ── the nav steps aside on the full-screen sections ───────────
+   #coverage and #app hold the entire viewport; a floating bar parked
+   over them breaks that. It fades out on the way in and back on the
+   way out. Never on #hero — the hero is where people arrive and the
+   nav has to be there.
+   visibility, not opacity alone: a nav you cannot see but can still
+   Tab into is a keyboard trap. visibility flips discretely, so it
+   leaves only once the fade has finished and returns the moment one
+   starts. */
+nav.is-away { opacity: 0; visibility: hidden; pointer-events: none; }
 .nav-logo {
   display: flex; align-items: center; gap: 9px;
   font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1.2rem;
@@ -292,22 +303,22 @@ nav {
 /* Signup is the hero's action, not a button that scrolls to one. */
 .hero-signup { margin-bottom: 1rem; scroll-margin-top: 110px; }
 .hero-signup-lead { font-size: var(--t-ui); color: var(--ink-faint); margin-bottom: .6rem; }
-.hero-form { display: flex; gap: .5rem; flex-wrap: wrap; }
-.hero-form #waitlistEmail {
+.wl-form { display: flex; gap: .5rem; flex-wrap: wrap; }
+.wl-form input[type="email"] {
   flex: 1 1 14rem; min-width: 0; padding: .8rem 1rem;
   border-radius: var(--r-sm); border: 1.5px solid var(--border);
   font-family: 'DM Sans', sans-serif; font-size: var(--t-body);
   background: white; color: var(--ink); transition: border-color .2s;
 }
-.hero-form #waitlistEmail::placeholder { color: var(--ink-faint); }
-.hero-form button[type="submit"] {
+.wl-form input[type="email"]::placeholder { color: var(--ink-faint); }
+.wl-form button[type="submit"] {
   flex: 0 0 auto; padding: .8rem 1.5rem;
   background: var(--brand); color: white; border: none;
   border-radius: var(--r-sm); font-family: 'Sora', sans-serif;
   font-weight: 600; font-size: var(--t-ui); cursor: pointer;
   transition: background .2s, transform .2s;
 }
-.hero-fineprint { margin-top: .8rem; font-size: var(--t-caption); line-height: 1.6; color: var(--ink-faint); max-width: 46ch; }
+.hero-fineprint, .wl-fineprint { margin-top: .8rem; font-size: var(--t-caption); line-height: 1.6; color: var(--ink-faint); max-width: 46ch; }
 .hero-secondary {
   display: inline-block; margin-top: .25rem;
   font-size: var(--t-ui); color: var(--ink-faint);
@@ -330,15 +341,44 @@ nav {
 /* Warm greys, tinted off the brand hue rather than neutral, so the land
    sits in the same family as the page instead of going cold. */
 .mp-prov { fill: #e7e2dc; stroke: #f7f9fc; stroke-width: 1.6; vector-effect: non-scaling-stroke; }
-.mp-prov--home { fill: #d8d0c6; }
-/* The other 31 Batangas LGUs as hairlines: the province is visibly
-   subdivided, so three lit cells read as a start, not a limit. */
-.mp-muni { fill: none; stroke: rgba(64,58,51,.13); stroke-width: 1; vector-effect: non-scaling-stroke; }
+/* Taal Lake was being painted as land. The PSA municipality polygons stop
+   at the shoreline, so the lake is the one part of Batangas that belongs to
+   no LGU — which gives it to us for free: paint the province water, then let
+   the 31 municipality shapes paint the land back on top. Whatever no
+   municipality covers is the lake. No new geometry, no second copy of the
+   boundary data.
+   The blue is the same value as the land but the opposite temperature, which
+   is how a map says water without shouting. The three launch cities also sit
+   outside the 31 and would show through — .mp-live paints them after. */
+.mp-prov--home { fill: #cbd8e4; }
+/* The other 31 Batangas LGUs: filled now, not just hairlines, because the
+   fill is what defines the shoreline. The hairlines still subdivide the
+   province, so three lit cells read as a start, not a limit. */
+/* Filled now, not just hairlines, because the fill is what defines the
+   shoreline. The stroke is the same colour as the fill on purpose: the PSA
+   municipality polygons do not share their edges exactly, and every seam
+   between two of them was letting a hairline of lake colour through. A
+   1.2px casing closes them. It costs ~0.6px of shoreline, which at this
+   scale is nothing. */
+/* Child combinator on purpose: the hairline overlay is a <use> of this
+   same path, and a <use> clone still matches its own class selectors.
+   Scoped to the real path, the clone inherits paint from the <use>. */
+.mp-context > .mp-muni { fill: #d8d0c6; stroke: #d8d0c6; stroke-width: 1.2; vector-effect: non-scaling-stroke; }
+/* The subdivision lines ride on their own layer on top, so closing the
+   seams above did not cost us the visibly-subdivided province — three lit
+   cells still read as a start, not a limit. */
+.mp-muni-lines { fill: none; stroke: rgba(64,58,51,.13); stroke-width: 1; vector-effect: non-scaling-stroke; }
+/* Land beneath the three launch cities, so the lake colour is never
+   what shows through them while they fade in. */
+.mp-cityland { fill: #d8d0c6; }
 
 /* --brand alone lands at 1.99:1 on the province grey, under the 3:1 floor
    for a meaningful graphic. The --brand-deep edge carries the boundary at
    3.39:1 and takes the pair clear. */
-.mp-city {
+/* Scoped for the same reason: the land underlay in .mp-context is a <use>
+   of these paths, and unscoped .mp-city would repaint the clone brand
+   orange — which showed the cities instantly and defeated their fade-in. */
+.mp-live .mp-city {
   fill: var(--brand); stroke: var(--brand-deep); stroke-width: 1.2;
   vector-effect: non-scaling-stroke;
   filter: drop-shadow(0 3px 8px rgba(194,65,12,.32));
@@ -376,7 +416,7 @@ nav {
   .hero-map { margin: 2rem -4vw 0; }
 }
 @media (max-width: 560px) {
-  .hero-form button[type="submit"] { flex: 1 1 100%; }
+  .wl-form button[type="submit"] { flex: 1 1 100%; }
 }
 @media (max-width: 420px) {
   .mp-label { font-size: var(--t-caption); }
@@ -561,6 +601,71 @@ nav {
 
 /* ── "A LOOK INSIDE THE APP" — three mini customer screens ─── */
 #app { padding: var(--band-sm) 0; background: var(--off-white); }
+
+/* ═══ THE OPENING THREE ══════════════════════════════════════════
+   #hero, #coverage and #app each hold the screen on their own, so the
+   top of the page reads as three deliberate moments rather than a
+   continuous scroll. Only these three — the sections below carry more
+   content than a viewport can hold, and padding them to a screen each
+   would just add empty space.
+   min-height, never height: if the content does outgrow the viewport
+   (short laptops, large text, or a phone) the section grows instead of
+   clipping. svh, not vh, so a phone toolbar un-hiding cannot push the
+   content out of view. No scroll snapping — scrolling stays the
+   visitor's. */
+#coverage, #app {
+  min-height: 100vh;    /* fallback for engines without the new units */
+  min-height: 100svh;
+  display: flex; flex-direction: column; justify-content: center;
+}
+/* Both bands were tuned when they were ordinary sections in a stack and
+   carried a full --band-md / --band-sm above and below. Centred inside a
+   full screen, that padding is doubled by the free space around it and
+   pushes each section just over one viewport. */
+/* Asymmetric, like the hero: the nav is fixed and ends at 74px, and a
+   section that holds exactly one screen would otherwise park its eyebrow
+   underneath it. Extra room above, less below. */
+/* Roughly symmetric and generous. The bottom was squeezed to 1.25rem to
+   force the section under one screen; the fit script below does that job
+   properly now, so the band can breathe again. The nav fades out over
+   these two anyway, so the top no longer has to clear it either. */
+#coverage, #app {
+  padding-top: clamp(3.5rem, 7vh, 5rem);
+  padding-bottom: clamp(3rem, 6vh, 4.5rem);
+}
+/* The panel paints the ground each section already had — #hero and
+   #app never declared one and inherit the page, so they must name it
+   here or the panel would repaint them white. */
+#hero     { --sx-bg: var(--off-white); }
+#coverage { --sx-bg: #fff; }
+#app      { --sx-bg: var(--off-white); }
+
+/* ── arriving: the section opens out to fill the screen ─────────
+   What animates is the section GROUND, not the section: a rounded,
+   shadowed panel inset from the page that opens to full bleed as you
+   scroll in. It rides on a pseudo-element, so no reflow reaches the
+   rest of the page, and unlike transform: scale it never resamples the
+   type — the copy is pin-sharp the whole way.
+   --off-white is the same value as the page background, so on #app it
+   is the shadow and the radius, not a colour change, that make the
+   panel legible as a panel. */
+.sx { position: relative; background: none; isolation: isolate; }
+.sx::before {
+  content: ''; position: absolute; z-index: -1;
+  inset: 2.5% 5%;
+  background: var(--sx-bg, #fff);
+  border-radius: var(--r-xl);
+  box-shadow: 0 24px 70px rgba(10,15,30,.10);
+  transition: inset .9s cubic-bezier(.16,1,.3,1),
+              border-radius .9s cubic-bezier(.16,1,.3,1),
+              box-shadow .9s ease;
+}
+.sx.in-view::before { inset: 0; border-radius: 0; box-shadow: 0 0 0 rgba(10,15,30,0); }
+@media (prefers-reduced-motion: reduce) {
+  nav { transition: background .3s, box-shadow .3s, border-color .3s; }
+  /* arrive already open */
+  .sx::before { inset: 0; border-radius: 0; box-shadow: none; transition: none; }
+}
 .app-header { text-align: center; }
 .app-header .section-sub { margin: 1rem auto 0; }
 .app-row { display: flex; gap: 2.75rem; margin-top: 2.5rem; align-items: flex-start; overflow-x: auto; scrollbar-width: none; padding: .5rem 5vw 1rem; }
@@ -846,7 +951,13 @@ section { position: relative; }
 .cta-inner { max-width: 1180px; margin: 0 auto; padding: 0 5vw; display: grid; grid-template-columns: 1fr 1fr; gap: 6vw; align-items: center; position: relative; z-index: 1; }
 .cta-h { font-family: 'Sora', sans-serif; font-weight: 800; font-size: clamp(2.5rem, 4vw, 4.2rem); letter-spacing: -.04em; line-height: var(--lh-display); color: var(--ink); margin-bottom: 2.25rem; }
 .cta-h span { color: var(--brand-deep); }
-.cta-sub { font-size: var(--t-lede); line-height: var(--lh-prose); color: var(--ink-light); font-weight: 400; max-width: 56ch; margin-bottom: 3.25rem; }
+.cta-sub { font-size: var(--t-lede); line-height: var(--lh-prose); color: var(--ink-light); font-weight: 400; max-width: 56ch; margin-bottom: 2rem; }
+
+/* ── #cta inline signup ─────────────────────────────────────────
+   Shares .wl-form/.wl-msg with the hero, so it is the same control at
+   the same size; only the surrounding block is new. */
+.cta-signup { max-width: 30rem; margin-bottom: 2.25rem; }
+.cta-signup-lead { font-size: var(--t-ui); color: var(--ink-faint); margin-bottom: .6rem; }
 .cta-phones { position: relative; display: flex; align-items: flex-end; justify-content: center; height: 420px; }
 .cta-meta { display: flex; gap: 1.5rem; margin-top: 1.5rem; flex-wrap: wrap; }
 .cta-meta-item { display: flex; align-items: center; gap: 6px; font-size: .78rem; color: var(--ink-faint); }
@@ -1078,7 +1189,7 @@ footer {
 /* Press feedback — nothing on the page acknowledged a click before. */
 .btn-google-play:active, .nav-cta-gplay:active, .mobile-menu-cta:active,
 .tb-apply:active, .tech-modal-map-btn:active, .back-to-top:active,
-#waitlistForm button[type="submit"]:not(:disabled):active { transform: translateY(1px); }
+.wl-form button[type="submit"]:not(:disabled):active { transform: translateY(1px); }
 
 /* Links that only had a colour hover now also answer the keyboard. */
 .nav-links a:focus-visible, .footer-link-list li a:focus-visible { color: var(--brand-ink); }
@@ -1089,11 +1200,11 @@ footer {
 .back-to-top:focus-visible { background: var(--brand-deep); }
 
 /* ── SUBMIT: rest / hover / focus / active / disabled+loading ── */
-#waitlistForm button[type="submit"] { position: relative; }
-#waitlistForm button[type="submit"]:disabled {
+.wl-form button[type="submit"] { position: relative; }
+.wl-form button[type="submit"]:disabled {
   background: var(--ink-faint); cursor: progress; padding-right: 2.5rem;
 }
-#waitlistForm button[type="submit"]:disabled::after {
+.wl-form button[type="submit"]:disabled::after {
   content: ''; position: absolute; right: .95rem; top: 50%;
   width: 12px; height: 12px; margin-top: -6px;
   border: 2px solid rgba(255,255,255,.45); border-top-color: white;
@@ -1104,14 +1215,14 @@ footer {
 /* Success and error were both orange and near-indistinguishable;
    success also failed contrast at 2.89:1. Now they differ in hue
    and in wording, and both clear 6:1 on the section background. */
-#waitlistMsg.is-ok    { color: #186c37; }
-#waitlistMsg.is-error { color: #b3261e; }
+.wl-msg.is-ok    { color: #186c37; }
+.wl-msg.is-error { color: #b3261e; }
 
 /* Invalid input only after the user has actually typed something. */
-#waitlistEmail:not(:placeholder-shown):invalid { border-color: #b3261e; }
+.wl-form input[type="email"]:not(:placeholder-shown):invalid { border-color: #b3261e; }
 
 @media (prefers-reduced-motion: reduce) {
-  #waitlistForm button[type="submit"]:disabled::after { animation: none; }
+  .wl-form button[type="submit"]:disabled::after { animation: none; }
   .skip-link { transition: none; }
 }
 
@@ -1133,8 +1244,8 @@ footer {
 .tb-apply { min-height: 44px; }
 .tech-modal-close { width: 44px; height: 44px; }
 .tech-modal-map-btn { min-height: 44px; box-sizing: border-box; }
-#waitlistEmail { min-height: 44px; }
-#waitlistForm button[type="submit"] { min-height: 44px; }
+.wl-form input[type="email"] { min-height: 44px; }
+.wl-form button[type="submit"] { min-height: 44px; }
 .footer-qr-block a { display: inline-flex; align-items: center; min-height: 44px; }
 
 /* Footer link columns were 16px tall; give them room without
@@ -1197,62 +1308,117 @@ footer {
   will-change: transform, filter;
 }
 .zoom-img.zoomed { transform: scale(1); filter: blur(0); }
-/* ─── COVERAGE: the three launch localities ──────────────────── */
-/* Not a card grid. Each locality gets its own band, map and copy
-   trading sides down the page, so the eye zigzags instead of scanning
-   three equal tiles. Nothing frames the map: like the hero, it sits on
-   the page ground.
-   Same source and projection as the hero (see .hero-map above), zoomed
-   from region to locality — what the hero lights as a single cell is
-   opened here into the barangays it is made of. One shared scale across
-   all three, so Malvar stays visibly smaller than Tanauan instead of
-   being blown up to fill a frame of its own. */
-.cvz {
-  display: grid; align-items: center;
-  /* equal columns, not a 1.06/.94 lean: the flipped row puts its map in
-     column two, and unequal columns would render it at a different
-     scale from the rows above and below it */
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: clamp(1.75rem, 4.5vw, 4rem);
+/* ─── COVERAGE: one map, one search ──────────────────────────── */
+/* Was three near-full-viewport bands, one per locality. They spent three
+   screens saying what the hero already says, and — because each map was
+   cropped to its own locality — they hid the one fact worth showing: the
+   three are contiguous. Malvar's whole selling point is that it touches
+   both of the others, which a split view cannot show.
+   Now one canvas. The three localities were always exported on the same
+   projection (see .hero-map above) and at the same scale — 948.2 user
+   units per 100% frame width in all three crops — so their outline paths
+   already share a coordinate space and merge with no re-export. The
+   viewBox is the union of the three #cvm-*-e bounding boxes
+   (0 0 1011.4 927.7) plus 42 units of context on each side.
+   The map answers "where do you work"; the search beside it answers
+   "do you cover MY barangay", which is the question people actually
+   arrive with. */
+.cvu {
+  display: grid;
+  /* map leads, panel reads beside it; two rows so the city cards sit
+     under the search rather than stretching to the map's full height */
+  grid-template-columns: minmax(0, 1.22fr) minmax(0, .78fr);
+  grid-template-rows: auto 1fr;
+  column-gap: clamp(1.5rem, 4vw, 3.5rem);
+  row-gap: 1.4rem;
+  align-items: start;
 }
-.cvz + .cvz { margin-top: clamp(3rem, 6vw, 5.5rem); }
-.cvz--flip > .cvz-map { order: 2; }
+.cvu-map  { grid-column: 1; grid-row: 1 / span 2; position: relative; }
+.cvu-find { grid-column: 2; grid-row: 1; }
+.cvu-cards{ grid-column: 2; grid-row: 2; align-self: start; }
 
-/* Each map is cropped to its own locality, then drawn at a width
-   proportional to that crop (the inline width:% the generator emits).
-   One max-width governs all three, so they share a true scale on
-   screen — a smaller place gets a smaller map, not a bigger frame. */
-/* Definite width, not max-width + auto margins: auto margins switch off
-   a grid item's stretch, which leaves the SVG resolving its width:% of a
-   shrink-to-fit parent and collapsing to the 300px replaced-element
-   default. justify-self does the centring instead. */
-.cvz-map { position: relative; width: min(100%, 34rem); justify-self: center; }
-/* the frame carries the per-locality width, so pin coordinates can be
-   plain percentages of it and need no measuring at runtime */
-.cvm-frame { position: relative; margin-inline: auto; }
-.cvm { display: block; width: 100%; height: auto; }
+/* The cap is in svh because this section now holds one screen: on a short
+   laptop the map was the one thing that would not give, so the section
+   overflowed. min(100%, …) means phones are unaffected — there the column
+   is far narrower than the cap and the map still takes the full bleed. */
+.cvm-frame { position: relative; margin-inline: auto; width: min(100%, 62svh); }
+/* aspect-ratio, not the SVG's intrinsic ratio: the camera animates the
+   viewBox, and an intrinsic ratio would re-lay-out the page on every
+   frame of the zoom. Fixed here, every camera target is padded to the
+   same ratio, so preserveAspectRatio never letterboxes and pin
+   coordinates stay a plain percentage of the box. */
+/* The radius is invisible at the overview — the vignette has already
+   faded the context to nothing well inside the frame — and only shows
+   once the camera is in, where the map does reach the edges. */
+.cvm { display: block; width: 100%; height: auto; aspect-ratio: 1095.4 / 1011.7; border-radius: var(--r-md); }
 /* A <use> shadow tree can't be reached by selectors, so the backdrop
    tints ride on fill/stroke inheritance from the <use> itself. The
    barangay cells are real top-level paths instead — they have to be
    hit-testable and individually styleable. */
 .cvm-ctx { fill: #eae5de; stroke: #fff; stroke-width: 1.7; }
-/* the other two launch localities, a step darker than plain neighbours
-   so you can see the three fit together */
-.cvm-sib { fill: #cfc4b5; stroke: #fff; stroke-width: 1.7; }
-/* --brand on the neighbour grey lands under the 3:1 floor for a
-   meaningful graphic; the --brand-deep edge carries the boundary and
-   takes the pair clear, exactly as in the hero. */
-.cvm-edge { fill: none; stroke: var(--brand-deep); stroke-width: 2.2; stroke-linejoin: round; }
-.cvm-cells { filter: drop-shadow(0 3px 10px rgba(194,65,12,.28)); }
+/* A city border and a barangay border are not the same kind of line. At
+   the overview the map is ~540px across — about 2 user units per pixel —
+   so the barangay hairlines land near 0.6px and anything under about 6
+   units cannot out-read them. The boundary is drawn as a casing: a white
+   band under a --brand-ink line, the standard way an administrative
+   border is shown over a filled area. Without it the 93 cells collapse
+   into one orange silhouette, which is what this section is for. */
+.cvm-edge-halo { fill: none; stroke: #fff; stroke-width: 9; stroke-linejoin: round; }
+.cvm-edge { fill: none; stroke: var(--brand-ink); stroke-width: 4.5; stroke-linejoin: round; }
+/* Light enough to sit the shape off the page without bleeding orange
+   into the boundaries — the old 0 3px 10px/.28 muddied them. */
+.cvm-cells { filter: drop-shadow(0 2px 7px rgba(194,65,12,.16)); }
+.cvm-cells > g { transition: opacity .4s cubic-bezier(.16,1,.3,1); }
 .cvm-b {
-  fill: var(--brand); stroke: rgba(255,255,255,.72); stroke-width: 1.4;
+  fill: var(--brand);
+  /* --w is 1 at the city's centroid and 0 at its rim (set at build time
+     from data-x/data-y), so each city has interior structure instead of
+     reading as one flat silhouette. Plain --brand above is the fallback
+     for engines without color-mix. */
+  fill: color-mix(in oklab, var(--brand-deep) calc(var(--w, 0) * 62%), var(--brand));
+  /* lighter than the old .72/1.4: the hairlines have to sit clearly
+     below the city casing above, not compete with it */
+  stroke: rgba(255,255,255,.6); stroke-width: 1.1;
+  transform-box: fill-box; transform-origin: 50% 50%;
   /* the outgoing cell has to still be cooling as the next one warms, or
      the loop reads as a series of switches rather than one moving light */
-  transition: fill .5s cubic-bezier(.16,1,.3,1);
+  transition: fill .5s cubic-bezier(.16,1,.3,1),
+              opacity .34s ease-out,
+              transform .3s cubic-bezier(.16,1,.3,1);
 }
 /* darker fill alone is legible but quiet at barangay size; the white
    keyline is what actually picks one cell out of ninety-three */
 .cvm-b.is-hot { fill: var(--brand-deep); stroke: #fff; stroke-width: 2.4; }
+
+/* ── coverage bloom ───────────────────────────────────────────── */
+/* Cells are filled by default, so with JS off the finished map renders.
+   The script adds .is-bloom to hide them, then .is-bloomed on the next
+   frame to let them in, staggered outward from each city's centroid by a
+   per-cell transition-delay. Reads as coverage spreading, which is the
+   company's story, rather than as a map fading in. Once per page load. */
+.cvm-cells.is-bloom .cvm-b { opacity: 0; transform: scale(.92); }
+.cvm-cells.is-bloom.is-bloomed .cvm-b { opacity: 1; transform: none; }
+/* --len is getTotalLength(), written by the script; without it the
+   outlines are simply solid from the start. Casing and line draw
+   together, or the white band arrives before the border it belongs to. */
+.cvm-edges.is-arming use { stroke-dasharray: var(--len); stroke-dashoffset: var(--len); }
+.cvm-edges.is-arming.is-drawn use {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset .45s cubic-bezier(.33,1,.68,1);
+}
+
+/* ── selection: the rest of the map steps back ────────────────── */
+.cvm-cells.is-focused > g:not(.is-city) { opacity: .26; }
+.cvm-cells.is-focused > g.is-city .cvm-b:not(.is-hot) { opacity: .55; }
+/* card hover emphasises a whole city — the reason the cells are grouped */
+.cvm-cells.is-lifting > g:not(.is-city) { opacity: .34; }
+
+@media (hover: hover) and (pointer: fine) {
+  /* px in an SVG transform are user units, so the lift scales with the
+     camera instead of growing as you zoom in */
+  .cvm-b:hover { transform: translateY(-6px); }
+  .cvm-cells.is-bloom:not(.is-bloomed) .cvm-b:hover { transform: scale(.92); }
+}
 
 /* ── the naming pin ───────────────────────────────────────────── */
 /* One pin per map, moved rather than duplicated: listing all 93 names
@@ -1301,36 +1467,120 @@ footer {
   margin-left: -4px;
 }
 
-.cvz-lede { font-size: var(--t-lede); color: var(--ink-light); line-height: var(--lh-sub); margin: .6rem 0 1rem; max-width: 34ch; }
-.cvz-hint { font-size: var(--t-ui); color: var(--ink-faint); margin: 0; }
-.cvz-count { font-weight: 700; color: var(--brand-ink); }
-
-.coverage-status {
-  display: inline-flex; align-items: center; gap: 5px; width: fit-content;
-  background: #e9f5ee; color: #186c37;
-  font-size: .65rem; font-weight: 700; padding: 4px 10px; border-radius: 100px;
-  margin-bottom: .6rem;
+/* ── the counter ──────────────────────────────────────────────── */
+/* Same Sora / --t-figure treatment as the stat cards in #cta. The
+   number is counted out of the DOM, so it cannot disagree with the map. */
+.cvu-count {
+  font-family: 'Sora', sans-serif; font-weight: 800;
+  font-size: var(--t-figure); letter-spacing: -.03em; line-height: 1.15;
+  color: var(--ink); margin: 0 0 1.2rem;
 }
-.coverage-status::before { content: ''; width: 5px; height: 5px; background: currentColor; border-radius: 50%; }
-.coverage-name { font-family: 'Sora', sans-serif; font-weight: 700; font-size: var(--t-h3); color: var(--ink); line-height: var(--lh-sub); letter-spacing: -.02em; margin: 0; }
+.cvu-count b { color: var(--brand-deep); font-weight: 800; font-variant-numeric: tabular-nums; }
+
+/* ── barangay search ──────────────────────────────────────────── */
+.cvu-search { position: relative; }
+.cvu-label { display: block; font-size: var(--t-ui); font-weight: 600; color: var(--ink-light); margin-bottom: .45rem; }
+.cvu-input {
+  width: 100%; min-height: 48px; padding: 13px 16px;
+  font: inherit; font-size: 1rem; color: var(--ink);
+  background: white; border: 1.5px solid var(--border); border-radius: var(--r-md);
+  transition: border-color .2s, box-shadow .2s;
+}
+.cvu-input::placeholder { color: var(--ink-faint); }
+.cvu-input:focus-visible, .cvu-input:focus {
+  outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-light);
+}
+.cvu-list {
+  position: absolute; z-index: 5; left: 0; right: 0; top: calc(100% + 6px);
+  margin: 0; padding: 6px; list-style: none;
+  background: white; border: 1px solid var(--border); border-radius: var(--r-md);
+  box-shadow: 0 12px 34px rgba(10,15,30,.14);
+  max-height: 17rem; overflow-y: auto;
+}
+.cvu-list[hidden] { display: none; }
+.cvu-opt {
+  display: flex; align-items: baseline; justify-content: space-between; gap: .75rem;
+  padding: 9px 12px; border-radius: 12px; cursor: pointer;
+  font-size: var(--t-ui); color: var(--ink);
+}
+/* four names — San Jose, San Juan, San Fernando, Santiago — exist in two
+   of the three localities, so an option is never just a barangay name */
+.cvu-opt-city { flex: none; font-size: var(--t-caption); color: var(--ink-faint); }
+.cvu-opt.is-active, .cvu-opt:hover { background: var(--brand-pale); }
+.cvu-opt.is-active .cvu-opt-city, .cvu-opt:hover .cvu-opt-city { color: var(--brand-ink); }
+
+/* ── the verdict ──────────────────────────────────────────────── */
+/* A highlight on the map is something the visitor has to interpret.
+   This says it. */
+.cvu-verdict { margin: 1rem 0 0; min-height: 1.6rem; font-size: var(--t-ui); color: var(--ink-light); line-height: var(--lh-sub); }
+.cvu-verdict:empty { margin: 0; }
+.cvu-flag {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: .65rem; font-weight: 700; padding: 4px 10px; border-radius: 100px;
+  margin-right: .5rem; vertical-align: 2px;
+}
+.cvu-flag::before { content: ''; width: 5px; height: 5px; background: currentColor; border-radius: 50%; }
+.cvu-flag.is-yes { background: #e9f5ee; color: #186c37; }
+.cvu-flag.is-no  { background: var(--brand-light); color: var(--brand-ink); }
+.cvu-verdict b { color: var(--ink); font-weight: 700; }
+/* a dead end here is a wasted signal — out-of-area is demand data */
+.cvu-tell {
+  background: none; border: 0; padding: 0; font: inherit; font-size: inherit;
+  color: var(--brand-ink); font-weight: 600; cursor: pointer;
+  text-decoration: underline; text-underline-offset: 2px;
+}
+.cvu-tell:hover, .cvu-tell:focus-visible { color: var(--brand-deep); }
+
+.cvu-reset {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: .9rem;
+  background: white; border: 1.5px solid var(--border); border-radius: 100px;
+  padding: 8px 15px; min-height: 40px;
+  font: inherit; font-size: var(--t-ui); font-weight: 600; color: var(--brand-ink);
+  cursor: pointer; transition: border-color .2s, background .2s;
+}
+.cvu-reset:hover, .cvu-reset:focus-visible { border-color: var(--brand); background: var(--brand-pale); }
+.cvu-reset[hidden] { display: none; }
+
+/* ── the three localities, as a legend rather than three bands ── */
+.cvu-cards { display: grid; gap: .6rem; }
+.cvu-card {
+  border: 1px solid var(--border); border-radius: var(--r-md);
+  padding: .8rem 1rem; background: white;
+  transition: border-color .3s, background .3s;
+}
+.cvu-card.is-city { border-color: var(--brand); background: var(--brand-pale); }
+.cvu-card-top { display: flex; align-items: baseline; justify-content: space-between; gap: .6rem; }
+.cvu-card-note { font-size: var(--t-caption); color: var(--ink-faint); line-height: 1.5; margin: .3rem 0 0; }
+.cvu-count-b { font-size: var(--t-caption); font-weight: 700; color: var(--brand-ink); white-space: nowrap; }
+
+/* Was a band heading at --t-h3; the cards are a legend for the map now,
+   not three sections, so it sits at body size. The "Launch city" chip
+   that rode above it went with them — repeated three times it said
+   nothing the section title had not already said. */
+.coverage-name { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 1rem; color: var(--ink); line-height: var(--lh-sub); letter-spacing: -.02em; margin: 0; }
 
 @media (max-width: 899px) {
-  /* the alternation collapses; map always leads its own copy */
-  .cvz { grid-template-columns: 1fr; gap: 1.4rem; }
-  .cvz--flip > .cvz-map { order: 0; }
-  /* unboxed, the map can take the bleed back on a phone */
-  .cvz-map { width: auto; justify-self: stretch; margin: 0 -4vw; }
+  /* search first: it is the job. Map directly under it, so the pin drop
+     and the verdict land in the same glance. */
+  .cvu { grid-template-columns: 1fr; grid-template-rows: auto; row-gap: 1.3rem; }
+  .cvu-find  { grid-column: 1; grid-row: 1; }
+  .cvu-map   { grid-column: 1; grid-row: 2; margin: 0 -4vw; }
+  .cvu-cards { grid-column: 1; grid-row: 3; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .cvm-b, .cvm-pin, .cvm-pin::after, .cvm-pin-label { transition: none; }
+  /* every motion above resolves to its end state; the search is
+     unaffected either way */
+  .cvm-b, .cvm-pin, .cvm-pin::after, .cvm-pin-label,
+  .cvm-edge, .cvm-cells > g { transition: none !important; transition-delay: 0s !important; }
   .cvm-pin::after { transform: scale(1); }
   .cvm-pin-label { transform: translateX(-50%); }
+  .cvm-b:hover { transform: none; }
 }
 
 /* waitlist form — hover/focus moved off inline on* handlers */
-#waitlistEmail:focus { border-color: var(--brand); }
-#waitlistForm button[type="submit"]:hover,
-#waitlistForm button[type="submit"]:focus-visible { background: var(--brand-mid); }
+.wl-form input[type="email"]:focus { border-color: var(--brand); }
+.wl-form button[type="submit"]:hover,
+.wl-form button[type="submit"]:focus-visible { background: var(--brand-mid); }
 .privacy-link { color: var(--ink-faint); text-decoration: underline; text-underline-offset: 2px; }
 .privacy-link:hover, .privacy-link:focus-visible { color: var(--brand-ink); }
 
@@ -1490,7 +1740,7 @@ footer {
 .back-to-top:hover { background: var(--brand); }
 .back-to-top svg { width: 18px; height: 18px; }
 </style>
-<noscript><style>.reveal,.reveal-left,.reveal-right{opacity:1!important;transform:none!important;}.zoom-img{transform:none!important;filter:none!important;}</style></noscript>
+<noscript><style>.reveal,.reveal-left,.reveal-right{opacity:1!important;transform:none!important;}.sx::before{inset:0!important;border-radius:0!important;box-shadow:none!important;}.zoom-img{transform:none!important;filter:none!important;}</style></noscript>
 </head>
 <body>
 
@@ -1545,7 +1795,7 @@ footer {
      three phone mockups two sections down already carry that job,
      and the eyebrow + hero-metric row are both craft-floor refuses.
      Single editorial column; the slab is the only object.          -->
-<section id="hero">
+<section id="hero" class="sx" data-fit>
   <div class="hero-inner">
    <div class="hero-copy">
     <h1 class="hero-h1">Your aircon fixed,<br/><em>fast &amp; right.</em></h1>
@@ -1553,7 +1803,7 @@ footer {
 
       <div id="waitlist" class="hero-signup">
         <p class="hero-signup-lead">Get an email the day we launch in your city.</p>
-        <form id="waitlistForm" class="hero-form">
+        <form id="waitlistForm" class="hero-form wl-form" data-waitlist>
           <label for="waitlistEmail" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;">Your email address</label>
           <input id="waitlistEmail" type="email" name="email" placeholder="Your email address" required autocomplete="email" inputmode="email" />
           <!-- Spam honeypot: Web3Forms drops any submission where botcheck is set.
@@ -1561,7 +1811,7 @@ footer {
           <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;"/>
           <button type="submit" >Notify Me</button>
         </form>
-        <p id="waitlistMsg" role="status" aria-live="polite" style="display:none;"></p>
+        <p id="waitlistMsg" class="wl-msg" role="status" aria-live="polite" style="display:none;"></p>
         <!-- Data Privacy Act expects notice where the data is collected, not only in the footer. -->
         <p class="hero-fineprint">We'll only email you about the launch — nothing else. See our <a href="/privacy" class="privacy-link">Privacy Policy</a>.</p>
       </div>
@@ -1586,13 +1836,22 @@ footer {
             <path class="mp-prov" d="M329.5 560.7 343.3 556.0 352.2 557.8 365.4 550.7 374.7 539.0 406.6 523.0 409.4 516.0 433.9 513.7 446.0 495.4 445.8 477.6 450.6 479.3 454.7 474.1 450.4 468.2 458.6 466.3 467.4 472.9 478.7 472.5 486.6 459.4 478.4 455.3 487.6 444.7 490.5 433.0 497.6 424.6 497.8 414.8 486.4 411.6 469.8 366.1 449.9 334.5 461.3 324.1 454.4 316.5 452.2 306.0 431.2 304.8 433.5 302.4 431.0 295.3 418.6 277.9 413.9 281.7 417.5 289.6 413.1 295.1 416.9 300.6 397.9 300.4 385.7 309.7 386.0 316.5 379.7 326.8 385.7 339.9 385.4 342.4 379.7 341.2 382.7 376.6 380.4 381.8 387.6 393.2 395.2 387.6 402.8 366.6 409.1 371.1 409.2 366.0 411.3 368.8 418.3 366.9 417.3 370.0 424.7 373.5 430.2 385.5 427.1 401.4 421.3 403.2 424.2 399.8 419.5 398.6 414.3 390.1 412.8 393.6 408.4 390.6 404.0 395.4 413.4 399.1 411.8 409.5 406.3 407.8 412.3 415.0 403.4 415.5 401.5 408.7 396.9 409.2 394.8 416.6 374.4 428.3 371.0 436.1 360.6 441.5 354.4 453.4 347.7 457.6 336.2 459.6 325.6 455.7 321.2 462.1 314.7 464.5 311.7 460.8 301.9 461.0 299.9 456.1 305.8 447.9 302.3 438.7 297.8 438.0 293.3 424.4 279.3 411.6 272.3 396.9 263.1 391.5 262.0 385.1 252.5 382.8 247.3 375.1 244.9 379.0 235.5 380.7 226.5 391.4 226.0 402.4 236.4 394.8 239.9 395.6 239.5 398.8 256.2 397.7 239.5 423.1 237.9 433.1 246.1 430.5 242.8 442.0 245.5 447.6 236.3 453.6 229.2 474.7 266.9 474.7 280.4 481.0 306.9 485.8 311.7 495.4 316.3 532.5 330.2 551.4 329.5 560.7Z"/>
             <path class="mp-prov" d="M229.6 387.0 225.5 386.1 226.0 369.5 209.5 344.6 209.3 331.8 190.9 338.3 187.6 335.2 185.4 343.1 181.3 340.1 180.3 343.5 179.2 340.8 174.7 342.7 173.5 336.1 181.7 329.2 187.4 329.0 180.7 327.6 187.4 322.5 184.3 320.7 176.4 324.4 166.4 351.9 156.9 356.7 151.2 368.0 132.0 382.8 122.2 396.0 106.4 402.9 98.8 416.2 97.0 414.0 82.5 419.1 79.2 416.7 74.3 420.0 72.9 416.7 64.1 425.6 62.1 422.8 58.3 431.4 60.2 443.3 57.0 445.9 67.0 449.9 71.3 448.5 74.8 460.4 94.9 466.4 88.9 472.4 91.9 482.4 99.4 487.8 105.2 481.6 108.8 484.7 120.9 483.7 121.8 491.7 152.9 504.7 154.5 519.0 169.7 506.9 176.0 505.2 180.3 510.0 195.5 505.9 210.2 500.6 214.0 490.7 225.1 490.0 234.0 484.2 238.1 476.5 229.2 474.7 228.5 471.5 237.1 452.4 245.5 447.6 242.8 442.0 246.1 430.5 236.9 431.9 243.6 413.4 256.2 397.7 239.5 398.8 239.9 395.6 236.4 394.8 226.0 402.4 229.6 387.0ZM40.3 377.8 46.1 371.0 55.3 369.2 33.5 370.7 33.8 374.8 40.3 377.8Z"/>
             <path class="mp-prov mp-prov--home" d="M261.1 737.0 259.6 735.1 247.8 740.0 241.1 735.9 241.7 741.7 257.4 756.3 265.6 752.8 261.1 737.0ZM149.3 684.1 154.3 700.1 164.8 703.0 167.3 707.8 180.7 712.4 198.2 708.3 193.9 698.6 172.6 698.8 153.7 691.0 149.3 684.1ZM154.3 682.3 153.9 690.1 154.3 682.3ZM57.0 445.9 53.6 442.6 49.7 445.9 44.0 441.9 42.9 449.7 46.8 450.5 42.3 453.3 43.4 460.4 47.3 459.2 45.5 463.0 51.8 461.4 54.7 464.9 38.9 468.5 45.0 469.1 47.6 471.4 42.5 474.1 52.5 475.7 53.3 479.7 43.5 480.0 45.9 484.9 37.2 484.0 47.0 485.9 45.9 491.0 52.1 490.3 52.4 493.2 56.0 491.6 59.4 495.1 56.9 498.1 59.9 515.9 55.8 538.9 62.9 552.3 60.0 558.4 50.3 556.2 57.1 564.5 54.4 571.4 57.9 575.7 60.0 591.3 56.6 597.4 59.2 608.7 57.0 618.4 62.4 624.5 58.7 628.8 73.5 647.6 77.7 646.8 82.1 638.7 71.4 620.1 71.4 612.2 76.5 607.4 97.7 616.0 101.1 614.0 102.2 607.7 92.5 595.7 91.4 588.0 97.0 578.1 110.2 572.9 169.9 588.3 183.6 598.4 185.8 620.2 180.2 624.8 191.0 641.6 191.1 650.8 182.1 654.5 167.7 669.8 175.8 686.1 186.6 678.7 192.8 665.6 212.7 642.0 223.7 642.1 239.2 650.5 241.1 648.8 241.2 655.6 248.7 661.4 249.2 672.8 243.9 684.9 245.7 693.9 238.0 707.4 245.3 707.5 248.0 711.1 252.5 709.5 256.3 714.9 302.3 703.4 310.5 710.8 323.7 710.9 335.3 724.4 346.4 724.7 380.3 697.0 394.6 691.0 404.8 698.8 426.2 685.7 422.5 678.6 414.9 680.7 417.8 669.6 410.1 651.4 413.1 636.5 421.2 628.4 417.4 620.1 414.7 623.0 403.6 614.2 399.3 616.3 390.7 613.8 381.9 602.8 373.5 605.9 366.6 602.7 356.1 603.9 350.9 599.9 345.2 601.5 340.4 598.9 340.8 593.1 326.6 586.5 325.5 573.8 330.4 552.6 316.3 532.5 311.7 495.4 306.9 485.8 280.4 481.0 266.9 474.7 242.2 475.1 225.1 490.0 214.0 490.7 210.2 500.6 180.3 510.0 176.0 505.2 169.7 506.9 154.5 519.0 152.9 504.7 121.8 491.7 120.9 483.7 108.8 484.7 105.2 481.6 99.4 487.8 91.9 482.4 88.9 472.4 94.9 466.4 74.8 460.4 71.3 448.5 67.0 449.9 57.0 445.9Z"/>
-            <path class="mp-muni" d="M203.4 538.0 201.9 535.0 185.0 540.3 180.5 548.3 179.6 560.7 183.7 574.5 181.6 578.6 186.1 585.1 200.5 576.4 197.2 562.6 204.9 551.8 200.8 543.8 203.4 538.0Z M242.2 605.5 239.0 606.0 236.4 590.2 231.0 590.8 230.4 594.5 225.1 593.6 218.0 598.8 219.5 605.2 215.4 616.7 236.5 611.9 242.2 605.5Z M125.9 577.3 122.9 550.8 129.9 542.6 139.1 538.5 145.3 520.3 137.0 522.2 129.7 536.7 107.4 552.7 99.9 562.3 96.2 550.6 88.0 546.5 78.1 561.4 78.4 574.2 82.7 583.9 91.9 586.0 98.0 577.4 110.2 572.9 125.9 577.3Z M285.2 543.8 280.3 534.3 273.1 530.7 269.2 532.3 266.0 526.8 249.0 532.1 247.9 535.3 255.8 532.0 261.3 534.0 266.7 546.8 275.5 553.3 285.2 543.8ZM227.0 547.4 231.2 536.7 223.9 539.7 227.0 547.4Z M267.5 616.1 262.5 614.8 248.7 619.9 235.0 647.4 241.1 648.8 239.7 652.2 247.8 661.2 249.2 671.1 244.5 682.2 245.7 693.9 238.0 707.4 245.3 707.5 248.0 711.1 252.5 709.5 256.3 714.9 298.8 703.7 295.0 693.7 296.0 686.3 299.5 684.8 297.5 682.5 300.6 681.4 297.7 674.6 299.7 657.7 282.5 638.4 264.3 638.7 267.5 616.1ZM254.5 754.0 257.4 756.3 265.6 752.8 262.8 739.2 259.6 735.1 250.4 740.0 241.1 735.9 241.7 741.7 254.5 754.0Z M230.1 644.8 231.9 641.7 223.1 632.2 228.8 613.0 213.0 616.2 201.1 630.3 184.4 629.5 191.5 642.9 190.8 650.1 207.8 646.5 213.5 641.7 230.1 644.8Z M160.7 528.6 154.5 519.0 145.3 520.3 139.1 538.5 129.9 542.6 122.9 550.8 125.9 577.3 156.3 585.0 164.7 557.8 160.7 528.6Z M80.5 577.4 64.0 574.9 57.9 575.6 56.9 578.8 60.0 591.3 56.6 597.4 59.2 608.7 57.1 616.5 62.4 624.5 58.7 628.8 74.7 648.1 82.1 638.7 71.4 620.1 73.8 608.3 86.7 609.5 97.7 616.0 102.4 611.2 91.5 593.3 91.9 586.0 82.7 583.9 80.5 577.4Z M250.5 569.3 238.1 571.8 239.2 578.6 235.9 582.6 239.0 606.0 249.3 603.8 247.4 599.2 254.2 588.4 256.7 579.9 250.5 569.3Z M294.0 606.5 280.3 601.9 273.7 605.3 267.5 616.1 267.7 629.8 263.8 637.2 267.3 639.7 280.5 637.7 292.1 648.7 300.7 650.6 302.2 641.3 294.7 635.7 297.0 626.5 294.0 606.5Z M206.0 510.6 204.0 502.0 180.3 510.0 176.0 505.2 162.9 510.7 154.5 519.0 160.7 528.6 180.7 538.8 188.8 540.3 201.9 535.0 204.0 537.9 199.8 530.2 202.4 525.3 194.9 516.9 206.0 510.6Z M185.0 540.3 160.7 528.6 164.7 557.8 156.3 585.0 174.3 590.6 185.2 602.0 186.1 585.1 181.6 578.6 183.7 574.5 179.4 551.9 185.0 540.3Z M89.5 523.9 83.9 526.9 81.8 521.9 69.6 525.5 67.8 519.8 59.6 518.3 55.8 538.9 60.6 543.4 62.4 555.0 55.1 559.0 50.5 554.0 51.1 559.5 57.1 564.5 56.2 574.7 80.5 577.4 78.1 561.4 86.5 546.8 89.5 523.9Z M326.3 548.6 319.8 552.5 310.8 549.3 300.7 531.0 298.5 537.9 288.6 546.9 285.2 543.8 274.6 553.9 274.7 568.5 270.9 567.9 268.8 561.7 256.4 561.3 250.5 569.3 256.1 577.8 269.9 578.0 272.4 580.7 274.2 589.0 277.0 588.9 275.5 595.6 280.5 596.7 278.3 602.5 294.0 606.5 315.4 586.8 323.9 593.0 337.4 595.9 341.0 593.5 329.6 589.4 325.5 581.7 330.4 552.6 326.3 548.6Z M370.1 676.2 354.4 683.3 347.8 681.3 349.4 665.9 343.8 663.3 338.4 665.0 340.1 680.6 332.8 670.5 329.9 673.7 318.4 671.5 311.5 676.1 308.5 671.5 300.0 669.9 297.7 674.6 300.6 681.4 297.5 682.5 299.5 684.8 296.0 686.3 295.0 693.7 298.8 703.7 305.6 704.6 308.9 710.0 323.7 710.9 335.3 724.4 346.4 724.7 378.2 698.8 375.2 677.9 370.1 676.2Z M206.4 646.8 182.7 654.1 167.7 669.8 175.8 686.1 186.6 678.7 206.4 646.8Z M275.5 553.3 266.7 546.8 263.3 539.4 258.5 549.2 258.5 561.8 268.8 561.7 270.9 567.9 274.7 568.5 275.5 553.3Z M46.8 440.1 45.3 437.6 46.8 440.1ZM154.5 519.0 152.9 504.7 121.8 491.7 120.9 483.7 108.8 484.7 105.2 481.6 99.4 487.8 91.9 482.4 88.9 472.4 94.9 466.4 76.1 461.1 71.3 448.5 58.6 448.1 53.6 442.6 49.7 445.9 45.1 441.9 46.5 451.0 42.3 453.3 43.4 460.4 47.3 459.2 46.7 463.7 51.8 461.4 54.7 464.9 38.9 468.5 45.0 469.1 47.6 471.4 42.5 474.1 51.2 475.0 53.4 478.7 44.8 480.5 46.6 484.5 40.6 485.6 46.3 486.2 46.9 491.4 57.4 492.2 59.4 496.4 56.6 506.5 60.0 518.1 67.8 519.8 69.6 525.5 81.8 521.9 83.9 526.9 92.9 516.8 106.5 518.4 128.5 507.1 131.1 507.1 133.7 523.0 154.5 519.0ZM2.4 518.6 3.0 520.8 2.4 518.6Z M340.6 594.7 327.8 594.4 315.4 586.8 302.7 598.8 305.7 605.6 311.3 604.9 313.0 608.4 351.5 607.7 361.4 603.6 342.1 600.1 340.6 594.7Z M361.4 603.6 351.5 607.7 317.9 609.0 310.5 604.6 305.7 605.6 302.7 598.8 294.0 606.5 297.0 626.5 294.7 635.7 313.1 631.0 320.2 634.4 323.0 641.6 329.3 643.2 331.3 640.4 343.9 647.0 345.5 653.4 338.1 659.4 348.7 664.2 350.2 676.9 347.4 680.1 354.4 683.3 370.1 676.2 364.4 661.3 366.3 626.7 370.5 612.4 382.4 602.9 373.5 605.9 361.4 603.6Z M278.3 602.5 280.5 596.7 275.5 595.6 277.0 588.9 274.2 589.0 272.4 580.7 254.7 576.2 254.2 588.4 247.4 599.2 249.3 603.8 242.1 606.2 248.7 619.9 262.5 614.8 267.5 616.1 278.3 602.5Z M378.2 698.8 394.6 691.0 406.2 698.5 427.0 682.9 420.9 677.9 414.9 680.7 417.8 669.6 410.1 651.4 412.7 637.5 420.6 629.3 418.6 621.4 414.1 622.5 400.8 613.5 399.3 616.3 390.7 613.8 382.4 602.9 370.5 612.4 367.2 623.1 364.4 661.3 369.0 674.5 375.2 677.9 378.2 698.8Z M198.8 605.6 185.7 608.7 185.4 621.3 180.2 624.8 184.4 629.5 201.1 630.3 213.0 616.2 215.0 617.6 218.6 607.0 204.7 609.1 198.8 605.6Z M219.3 539.4 211.0 533.0 212.8 554.2 227.0 547.4 219.3 539.4ZM212.2 582.7 201.9 575.3 190.1 582.1 196.6 588.2 208.4 586.5 212.2 582.7Z M248.7 619.9 242.1 606.2 236.5 611.9 228.8 613.0 223.1 632.2 231.9 641.7 230.1 644.8 235.0 647.4 248.7 619.9Z M218.0 598.8 214.6 595.0 215.3 583.3 212.2 582.7 206.2 600.3 198.6 604.6 198.6 608.0 218.6 607.0 218.0 598.8Z M209.1 585.8 196.6 588.2 190.2 580.6 188.1 582.5 184.4 587.5 187.3 596.8 185.7 608.7 203.4 603.1 209.1 585.8Z M243.6 504.0 248.8 492.5 241.4 475.5 225.1 490.0 214.0 490.7 210.2 500.6 204.0 502.0 206.0 510.6 208.6 505.7 222.2 508.1 228.7 503.8 243.6 504.0ZM231.2 536.7 228.5 525.1 217.1 530.1 210.7 525.4 208.3 527.1 219.3 539.4 231.2 536.7ZM243.5 530.4 246.0 531.9 243.5 530.4ZM236.2 530.9 235.2 528.6 236.2 530.9Z M343.8 663.3 338.1 659.4 345.5 653.4 343.9 647.0 331.3 640.4 329.3 643.2 323.0 641.6 320.2 634.4 313.1 631.0 298.4 634.9 302.5 647.9 300.7 650.6 293.0 648.8 299.7 657.7 300.0 669.9 308.5 671.5 311.5 676.1 318.4 671.5 329.9 673.7 332.8 670.5 340.1 680.6 338.4 665.0 343.8 663.3Z M154.2 682.3 154.4 690.0 154.2 682.3ZM181.3 712.4 197.6 709.0 199.3 705.5 193.9 698.6 172.6 698.8 153.7 691.0 149.5 685.1 154.3 700.1 181.3 712.4Z M136.1 523.3 132.9 521.1 131.1 507.1 118.3 510.3 106.5 518.4 92.9 516.8 87.5 527.7 86.5 546.8 96.2 550.6 99.9 562.3 107.4 552.7 129.7 536.7 136.1 523.3Z"/>
+            <path id="mp-muni-p" class="mp-muni" d="M203.4 538.0 201.9 535.0 185.0 540.3 180.5 548.3 179.6 560.7 183.7 574.5 181.6 578.6 186.1 585.1 200.5 576.4 197.2 562.6 204.9 551.8 200.8 543.8 203.4 538.0Z M242.2 605.5 239.0 606.0 236.4 590.2 231.0 590.8 230.4 594.5 225.1 593.6 218.0 598.8 219.5 605.2 215.4 616.7 236.5 611.9 242.2 605.5Z M125.9 577.3 122.9 550.8 129.9 542.6 139.1 538.5 145.3 520.3 137.0 522.2 129.7 536.7 107.4 552.7 99.9 562.3 96.2 550.6 88.0 546.5 78.1 561.4 78.4 574.2 82.7 583.9 91.9 586.0 98.0 577.4 110.2 572.9 125.9 577.3Z M285.2 543.8 280.3 534.3 273.1 530.7 269.2 532.3 266.0 526.8 249.0 532.1 247.9 535.3 255.8 532.0 261.3 534.0 266.7 546.8 275.5 553.3 285.2 543.8ZM227.0 547.4 231.2 536.7 223.9 539.7 227.0 547.4Z M267.5 616.1 262.5 614.8 248.7 619.9 235.0 647.4 241.1 648.8 239.7 652.2 247.8 661.2 249.2 671.1 244.5 682.2 245.7 693.9 238.0 707.4 245.3 707.5 248.0 711.1 252.5 709.5 256.3 714.9 298.8 703.7 295.0 693.7 296.0 686.3 299.5 684.8 297.5 682.5 300.6 681.4 297.7 674.6 299.7 657.7 282.5 638.4 264.3 638.7 267.5 616.1ZM254.5 754.0 257.4 756.3 265.6 752.8 262.8 739.2 259.6 735.1 250.4 740.0 241.1 735.9 241.7 741.7 254.5 754.0Z M230.1 644.8 231.9 641.7 223.1 632.2 228.8 613.0 213.0 616.2 201.1 630.3 184.4 629.5 191.5 642.9 190.8 650.1 207.8 646.5 213.5 641.7 230.1 644.8Z M160.7 528.6 154.5 519.0 145.3 520.3 139.1 538.5 129.9 542.6 122.9 550.8 125.9 577.3 156.3 585.0 164.7 557.8 160.7 528.6Z M80.5 577.4 64.0 574.9 57.9 575.6 56.9 578.8 60.0 591.3 56.6 597.4 59.2 608.7 57.1 616.5 62.4 624.5 58.7 628.8 74.7 648.1 82.1 638.7 71.4 620.1 73.8 608.3 86.7 609.5 97.7 616.0 102.4 611.2 91.5 593.3 91.9 586.0 82.7 583.9 80.5 577.4Z M250.5 569.3 238.1 571.8 239.2 578.6 235.9 582.6 239.0 606.0 249.3 603.8 247.4 599.2 254.2 588.4 256.7 579.9 250.5 569.3Z M294.0 606.5 280.3 601.9 273.7 605.3 267.5 616.1 267.7 629.8 263.8 637.2 267.3 639.7 280.5 637.7 292.1 648.7 300.7 650.6 302.2 641.3 294.7 635.7 297.0 626.5 294.0 606.5Z M206.0 510.6 204.0 502.0 180.3 510.0 176.0 505.2 162.9 510.7 154.5 519.0 160.7 528.6 180.7 538.8 188.8 540.3 201.9 535.0 204.0 537.9 199.8 530.2 202.4 525.3 194.9 516.9 206.0 510.6Z M185.0 540.3 160.7 528.6 164.7 557.8 156.3 585.0 174.3 590.6 185.2 602.0 186.1 585.1 181.6 578.6 183.7 574.5 179.4 551.9 185.0 540.3Z M89.5 523.9 83.9 526.9 81.8 521.9 69.6 525.5 67.8 519.8 59.6 518.3 55.8 538.9 60.6 543.4 62.4 555.0 55.1 559.0 50.5 554.0 51.1 559.5 57.1 564.5 56.2 574.7 80.5 577.4 78.1 561.4 86.5 546.8 89.5 523.9Z M326.3 548.6 319.8 552.5 310.8 549.3 300.7 531.0 298.5 537.9 288.6 546.9 285.2 543.8 274.6 553.9 274.7 568.5 270.9 567.9 268.8 561.7 256.4 561.3 250.5 569.3 256.1 577.8 269.9 578.0 272.4 580.7 274.2 589.0 277.0 588.9 275.5 595.6 280.5 596.7 278.3 602.5 294.0 606.5 315.4 586.8 323.9 593.0 337.4 595.9 341.0 593.5 329.6 589.4 325.5 581.7 330.4 552.6 326.3 548.6Z M370.1 676.2 354.4 683.3 347.8 681.3 349.4 665.9 343.8 663.3 338.4 665.0 340.1 680.6 332.8 670.5 329.9 673.7 318.4 671.5 311.5 676.1 308.5 671.5 300.0 669.9 297.7 674.6 300.6 681.4 297.5 682.5 299.5 684.8 296.0 686.3 295.0 693.7 298.8 703.7 305.6 704.6 308.9 710.0 323.7 710.9 335.3 724.4 346.4 724.7 378.2 698.8 375.2 677.9 370.1 676.2Z M206.4 646.8 182.7 654.1 167.7 669.8 175.8 686.1 186.6 678.7 206.4 646.8Z M275.5 553.3 266.7 546.8 263.3 539.4 258.5 549.2 258.5 561.8 268.8 561.7 270.9 567.9 274.7 568.5 275.5 553.3Z M46.8 440.1 45.3 437.6 46.8 440.1ZM154.5 519.0 152.9 504.7 121.8 491.7 120.9 483.7 108.8 484.7 105.2 481.6 99.4 487.8 91.9 482.4 88.9 472.4 94.9 466.4 76.1 461.1 71.3 448.5 58.6 448.1 53.6 442.6 49.7 445.9 45.1 441.9 46.5 451.0 42.3 453.3 43.4 460.4 47.3 459.2 46.7 463.7 51.8 461.4 54.7 464.9 38.9 468.5 45.0 469.1 47.6 471.4 42.5 474.1 51.2 475.0 53.4 478.7 44.8 480.5 46.6 484.5 40.6 485.6 46.3 486.2 46.9 491.4 57.4 492.2 59.4 496.4 56.6 506.5 60.0 518.1 67.8 519.8 69.6 525.5 81.8 521.9 83.9 526.9 92.9 516.8 106.5 518.4 128.5 507.1 131.1 507.1 133.7 523.0 154.5 519.0ZM2.4 518.6 3.0 520.8 2.4 518.6Z M340.6 594.7 327.8 594.4 315.4 586.8 302.7 598.8 305.7 605.6 311.3 604.9 313.0 608.4 351.5 607.7 361.4 603.6 342.1 600.1 340.6 594.7Z M361.4 603.6 351.5 607.7 317.9 609.0 310.5 604.6 305.7 605.6 302.7 598.8 294.0 606.5 297.0 626.5 294.7 635.7 313.1 631.0 320.2 634.4 323.0 641.6 329.3 643.2 331.3 640.4 343.9 647.0 345.5 653.4 338.1 659.4 348.7 664.2 350.2 676.9 347.4 680.1 354.4 683.3 370.1 676.2 364.4 661.3 366.3 626.7 370.5 612.4 382.4 602.9 373.5 605.9 361.4 603.6Z M278.3 602.5 280.5 596.7 275.5 595.6 277.0 588.9 274.2 589.0 272.4 580.7 254.7 576.2 254.2 588.4 247.4 599.2 249.3 603.8 242.1 606.2 248.7 619.9 262.5 614.8 267.5 616.1 278.3 602.5Z M378.2 698.8 394.6 691.0 406.2 698.5 427.0 682.9 420.9 677.9 414.9 680.7 417.8 669.6 410.1 651.4 412.7 637.5 420.6 629.3 418.6 621.4 414.1 622.5 400.8 613.5 399.3 616.3 390.7 613.8 382.4 602.9 370.5 612.4 367.2 623.1 364.4 661.3 369.0 674.5 375.2 677.9 378.2 698.8Z M198.8 605.6 185.7 608.7 185.4 621.3 180.2 624.8 184.4 629.5 201.1 630.3 213.0 616.2 215.0 617.6 218.6 607.0 204.7 609.1 198.8 605.6Z M219.3 539.4 211.0 533.0 212.8 554.2 227.0 547.4 219.3 539.4ZM212.2 582.7 201.9 575.3 190.1 582.1 196.6 588.2 208.4 586.5 212.2 582.7Z M248.7 619.9 242.1 606.2 236.5 611.9 228.8 613.0 223.1 632.2 231.9 641.7 230.1 644.8 235.0 647.4 248.7 619.9Z M218.0 598.8 214.6 595.0 215.3 583.3 212.2 582.7 206.2 600.3 198.6 604.6 198.6 608.0 218.6 607.0 218.0 598.8Z M209.1 585.8 196.6 588.2 190.2 580.6 188.1 582.5 184.4 587.5 187.3 596.8 185.7 608.7 203.4 603.1 209.1 585.8Z M243.6 504.0 248.8 492.5 241.4 475.5 225.1 490.0 214.0 490.7 210.2 500.6 204.0 502.0 206.0 510.6 208.6 505.7 222.2 508.1 228.7 503.8 243.6 504.0ZM231.2 536.7 228.5 525.1 217.1 530.1 210.7 525.4 208.3 527.1 219.3 539.4 231.2 536.7ZM243.5 530.4 246.0 531.9 243.5 530.4ZM236.2 530.9 235.2 528.6 236.2 530.9Z M343.8 663.3 338.1 659.4 345.5 653.4 343.9 647.0 331.3 640.4 329.3 643.2 323.0 641.6 320.2 634.4 313.1 631.0 298.4 634.9 302.5 647.9 300.7 650.6 293.0 648.8 299.7 657.7 300.0 669.9 308.5 671.5 311.5 676.1 318.4 671.5 329.9 673.7 332.8 670.5 340.1 680.6 338.4 665.0 343.8 663.3Z M154.2 682.3 154.4 690.0 154.2 682.3ZM181.3 712.4 197.6 709.0 199.3 705.5 193.9 698.6 172.6 698.8 153.7 691.0 149.5 685.1 154.3 700.1 181.3 712.4Z M136.1 523.3 132.9 521.1 131.1 507.1 118.3 510.3 106.5 518.4 92.9 516.8 87.5 527.7 86.5 546.8 96.2 550.6 99.9 562.3 107.4 552.7 129.7 536.7 136.1 523.3Z"/>
+            <!-- The three launch cities belong to no polygon in .mp-muni (that
+                 layer is the OTHER 31 LGUs), so with the province painted water
+                 they sat over the lake colour. While .mp-city fades in from
+                 opacity 0 on load, that water showed straight through them.
+                 These put the land back underneath. -->
+            <use href="#mp-c0" class="mp-cityland"/>
+            <use href="#mp-c1" class="mp-cityland"/>
+            <use href="#mp-c2" class="mp-cityland"/>
+            <use href="#mp-muni-p" class="mp-muni-lines"/>
           </g>
       
           <g class="mp-live">
-                  <path class="mp-city" style="--i:0" d="M277.9 479.4 266.9 474.7 241.4 475.5 244.8 479.9 248.2 488.3 248.8 492.5 248.5 497.1 245.2 500.4 243.6 504.0 245.5 504.3 245.9 506.2 248.5 506.1 250.3 511.3 253.5 515.5 250.0 525.2 246.1 530.5 246.7 531.6 248.1 532.3 255.4 531.3 261.5 529.3 268.7 524.7 275.5 523.8 289.7 518.4 292.2 514.6 291.4 509.8 289.0 505.0 283.8 500.0 281.6 499.3 281.2 497.0 283.4 493.6 276.9 488.5 277.9 486.7 277.1 485.7 277.9 479.4Z"/>
-            <path class="mp-city" style="--i:1" d="M326.3 548.6 320.5 540.9 316.3 532.5 311.7 495.4 306.9 485.8 303.5 483.7 298.2 483.3 296.9 482.0 283.1 479.8 280.4 481.0 278.8 479.0 277.9 479.4 277.1 485.7 277.9 486.7 276.9 488.5 283.4 493.6 281.2 497.0 281.6 499.3 283.8 500.0 289.0 505.0 291.5 511.3 293.7 513.0 293.3 514.5 294.8 517.2 297.6 518.7 298.3 522.2 300.5 523.1 300.8 529.2 303.3 531.7 308.3 546.1 310.8 549.3 317.5 552.2 322.6 551.8 326.3 548.6Z"/>
-            <path class="mp-city" style="--i:2" d="M302.4 530.7 300.8 529.2 300.5 523.1 298.3 522.2 297.6 518.7 294.8 517.2 293.3 514.5 293.7 513.0 291.5 511.3 292.2 514.6 289.7 518.4 275.5 523.8 268.7 524.7 266.0 526.8 267.8 527.9 267.9 531.6 269.2 532.3 273.1 530.7 275.6 531.2 282.6 536.6 283.8 541.7 287.1 547.7 288.6 546.9 288.8 544.9 298.5 537.9 299.5 536.3 298.2 532.9 302.4 530.7Z"/>
+                  <path id="mp-c0" class="mp-city" style="--i:0" d="M277.9 479.4 266.9 474.7 241.4 475.5 244.8 479.9 248.2 488.3 248.8 492.5 248.5 497.1 245.2 500.4 243.6 504.0 245.5 504.3 245.9 506.2 248.5 506.1 250.3 511.3 253.5 515.5 250.0 525.2 246.1 530.5 246.7 531.6 248.1 532.3 255.4 531.3 261.5 529.3 268.7 524.7 275.5 523.8 289.7 518.4 292.2 514.6 291.4 509.8 289.0 505.0 283.8 500.0 281.6 499.3 281.2 497.0 283.4 493.6 276.9 488.5 277.9 486.7 277.1 485.7 277.9 479.4Z"/>
+            <path id="mp-c1" class="mp-city" style="--i:1" d="M326.3 548.6 320.5 540.9 316.3 532.5 311.7 495.4 306.9 485.8 303.5 483.7 298.2 483.3 296.9 482.0 283.1 479.8 280.4 481.0 278.8 479.0 277.9 479.4 277.1 485.7 277.9 486.7 276.9 488.5 283.4 493.6 281.2 497.0 281.6 499.3 283.8 500.0 289.0 505.0 291.5 511.3 293.7 513.0 293.3 514.5 294.8 517.2 297.6 518.7 298.3 522.2 300.5 523.1 300.8 529.2 303.3 531.7 308.3 546.1 310.8 549.3 317.5 552.2 322.6 551.8 326.3 548.6Z"/>
+            <path id="mp-c2" class="mp-city" style="--i:2" d="M302.4 530.7 300.8 529.2 300.5 523.1 298.3 522.2 297.6 518.7 294.8 517.2 293.3 514.5 293.7 513.0 291.5 511.3 292.2 514.6 289.7 518.4 275.5 523.8 268.7 524.7 266.0 526.8 267.8 527.9 267.9 531.6 269.2 532.3 273.1 530.7 275.6 531.2 282.6 536.6 283.8 541.7 287.1 547.7 288.6 546.9 288.8 544.9 298.5 537.9 299.5 536.3 298.2 532.9 302.4 530.7Z"/>
           </g>
       
           <g class="mp-leaders">
@@ -1613,7 +1872,7 @@ footer {
 </section>
 
 <!-- ─── COVERAGE SECTION ──────────────────────────────────────── -->
-<section id="coverage" style="padding: var(--band-md) 0; background: white;">
+<section id="coverage" class="sx" data-hide-nav data-fit>
   <div class="container">
     <div style="text-align:center; margin-bottom: 3rem;">
       <div class="section-eyebrow">Service Area</div>
@@ -1621,191 +1880,201 @@ footer {
       <p class="section-sub" style="margin:0 auto;">We're starting close to home. Three cities first, then we widen from there.</p>
     </div>
 
-    <!-- Barangay maps, not city photos, and a band each rather than a
-         row of cards. Boundaries are PSA administrative data (via
-         faeldon/philippines-json-maps, MIT) on the same projection as
-         the hero map; see the .cvz rules for the layout and tinting.
-         The backdrop is shared by all three rows and defined once. -->
-<svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute"><defs><radialGradient id="cvm-fade"><stop offset=".62" stop-color="#fff"/><stop offset="1" stop-color="#000"/></radialGradient><path id="cvm-ctx" d="M-170.0 766.3 -139.7 759.0 -120.6 739.9 -129.0 763.7 -131.9 797.0 -139.8 803.2 -148.6 835.1 -148.0 859.7 -157.9 871.5 -170.0 867.7ZM521.4 824.9 452.9 864.3 429.6 914.0 406.4 937.4 397.5 918.7 380.1 901.5 344.1 874.7 340.8 866.1 321.3 858.5 301.1 860.6 297.1 831.5 285.1 802.4 281.7 782.3 261.5 772.2 269.6 748.2 247.8 716.9 237.2 708.6 218.3 706.0 207.9 694.0 184.1 692.5 172.4 684.4 123.7 694.8 108.2 702.5 101.5 723.0 82.1 734.4 78.2 723.8 90.1 711.1 90.8 685.3 167.0 675.5 190.0 665.4 239.5 652.3 249.8 642.4 293.6 622.4 314.9 635.2 316.4 679.1 331.0 688.0 358.6 680.6 378.2 668.6 391.5 675.8 407.7 675.0 426.1 689.4 427.8 699.0 463.5 712.2 469.4 725.3 491.2 739.5 491.5 762.3 509.3 787.0 505.3 799.9 518.6 809.4ZM1011.4 882.3 1028.1 897.9 1056.9 914.9 1059.9 929.7 1048.6 1026.1 1038.4 1049.2 1028.1 1097.7 139.7 1097.7 161.0 1069.9 164.8 1035.7 179.1 1033.0 203.6 1038.3 228.0 1052.2 327.1 1037.6 337.8 1049.0 333.9 1067.2 345.8 1097.7 403.4 1097.7 422.4 1041.0 417.7 1025.7 417.2 998.7 407.5 985.9 396.0 945.1 429.6 914.0 452.9 864.3 521.4 824.9 521.3 835.9 544.7 870.8 562.2 861.6 564.7 838.2 608.3 816.3 613.7 806.2 641.6 779.4 680.5 754.1 691.6 734.9 676.3 695.4 706.2 672.1 726.6 669.2 736.8 680.5 734.6 692.2 760.5 741.8 765.2 759.1 780.5 783.9 781.6 801.8 796.5 851.6 826.8 889.9 851.7 895.7 880.7 917.3 906.4 924.8 933.9 927.7 966.9 920.5 981.4 901.8ZM406.4 937.4 396.0 945.1 407.5 985.9 417.2 998.7 417.7 1025.7 422.4 1041.0 403.4 1097.7 345.8 1097.7 333.9 1067.2 337.8 1049.0 327.1 1037.6 228.0 1052.2 203.6 1038.3 212.6 1022.9 204.8 1006.6 202.7 985.7 192.9 960.1 201.1 929.3 209.0 919.3 204.0 888.4 211.6 866.0 249.9 814.4 249.5 796.3 261.5 772.2 281.7 782.3 285.1 802.4 297.1 831.5 301.1 860.6 321.3 858.5 340.8 866.1 344.1 874.7 380.1 901.5 397.5 918.7ZM-61.7 671.5 -86.6 662.2 -73.4 644.2 -62.5 658.8ZM25.3 665.6 55.4 683.4 30.8 694.8 10.5 675.3 -7.4 667.8 5.8 639.9ZM-120.6 739.9 -139.7 759.0 -170.0 766.3 -170.0 627.2 -164.2 603.7 -152.9 602.7 -126.8 634.1 -136.6 643.0 -133.7 660.4 -139.6 672.1 -143.2 700.4 -122.2 727.6ZM26.5 351.6 20.6 360.9 -7.8 345.9 -17.6 354.5 -49.9 358.4 -71.8 351.6 -79.3 356.8 -129.9 361.3 -150.8 348.6 -170.0 358.5 -170.0 169.2 -158.3 161.6 -155.4 155.3 -87.9 115.6 -38.6 24.1 -14.2 20.0 0.0 12.6 40.8 64.9 81.6 164.3 88.9 214.1 84.6 269.3 57.3 302.1 45.7 308.4 41.6 324.2ZM1011.4 882.3 892.2 690.2 862.8 489.2 860.0 368.9 909.0 393.7 996.0 460.6 1113.2 417.7 1181.4 369.6 1181.4 719.7 1139.8 804.1ZM1181.4 -170.0 1181.4 140.8 1097.6 221.7 998.1 261.8 909.0 393.7 860.0 368.9 837.4 248.5 883.8 217.6 956.3 246.4 1058.5 89.3 1134.6 6.4 1150.5 -118.1 1124.4 -170.0ZM-18.9 -170.0 -50.0 -151.3 -87.7 -5.9 -153.1 -35.7 -94.1 -170.0ZM838.2 -163.2 815.1 -84.2 660.5 89.2 434.6 58.1 266.9 0.0 -38.6 24.1 -87.7 -5.9 -50.0 -151.3 -18.9 -170.0 722.0 -170.0 720.9 -160.1ZM1181.4 369.6 1113.2 417.7 996.0 460.6 909.0 393.7 998.1 261.8 1097.6 221.7 1181.4 140.8ZM1124.4 -170.0 1150.5 -118.1 1134.6 6.4 1058.5 89.3 956.3 246.4 883.8 217.6 837.4 248.5 779.8 134.3 660.5 89.2 815.1 -84.2 838.2 -163.2 872.7 -118.8 950.6 -146.7 966.5 -170.0ZM1181.4 995.5 1163.5 1009.9 1048.6 1026.1 1056.9 914.9 1011.4 882.3 1139.8 804.1 1181.4 719.7Z"/><path id="cvm-tanauan-e" d="M85.5 387.7 93.4 401.0 110.4 423.8 106.9 438.3 120.3 457.1 135.1 467.0 145.0 488.4 140.4 515.1 129.5 543.4 120.1 555.7 111.6 563.9 104.6 582.0 102.5 604.1 79.0 631.8 71.5 650.2 56.2 666.1 63.4 679.1 79.7 688.4 90.8 685.3 167.0 675.5 190.0 665.4 217.9 659.5 239.5 652.3 249.8 642.4 267.1 633.1 284.0 630.7 305.8 606.8 319.2 605.8 329.4 595.2 351.8 594.1 360.1 588.5 406.7 586.6 419.3 579.3 479.9 550.5 492.4 556.2 525.3 533.8 534.6 536.8 574.9 522.0 605.6 477.4 608.2 459.0 597.9 449.9 595.0 416.7 585.4 400.6 584.9 388.8 575.1 383.9 575.1 374.4 560.7 362.1 555.4 349.7 545.4 346.5 517.8 326.6 505.2 303.9 492.8 304.9 479.5 295.0 474.6 267.5 500.7 227.1 487.3 211.7 469.3 201.3 457.1 200.3 438.7 177.4 422.4 163.4 434.2 155.7 434.9 145.7 425.7 133.8 435.2 110.7 431.2 100.0 429.3 88.5 436.2 81.3 429.5 63.5 434.6 58.1 358.4 29.2 320.9 16.6 304.5 10.2 303.7 2.5 266.9 0.0 196.7 4.8 84.7 15.1 10.5 7.2 0.0 12.6 40.8 64.9 71.6 137.8 81.6 164.3 88.9 214.1 87.7 252.8 84.6 269.3 57.3 302.1 45.7 308.4 41.6 324.2 29.1 347.2 49.4 354.5 56.7 362.6 54.5 377.0Z"/><mask id="cvm-m-tanauan" maskUnits="userSpaceOnUse" x="-170.0" y="-170.0" width="948.2" height="1028.4"><rect x="-170.0" y="-170.0" width="948.2" height="1028.4" fill="url(#cvm-fade)"/></mask><path id="cvm-malvar-e" d="M691.2 574.9 703.8 578.1 707.0 584.4 706.8 591.9 702.4 599.4 706.1 608.6 707.3 620.5 704.3 628.3 707.3 634.7 707.0 651.0 718.7 653.9 725.3 660.5 727.2 667.9 720.0 671.5 706.2 672.1 693.7 683.2 682.8 689.2 676.3 695.4 677.0 699.9 684.6 709.5 685.3 720.4 691.8 728.0 691.6 734.9 680.5 754.1 663.5 766.5 641.6 779.4 635.2 786.8 625.6 793.7 613.7 806.2 608.3 816.3 587.6 827.1 570.6 832.1 564.7 838.2 564.3 852.8 562.2 861.6 544.7 870.8 535.0 870.0 537.1 860.8 531.1 853.4 527.9 840.9 521.3 835.9 521.4 824.9 519.0 820.3 518.6 809.4 515.6 805.3 505.3 799.9 510.5 794.4 509.3 787.0 501.1 778.2 501.4 768.8 491.5 762.3 493.2 748.8 491.2 739.5 482.8 730.7 469.4 725.3 463.5 712.2 438.2 704.6 427.8 699.0 426.1 689.4 418.0 684.3 407.7 675.0 402.3 678.3 391.5 675.8 384.9 670.9 378.2 668.6 370.0 672.1 360.1 673.3 358.6 680.6 348.6 685.0 331.0 688.0 322.6 685.2 316.4 679.1 313.6 655.6 314.9 635.2 297.2 625.3 295.6 616.4 305.8 606.8 319.2 605.8 324.9 598.1 336.6 594.1 351.8 594.1 360.1 588.5 368.3 586.9 392.3 585.8 399.6 587.8 406.7 586.6 419.3 579.3 479.9 550.5 492.4 556.2 500.2 552.0 525.3 533.8 528.1 539.6 542.5 533.2 574.9 522.0 581.7 511.3 592.9 497.6 599.4 483.9 605.6 477.4 608.2 459.0 597.9 449.9 597.0 437.8 607.9 442.0 623.6 458.9 619.0 466.4 617.9 475.9 627.8 487.6 635.6 508.6 646.0 513.3 650.7 521.6 662.7 525.7 669.8 531.2 672.2 540.7 668.1 550.0 677.4 568.3Z"/><mask id="cvm-m-malvar" maskUnits="userSpaceOnUse" x="125.6" y="267.8" width="771.6" height="772.9"><rect x="125.6" y="267.8" width="771.6" height="772.9" fill="url(#cvm-fade)"/></mask><path id="cvm-santo-e" d="M479.2 262.3 487.3 252.0 487.3 246.5 491.0 244.2 492.4 238.9 498.6 233.7 500.6 229.6 499.5 225.2 491.4 217.0 487.3 211.7 478.4 205.1 466.1 200.0 457.1 200.3 446.9 185.4 438.7 177.4 433.3 174.8 428.2 169.8 423.4 167.0 422.2 160.5 426.5 160.3 434.2 155.7 436.2 150.7 434.9 145.7 428.6 140.4 425.7 133.8 429.2 122.9 432.1 120.3 435.2 110.7 434.2 103.7 429.6 96.8 429.3 88.5 436.2 81.3 435.8 75.1 430.2 71.0 429.9 62.1 434.6 58.1 439.9 47.7 445.3 54.1 448.2 60.6 449.0 65.6 451.7 66.3 453.5 71.7 462.7 75.0 465.2 77.8 470.6 75.1 475.4 75.1 479.4 71.4 480.3 65.1 489.0 63.6 492.4 64.7 497.2 62.9 501.8 67.2 507.7 63.8 512.9 67.3 520.4 68.3 529.6 67.6 536.3 71.9 542.8 73.3 546.4 72.0 555.7 72.7 561.7 75.4 568.2 73.2 576.0 72.8 579.5 74.8 582.0 79.7 586.4 81.7 592.7 80.6 593.5 82.7 604.5 83.2 606.1 81.1 614.2 79.9 628.9 92.0 660.5 89.2 676.6 104.9 685.5 104.9 708.2 101.7 740.2 109.6 779.8 134.3 810.6 189.4 819.0 208.2 825.9 221.4 837.4 248.5 850.4 326.6 860.0 368.9 860.0 410.9 864.5 440.5 862.8 489.2 878.8 539.1 879.5 553.5 877.7 620.4 882.8 645.1 889.5 665.0 892.2 690.2 906.0 719.1 933.0 766.5 942.1 790.8 958.2 816.3 973.3 833.3 988.3 852.8 998.9 870.0 1011.4 882.3 981.4 901.8 977.7 908.2 966.9 920.5 955.2 921.1 940.7 926.6 933.9 927.7 915.7 925.0 906.4 924.8 898.6 920.2 889.1 919.3 880.7 917.3 867.7 908.6 860.9 905.1 855.7 898.4 851.7 895.7 834.0 889.2 831.6 890.8 826.8 889.9 821.6 884.9 807.7 867.4 806.0 862.8 806.9 857.5 802.7 857.5 796.5 851.6 796.1 845.2 798.0 842.1 792.9 837.7 792.0 830.0 788.7 828.5 789.4 824.3 793.1 819.4 785.8 804.7 781.6 801.8 781.5 794.6 780.3 791.9 780.5 783.9 777.4 781.6 776.9 776.0 770.5 768.5 771.9 766.0 768.5 761.1 765.2 759.1 760.5 746.2 760.5 741.8 756.2 734.5 754.3 728.2 751.1 722.7 744.5 717.0 744.5 709.6 738.8 701.4 741.1 697.8 736.0 695.3 734.6 692.2 737.1 687.0 736.8 680.5 731.9 679.0 726.9 673.7 727.2 667.9 725.3 660.5 721.7 658.7 718.7 653.9 715.3 654.3 707.0 651.0 708.1 642.0 707.3 634.7 704.3 628.3 707.3 620.5 707.7 615.9 706.1 608.6 703.6 605.3 702.4 599.4 706.8 591.9 707.0 584.4 703.8 578.1 697.0 575.1 690.6 574.7 677.4 568.3 674.4 560.6 668.1 550.0 669.9 547.6 668.6 543.4 672.2 540.7 672.1 535.9 669.2 526.6 666.3 522.5 657.5 523.9 650.7 521.6 646.0 513.3 635.6 508.6 630.9 494.7 627.5 490.6 627.8 487.6 617.9 475.9 619.0 466.4 623.6 458.9 619.1 456.0 616.5 451.9 612.2 450.5 612.0 446.6 607.9 442.0 602.8 439.1 597.0 437.8 593.7 423.2 596.0 419.9 593.1 411.8 588.8 410.2 591.0 406.3 585.4 400.6 587.3 396.5 584.6 394.2 584.9 388.8 578.3 385.3 575.0 381.8 578.8 379.3 580.7 374.9 573.7 373.5 567.6 362.7 561.3 366.5 560.7 362.1 557.0 357.9 555.4 349.7 550.9 349.5 548.1 347.1 542.8 346.0 537.7 340.9 536.0 337.3 526.8 333.4 525.1 331.2 517.8 326.6 514.8 322.2 512.7 314.3 509.2 307.5 505.2 303.9 499.4 305.5 492.8 304.9 489.6 302.6 486.7 297.6 479.5 295.0 477.6 291.2 476.7 284.0 474.3 280.4 476.1 272.3 474.6 267.5Z"/><mask id="cvm-m-santo" maskUnits="userSpaceOnUse" x="252.2" y="-122.3" width="929.2" height="1220.0"><rect x="252.2" y="-122.3" width="929.2" height="1220.0" fill="url(#cvm-fade)"/></mask></defs></svg>
+    <!-- One map for all three localities, not a band each. Boundaries are
+         PSA administrative data (via faeldon/philippines-json-maps, MIT) on
+         the same projection as the hero map and at the same scale, so the
+         three crops merge onto one canvas with no re-export: the viewBox is
+         the union of the three #cvm-*-e bounding boxes plus 42 units of
+         context. See the .cvu rules for the layout. The <defs> are shared. -->
+<svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute"><defs><radialGradient id="cvm-fade"><stop offset=".74" stop-color="#fff"/><stop offset="1" stop-color="#000"/></radialGradient><path id="cvm-ctx" d="M-170.0 766.3 -139.7 759.0 -120.6 739.9 -129.0 763.7 -131.9 797.0 -139.8 803.2 -148.6 835.1 -148.0 859.7 -157.9 871.5 -170.0 867.7ZM521.4 824.9 452.9 864.3 429.6 914.0 406.4 937.4 397.5 918.7 380.1 901.5 344.1 874.7 340.8 866.1 321.3 858.5 301.1 860.6 297.1 831.5 285.1 802.4 281.7 782.3 261.5 772.2 269.6 748.2 247.8 716.9 237.2 708.6 218.3 706.0 207.9 694.0 184.1 692.5 172.4 684.4 123.7 694.8 108.2 702.5 101.5 723.0 82.1 734.4 78.2 723.8 90.1 711.1 90.8 685.3 167.0 675.5 190.0 665.4 239.5 652.3 249.8 642.4 293.6 622.4 314.9 635.2 316.4 679.1 331.0 688.0 358.6 680.6 378.2 668.6 391.5 675.8 407.7 675.0 426.1 689.4 427.8 699.0 463.5 712.2 469.4 725.3 491.2 739.5 491.5 762.3 509.3 787.0 505.3 799.9 518.6 809.4ZM1011.4 882.3 1028.1 897.9 1056.9 914.9 1059.9 929.7 1048.6 1026.1 1038.4 1049.2 1028.1 1097.7 139.7 1097.7 161.0 1069.9 164.8 1035.7 179.1 1033.0 203.6 1038.3 228.0 1052.2 327.1 1037.6 337.8 1049.0 333.9 1067.2 345.8 1097.7 403.4 1097.7 422.4 1041.0 417.7 1025.7 417.2 998.7 407.5 985.9 396.0 945.1 429.6 914.0 452.9 864.3 521.4 824.9 521.3 835.9 544.7 870.8 562.2 861.6 564.7 838.2 608.3 816.3 613.7 806.2 641.6 779.4 680.5 754.1 691.6 734.9 676.3 695.4 706.2 672.1 726.6 669.2 736.8 680.5 734.6 692.2 760.5 741.8 765.2 759.1 780.5 783.9 781.6 801.8 796.5 851.6 826.8 889.9 851.7 895.7 880.7 917.3 906.4 924.8 933.9 927.7 966.9 920.5 981.4 901.8ZM406.4 937.4 396.0 945.1 407.5 985.9 417.2 998.7 417.7 1025.7 422.4 1041.0 403.4 1097.7 345.8 1097.7 333.9 1067.2 337.8 1049.0 327.1 1037.6 228.0 1052.2 203.6 1038.3 212.6 1022.9 204.8 1006.6 202.7 985.7 192.9 960.1 201.1 929.3 209.0 919.3 204.0 888.4 211.6 866.0 249.9 814.4 249.5 796.3 261.5 772.2 281.7 782.3 285.1 802.4 297.1 831.5 301.1 860.6 321.3 858.5 340.8 866.1 344.1 874.7 380.1 901.5 397.5 918.7ZM-61.7 671.5 -86.6 662.2 -73.4 644.2 -62.5 658.8ZM25.3 665.6 55.4 683.4 30.8 694.8 10.5 675.3 -7.4 667.8 5.8 639.9ZM-120.6 739.9 -139.7 759.0 -170.0 766.3 -170.0 627.2 -164.2 603.7 -152.9 602.7 -126.8 634.1 -136.6 643.0 -133.7 660.4 -139.6 672.1 -143.2 700.4 -122.2 727.6ZM26.5 351.6 20.6 360.9 -7.8 345.9 -17.6 354.5 -49.9 358.4 -71.8 351.6 -79.3 356.8 -129.9 361.3 -150.8 348.6 -170.0 358.5 -170.0 169.2 -158.3 161.6 -155.4 155.3 -87.9 115.6 -38.6 24.1 -14.2 20.0 0.0 12.6 40.8 64.9 81.6 164.3 88.9 214.1 84.6 269.3 57.3 302.1 45.7 308.4 41.6 324.2ZM1011.4 882.3 892.2 690.2 862.8 489.2 860.0 368.9 909.0 393.7 996.0 460.6 1113.2 417.7 1181.4 369.6 1181.4 719.7 1139.8 804.1ZM1181.4 -170.0 1181.4 140.8 1097.6 221.7 998.1 261.8 909.0 393.7 860.0 368.9 837.4 248.5 883.8 217.6 956.3 246.4 1058.5 89.3 1134.6 6.4 1150.5 -118.1 1124.4 -170.0ZM-18.9 -170.0 -50.0 -151.3 -87.7 -5.9 -153.1 -35.7 -94.1 -170.0ZM838.2 -163.2 815.1 -84.2 660.5 89.2 434.6 58.1 266.9 0.0 -38.6 24.1 -87.7 -5.9 -50.0 -151.3 -18.9 -170.0 722.0 -170.0 720.9 -160.1ZM1181.4 369.6 1113.2 417.7 996.0 460.6 909.0 393.7 998.1 261.8 1097.6 221.7 1181.4 140.8ZM1124.4 -170.0 1150.5 -118.1 1134.6 6.4 1058.5 89.3 956.3 246.4 883.8 217.6 837.4 248.5 779.8 134.3 660.5 89.2 815.1 -84.2 838.2 -163.2 872.7 -118.8 950.6 -146.7 966.5 -170.0ZM1181.4 995.5 1163.5 1009.9 1048.6 1026.1 1056.9 914.9 1011.4 882.3 1139.8 804.1 1181.4 719.7Z"/><path id="cvm-tanauan-e" d="M85.5 387.7 93.4 401.0 110.4 423.8 106.9 438.3 120.3 457.1 135.1 467.0 145.0 488.4 140.4 515.1 129.5 543.4 120.1 555.7 111.6 563.9 104.6 582.0 102.5 604.1 79.0 631.8 71.5 650.2 56.2 666.1 63.4 679.1 79.7 688.4 90.8 685.3 167.0 675.5 190.0 665.4 217.9 659.5 239.5 652.3 249.8 642.4 267.1 633.1 284.0 630.7 305.8 606.8 319.2 605.8 329.4 595.2 351.8 594.1 360.1 588.5 406.7 586.6 419.3 579.3 479.9 550.5 492.4 556.2 525.3 533.8 534.6 536.8 574.9 522.0 605.6 477.4 608.2 459.0 597.9 449.9 595.0 416.7 585.4 400.6 584.9 388.8 575.1 383.9 575.1 374.4 560.7 362.1 555.4 349.7 545.4 346.5 517.8 326.6 505.2 303.9 492.8 304.9 479.5 295.0 474.6 267.5 500.7 227.1 487.3 211.7 469.3 201.3 457.1 200.3 438.7 177.4 422.4 163.4 434.2 155.7 434.9 145.7 425.7 133.8 435.2 110.7 431.2 100.0 429.3 88.5 436.2 81.3 429.5 63.5 434.6 58.1 358.4 29.2 320.9 16.6 304.5 10.2 303.7 2.5 266.9 0.0 196.7 4.8 84.7 15.1 10.5 7.2 0.0 12.6 40.8 64.9 71.6 137.8 81.6 164.3 88.9 214.1 87.7 252.8 84.6 269.3 57.3 302.1 45.7 308.4 41.6 324.2 29.1 347.2 49.4 354.5 56.7 362.6 54.5 377.0Z"/><path id="cvm-malvar-e" d="M691.2 574.9 703.8 578.1 707.0 584.4 706.8 591.9 702.4 599.4 706.1 608.6 707.3 620.5 704.3 628.3 707.3 634.7 707.0 651.0 718.7 653.9 725.3 660.5 727.2 667.9 720.0 671.5 706.2 672.1 693.7 683.2 682.8 689.2 676.3 695.4 677.0 699.9 684.6 709.5 685.3 720.4 691.8 728.0 691.6 734.9 680.5 754.1 663.5 766.5 641.6 779.4 635.2 786.8 625.6 793.7 613.7 806.2 608.3 816.3 587.6 827.1 570.6 832.1 564.7 838.2 564.3 852.8 562.2 861.6 544.7 870.8 535.0 870.0 537.1 860.8 531.1 853.4 527.9 840.9 521.3 835.9 521.4 824.9 519.0 820.3 518.6 809.4 515.6 805.3 505.3 799.9 510.5 794.4 509.3 787.0 501.1 778.2 501.4 768.8 491.5 762.3 493.2 748.8 491.2 739.5 482.8 730.7 469.4 725.3 463.5 712.2 438.2 704.6 427.8 699.0 426.1 689.4 418.0 684.3 407.7 675.0 402.3 678.3 391.5 675.8 384.9 670.9 378.2 668.6 370.0 672.1 360.1 673.3 358.6 680.6 348.6 685.0 331.0 688.0 322.6 685.2 316.4 679.1 313.6 655.6 314.9 635.2 297.2 625.3 295.6 616.4 305.8 606.8 319.2 605.8 324.9 598.1 336.6 594.1 351.8 594.1 360.1 588.5 368.3 586.9 392.3 585.8 399.6 587.8 406.7 586.6 419.3 579.3 479.9 550.5 492.4 556.2 500.2 552.0 525.3 533.8 528.1 539.6 542.5 533.2 574.9 522.0 581.7 511.3 592.9 497.6 599.4 483.9 605.6 477.4 608.2 459.0 597.9 449.9 597.0 437.8 607.9 442.0 623.6 458.9 619.0 466.4 617.9 475.9 627.8 487.6 635.6 508.6 646.0 513.3 650.7 521.6 662.7 525.7 669.8 531.2 672.2 540.7 668.1 550.0 677.4 568.3Z"/><path id="cvm-santo-e" d="M479.2 262.3 487.3 252.0 487.3 246.5 491.0 244.2 492.4 238.9 498.6 233.7 500.6 229.6 499.5 225.2 491.4 217.0 487.3 211.7 478.4 205.1 466.1 200.0 457.1 200.3 446.9 185.4 438.7 177.4 433.3 174.8 428.2 169.8 423.4 167.0 422.2 160.5 426.5 160.3 434.2 155.7 436.2 150.7 434.9 145.7 428.6 140.4 425.7 133.8 429.2 122.9 432.1 120.3 435.2 110.7 434.2 103.7 429.6 96.8 429.3 88.5 436.2 81.3 435.8 75.1 430.2 71.0 429.9 62.1 434.6 58.1 439.9 47.7 445.3 54.1 448.2 60.6 449.0 65.6 451.7 66.3 453.5 71.7 462.7 75.0 465.2 77.8 470.6 75.1 475.4 75.1 479.4 71.4 480.3 65.1 489.0 63.6 492.4 64.7 497.2 62.9 501.8 67.2 507.7 63.8 512.9 67.3 520.4 68.3 529.6 67.6 536.3 71.9 542.8 73.3 546.4 72.0 555.7 72.7 561.7 75.4 568.2 73.2 576.0 72.8 579.5 74.8 582.0 79.7 586.4 81.7 592.7 80.6 593.5 82.7 604.5 83.2 606.1 81.1 614.2 79.9 628.9 92.0 660.5 89.2 676.6 104.9 685.5 104.9 708.2 101.7 740.2 109.6 779.8 134.3 810.6 189.4 819.0 208.2 825.9 221.4 837.4 248.5 850.4 326.6 860.0 368.9 860.0 410.9 864.5 440.5 862.8 489.2 878.8 539.1 879.5 553.5 877.7 620.4 882.8 645.1 889.5 665.0 892.2 690.2 906.0 719.1 933.0 766.5 942.1 790.8 958.2 816.3 973.3 833.3 988.3 852.8 998.9 870.0 1011.4 882.3 981.4 901.8 977.7 908.2 966.9 920.5 955.2 921.1 940.7 926.6 933.9 927.7 915.7 925.0 906.4 924.8 898.6 920.2 889.1 919.3 880.7 917.3 867.7 908.6 860.9 905.1 855.7 898.4 851.7 895.7 834.0 889.2 831.6 890.8 826.8 889.9 821.6 884.9 807.7 867.4 806.0 862.8 806.9 857.5 802.7 857.5 796.5 851.6 796.1 845.2 798.0 842.1 792.9 837.7 792.0 830.0 788.7 828.5 789.4 824.3 793.1 819.4 785.8 804.7 781.6 801.8 781.5 794.6 780.3 791.9 780.5 783.9 777.4 781.6 776.9 776.0 770.5 768.5 771.9 766.0 768.5 761.1 765.2 759.1 760.5 746.2 760.5 741.8 756.2 734.5 754.3 728.2 751.1 722.7 744.5 717.0 744.5 709.6 738.8 701.4 741.1 697.8 736.0 695.3 734.6 692.2 737.1 687.0 736.8 680.5 731.9 679.0 726.9 673.7 727.2 667.9 725.3 660.5 721.7 658.7 718.7 653.9 715.3 654.3 707.0 651.0 708.1 642.0 707.3 634.7 704.3 628.3 707.3 620.5 707.7 615.9 706.1 608.6 703.6 605.3 702.4 599.4 706.8 591.9 707.0 584.4 703.8 578.1 697.0 575.1 690.6 574.7 677.4 568.3 674.4 560.6 668.1 550.0 669.9 547.6 668.6 543.4 672.2 540.7 672.1 535.9 669.2 526.6 666.3 522.5 657.5 523.9 650.7 521.6 646.0 513.3 635.6 508.6 630.9 494.7 627.5 490.6 627.8 487.6 617.9 475.9 619.0 466.4 623.6 458.9 619.1 456.0 616.5 451.9 612.2 450.5 612.0 446.6 607.9 442.0 602.8 439.1 597.0 437.8 593.7 423.2 596.0 419.9 593.1 411.8 588.8 410.2 591.0 406.3 585.4 400.6 587.3 396.5 584.6 394.2 584.9 388.8 578.3 385.3 575.0 381.8 578.8 379.3 580.7 374.9 573.7 373.5 567.6 362.7 561.3 366.5 560.7 362.1 557.0 357.9 555.4 349.7 550.9 349.5 548.1 347.1 542.8 346.0 537.7 340.9 536.0 337.3 526.8 333.4 525.1 331.2 517.8 326.6 514.8 322.2 512.7 314.3 509.2 307.5 505.2 303.9 499.4 305.5 492.8 304.9 489.6 302.6 486.7 297.6 479.5 295.0 477.6 291.2 476.7 284.0 474.3 280.4 476.1 272.3 474.6 267.5Z"/><mask id="cvm-m-all" maskUnits="userSpaceOnUse" x="-42" y="-42" width="1095.4" height="1011.7"><rect x="-42" y="-42" width="1095.4" height="1011.7" fill="url(#cvm-fade)"/></mask></defs></svg>
 
-    <div class="cvz reveal">
-      <div class="cvz-map">
-        <div class="cvm-frame" style="width:100.0%">
-          <svg class="cvm" viewBox="-170.0 -170.0 948.2 1028.4"
-               role="img" aria-labelledby="cvmT-tanauan cvmD-tanauan">
-            <title id="cvmT-tanauan">Map of Tanauan City, Batangas</title>
-            <desc id="cvmD-tanauan">The 48 barangays of Tanauan City are shaded as one service area: Altura Bata, Altura Matanda, Altura-South, Ambulong, Banadero, Bagbag, Bagumbayan, Balele, Banjo East, Banjo Laurel (Banjo West), Bilog-bilog, Boot, Cale, Darasa, Pagaspas, Gonzales, Hidalgo, Janopol, Janopol Oriental, Laurel, Luyos, Mabini, Malaking Pulo, Maria Paz, Maugat, Montaña (Ik-ik), Natatas, Pantay Matanda, Pantay Bata, Poblacion Barangay 1, Poblacion Barangay 2, Poblacion Barangay 3, Poblacion Barangay 4, Poblacion Barangay 5, Poblacion Barangay 6, Poblacion Barangay 7, Sala, Sambat, San Jose, Santol (Doña Jacoba Garcia), Santor, Sulpoc, Suplang, Talaga, Tinurik, Trapiche, Ulango, Wawa. Neighbouring Malvar and Santo Tomas and the surrounding Batangas and Laguna municipalities are shown in grey for context.</desc>
-            <g class="cvm-back" mask="url(#cvm-m-tanauan)">
+    <div class="cvu reveal">
+      <div class="cvu-map">
+        <div class="cvm-frame">
+          <svg class="cvm" viewBox="-42 -42 1095.4 1011.7"
+               role="img" aria-labelledby="cvmTitle cvmDesc" preserveAspectRatio="xMidYMid meet">
+            <title id="cvmTitle">Map of the PapaFix service area: Tanauan City, Malvar and Santo Tomas City, Batangas</title>
+            <desc id="cvmDesc">All 93 barangays of the three launch localities are shaded as one service area. Tanauan City (48): Altura Bata, Altura Matanda, Altura-South, Ambulong, Banadero, Bagbag, Bagumbayan, Balele, Banjo East, Banjo Laurel (Banjo West), Bilog-bilog, Boot, Cale, Darasa, Pagaspas, Gonzales, Hidalgo, Janopol, Janopol Oriental, Laurel, Luyos, Mabini, Malaking Pulo, Maria Paz, Maugat, Montaña (Ik-ik), Natatas, Pantay Matanda, Pantay Bata, Poblacion Barangay 1, Poblacion Barangay 2, Poblacion Barangay 3, Poblacion Barangay 4, Poblacion Barangay 5, Poblacion Barangay 6, Poblacion Barangay 7, Sala, Sambat, San Jose, Santol (Doña Jacoba Garcia), Santor, Sulpoc, Suplang, Talaga, Tinurik, Trapiche, Ulango, Wawa. Malvar (15): Bagong Pook, Bilucao (San Isidro Western), Bulihan, San Gregorio, Luta Del Norte, Luta Del Sur, Poblacion, San Andres, San Fernando, San Isidro East, San Juan, San Pedro II (Western), San Pedro I (Eastern), San Pioquinto, Santiago. Santo Tomas City (30): Barangay I (Pob.), Barangay II (Pob.), Barangay III (Pob.), Barangay IV (Pob.), San Agustin, San Antonio, San Bartolome, San Felix, San Fernando, San Francisco, San Isidro Norte, San Isidro Sur, San Joaquin, San Jose, San Juan, San Luis, San Miguel, San Pablo, San Pedro, San Rafael, San Roque, San Vicente, Santa Ana, Santa Anastacia, Santa Clara, Santa Cruz, Santa Elena, Santa Maria, Santiago, Santa Teresita. The three are contiguous. Surrounding Batangas and Laguna municipalities are shown in grey for context and are not served yet.</desc>
+
+            <!-- One vignette for the whole canvas. Three overlapping radial
+                 fades on a single map read as a smudge, which is why the
+                 per-locality masks went. -->
+            <g class="cvm-back" mask="url(#cvm-m-all)">
               <use href="#cvm-ctx" class="cvm-ctx"/>
-              <use href="#cvm-malvar-e" class="cvm-sib"/>
-              <use href="#cvm-santo-e" class="cvm-sib"/>
             </g>
+
+            <!-- Grouped by locality so a whole city can be emphasised as a
+                 unit, and so the bloom can spread from each centroid.
+                 data-x/data-y are data-px/data-py re-projected out of each
+                 old per-locality viewBox into this shared one — the
+                 percentages could not survive the merge, the geometry did. -->
             <g class="cvm-cells">
-              <path class="cvm-b" data-n="Altura Bata" data-px="36.93" data-py="31.73" d="M211.3 148.7 184.8 180.5 133.6 153.5 161.6 138.1 187.8 137.0Z"/>
-              <path class="cvm-b" data-n="Altura Matanda" data-px="37.57" data-py="27.61" d="M227.7 138.1 211.3 148.7 187.8 137.0 161.6 138.1 164.8 94.6 184.1 85.9 218.0 106.3 227.6 124.3Z"/>
-              <path class="cvm-b" data-n="Altura-South" data-px="44.50" data-py="31.10" d="M272.6 126.3 277.1 159.9 218.3 182.4 184.8 180.5 211.3 148.7 227.7 138.1 230.5 139.9 258.6 125.5Z"/>
-              <path class="cvm-b" data-n="Ambulong" data-px="26.89" data-py="51.32" d="M120.9 350.0 93.4 401.0 85.5 387.7 54.5 377.0 56.7 362.6 49.4 354.5 29.1 347.2 41.6 324.2 45.7 308.4 57.3 302.1Z"/>
-              <path class="cvm-b" data-n="Banadero" data-px="31.90" data-py="54.06" d="M174.6 389.4 106.9 438.3 110.4 423.8 93.4 401.0 120.9 350.0 131.8 337.3 161.6 360.3 155.3 370.9Z"/>
-              <path class="cvm-b" data-n="Bagbag" data-px="47.02" data-py="73.41" d="M329.4 595.2 319.2 605.8 305.8 606.8 284.0 630.7 267.1 633.1 250.4 616.0 241.8 601.4 232.8 570.7 235.8 543.1 256.7 525.1 321.9 573.1Z"/>
-              <path class="cvm-b" data-n="Bagumbayan" data-px="67.75" data-py="59.64" d="M516.5 400.4 521.6 411.9 500.9 426.0 510.0 448.0 480.3 469.1 445.7 468.3 424.3 465.5 411.1 446.4 397.9 450.4 392.8 441.9 460.5 418.7 477.2 416.7 481.0 404.1 509.4 398.3Z"/>
-              <path class="cvm-b" data-n="Balele" data-px="43.54" data-py="64.13" d="M328.3 466.0 311.2 471.5 256.7 525.1 235.8 543.1 185.8 467.0 211.7 455.3 226.3 457.9 233.9 449.2 260.8 441.6 270.6 432.9 303.4 420.2Z"/>
-              <path class="cvm-b" data-n="Banjo East" data-px="70.69" data-py="67.27" d="M534.6 536.8 525.3 533.8 492.4 556.2 479.9 550.5 475.5 522.7 459.1 505.8 526.3 492.1 528.9 524.0Z"/>
-              <path class="cvm-b" data-n="Banjo Laurel (Banjo West)" data-px="59.88" data-py="70.37" d="M479.9 550.5 419.3 579.3 406.7 586.6 360.1 588.5 351.8 594.1 329.4 595.2 370.0 526.4 459.1 505.8 475.5 522.7Z"/>
-              <path class="cvm-b" data-n="Bilog-bilog" data-px="39.94" data-py="41.07" d="M218.3 182.4 234.6 214.0 278.8 271.7 178.7 312.3 147.6 257.5 141.1 241.8 146.1 233.7 169.9 231.9 162.0 197.0 184.8 180.5Z"/>
-              <path class="cvm-b" data-n="Boot" data-px="38.92" data-py="76.55" d="M235.8 543.1 232.8 570.7 241.8 601.4 250.4 616.0 267.1 633.1 249.8 642.4 239.5 652.3 217.9 659.5 190.0 665.4 167.0 675.5 153.5 661.2 145.9 641.3 156.5 602.9 145.2 585.5 127.4 572.9 120.1 555.7 205.4 540.0 225.0 526.7Z"/>
-              <path class="cvm-b" data-n="Cale" data-px="45.65" data-py="35.85" d="M298.7 212.1 350.6 271.0 316.3 278.5 278.8 271.7 234.6 214.0 218.3 182.4 277.1 159.9 287.9 171.8Z"/>
-              <path class="cvm-b" data-n="Darasa" data-px="77.14" data-py="62.11" d="M544.6 424.9 551.4 427.4 595.0 416.7 597.9 449.9 608.2 459.0 605.6 477.4 574.9 522.0 534.6 536.8 528.9 524.0 526.3 492.1 510.0 448.0 500.9 426.0 521.6 411.9 526.5 427.1Z"/>
-              <path class="cvm-b" data-n="Pagaspas" data-px="65.17" data-py="43.86" d="M530.6 335.3 523.2 349.5 513.5 361.0 495.4 348.8 470.9 341.6 456.7 321.1 438.5 308.9 421.4 306.2 416.9 255.2 465.3 208.8 469.3 201.3 487.3 211.7 500.7 227.1 474.6 267.5 479.5 295.0 492.8 304.9 505.2 303.9 517.8 326.6Z"/>
-              <path class="cvm-b" data-n="Gonzales" data-px="34.83" data-py="59.82" d="M211.7 455.3 185.8 467.0 180.1 477.3 145.0 488.4 135.1 467.0 120.3 457.1 106.9 438.3 174.6 389.4 168.3 400.8 169.5 413.4 200.4 427.2Z"/>
-              <path class="cvm-b" data-n="Hidalgo" data-px="70.74" data-py="63.01" d="M526.3 492.1 459.1 505.8 445.7 468.3 480.3 469.1 510.0 448.0Z"/>
-              <path class="cvm-b" data-n="Janopol" data-px="41.35" data-py="55.51" d="M291.6 424.9 270.6 432.9 260.8 441.6 233.9 449.2 226.3 457.9 211.7 455.3 200.4 427.2 169.5 413.4 168.3 400.8 174.6 389.4 252.7 341.7 245.7 370.7 265.6 413.5Z"/>
-              <path class="cvm-b" data-n="Janopol Oriental" data-px="48.58" data-py="54.25" d="M342.5 404.3 291.6 424.9 265.6 413.5 245.7 370.7 252.7 341.7 286.6 323.2Z"/>
-              <path class="cvm-b" data-n="Laurel" data-px="52.65" data-py="21.97" d="M429.5 63.5 415.6 66.3 389.8 58.3 366.8 66.2 367.6 77.2 344.5 86.0 343.1 95.1 328.3 100.0 320.8 110.5 307.5 103.5 298.2 89.3 268.9 69.7 320.9 16.6 358.4 29.2 434.6 58.1Z"/>
-              <path class="cvm-b" data-n="Luyos" data-px="32.55" data-py="34.37" d="M184.8 180.5 162.0 197.0 169.9 231.9 104.7 190.5 95.7 174.8 133.6 153.5Z"/>
-              <path class="cvm-b" data-n="Mabini" data-px="52.06" data-py="67.09" d="M370.0 526.4 329.4 595.2 321.9 573.1 256.7 525.1 311.2 471.5 328.3 466.0 365.7 494.1Z"/>
-              <path class="cvm-b" data-n="Malaking Pulo" data-px="44.01" data-py="25.85" d="M268.9 69.7 298.2 89.3 272.6 126.3 258.6 125.5 230.5 139.9 227.7 138.1 227.6 124.3 218.0 106.3 184.1 85.9 164.8 94.6 154.7 53.9 229.9 51.6 245.7 62.9Z"/>
-              <path class="cvm-b" data-n="Maria Paz" data-px="29.70" data-py="79.48" d="M167.0 675.5 90.8 685.3 79.7 688.4 63.4 679.1 56.2 666.1 71.5 650.2 79.0 631.8 102.5 604.1 104.6 582.0 111.6 563.9 120.1 555.7 127.4 572.9 145.2 585.5 156.5 602.9 145.9 641.3 153.5 661.2Z"/>
-              <path class="cvm-b" data-n="Maugat" data-px="30.26" data-py="45.74" d="M178.7 312.3 148.1 320.8 131.8 337.3 120.9 350.0 57.3 302.1 84.6 269.3 147.6 257.5Z"/>
-              <path class="cvm-b" data-n="Montaña (Ik-ik)" data-px="28.34" data-py="31.02" d="M161.6 138.1 95.7 174.8 104.7 190.5 86.6 199.7 81.6 164.3 71.6 137.8 158.4 99.7 164.8 94.6Z"/>
-              <path class="cvm-b" data-n="Natatas" data-px="55.03" data-py="58.25" d="M424.4 430.8 328.3 466.0 303.4 420.2 342.5 404.3 414.7 383.1 421.4 385.4 420.5 403.1Z"/>
-              <path class="cvm-b" data-n="Pantay Matanda" data-px="59.58" data-py="37.55" d="M469.3 201.3 465.3 208.8 416.9 255.2 350.6 271.0 298.7 212.1 311.3 205.0 322.1 219.2 350.1 196.3 346.5 192.0 376.6 177.6 386.6 166.7 422.4 163.4 438.7 177.4 457.1 200.3Z"/>
-              <path class="cvm-b" data-n="Pantay Bata" data-px="51.86" data-py="33.62" d="M422.4 163.4 386.6 166.7 376.6 177.6 346.5 192.0 350.1 196.3 322.1 219.2 311.3 205.0 298.7 212.1 287.9 171.8 277.1 159.9 350.4 133.5 418.3 102.9 431.2 100.0 435.2 110.7 425.7 133.8 434.9 145.7 434.2 155.7Z"/>
-              <path class="cvm-b" data-n="Poblacion Barangay 1" data-px="76.71" data-py="52.60" d="M575.1 374.4 549.6 382.8 545.4 346.5 555.4 349.7 560.7 362.1Z"/>
-              <path class="cvm-b" data-n="Poblacion Barangay 2" data-px="76.75" data-py="54.19" d="M575.1 383.9 552.2 399.3 549.6 382.8 575.1 374.4Z"/>
-              <path class="cvm-b" data-n="Poblacion Barangay 3" data-px="78.06" data-py="56.06" d="M595.0 416.7 551.4 427.4 544.6 424.9 542.4 403.7 552.2 399.3 575.1 383.9 584.9 388.8 585.4 400.6Z"/>
-              <path class="cvm-b" data-n="Poblacion Barangay 4" data-px="74.52" data-py="50.67" d="M545.4 346.5 549.6 382.8 539.9 386.5 533.1 360.8 523.2 349.5 530.6 335.3Z"/>
-              <path class="cvm-b" data-n="Poblacion Barangay 5" data-px="75.42" data-py="54.51" d="M552.2 399.3 542.4 403.7 538.6 387.0 549.6 382.8Z"/>
-              <path class="cvm-b" data-n="Poblacion Barangay 6" data-px="73.29" data-py="52.11" d="M539.9 386.5 538.6 387.0 502.5 381.7 518.0 374.5 513.5 361.0 523.2 349.5 533.1 360.8Z"/>
-              <path class="cvm-b" data-n="Poblacion Barangay 7" data-px="73.71" data-py="55.29" d="M538.6 387.0 542.4 403.7 544.6 424.9 526.5 427.1 521.6 411.9 516.5 400.4 502.5 381.7Z"/>
-              <path class="cvm-b" data-n="Sala" data-px="57.73" data-py="44.96" d="M421.4 306.2 402.9 301.8 397.6 324.5 372.0 319.6 342.1 324.1 329.5 309.2 328.4 300.4 316.3 278.5 416.9 255.2Z"/>
-              <path class="cvm-b" data-n="Sambat" data-px="65.38" data-py="54.72" d="M502.5 381.7 516.5 400.4 509.4 398.3 481.0 404.1 477.2 416.7 460.5 418.7 424.4 430.8 420.5 403.1 421.4 385.4 414.7 383.1 420.6 354.7 436.1 355.2 453.8 364.1 482.1 372.3Z"/>
-              <path class="cvm-b" data-n="San Jose" data-px="30.12" data-py="39.10" d="M169.9 231.9 146.1 233.7 141.1 241.8 147.6 257.5 84.6 269.3 87.7 252.8 88.9 214.1 86.6 199.7 104.7 190.5Z"/>
-              <path class="cvm-b" data-n="Santol (Doña Jacoba Garcia)" data-px="45.28" data-py="19.74" d="M320.9 16.6 268.9 69.7 245.7 62.9 229.9 51.6 154.7 53.9 151.4 9.2 196.7 4.8 266.9 0.0 303.7 2.5 304.5 10.2Z"/>
-              <path class="cvm-b" data-n="Santor" data-px="55.87" data-py="51.50" d="M397.6 324.5 420.6 354.7 414.7 383.1 342.5 404.3 286.6 323.2 342.1 324.1 372.0 319.6Z"/>
-              <path class="cvm-b" data-n="Sulpoc" data-px="26.78" data-py="26.35" d="M30.6 9.1 47.3 23.6 70.3 32.7 87.4 55.9 107.7 90.3 112.6 90.7 154.7 53.9 164.8 94.6 158.4 99.7 71.6 137.8 40.8 64.9 0.0 12.6 10.5 7.2Z"/>
-              <path class="cvm-b" data-n="Suplang" data-px="30.31" data-py="20.81" d="M151.4 9.2 154.7 53.9 112.6 90.7 107.7 90.3 87.4 55.9 70.3 32.7 47.3 23.6 30.6 9.1 84.7 15.1Z"/>
-              <path class="cvm-b" data-n="Talaga" data-px="37.87" data-py="49.81" d="M316.3 278.5 328.4 300.4 329.5 309.2 342.1 324.1 286.6 323.2 252.7 341.7 174.6 389.4 155.3 370.9 161.6 360.3 131.8 337.3 148.1 320.8 178.7 312.3 278.8 271.7Z"/>
-              <path class="cvm-b" data-n="Tinurik" data-px="59.83" data-py="63.68" d="M445.7 468.3 459.1 505.8 370.0 526.4 365.7 494.1 328.3 466.0 392.8 441.9 397.9 450.4 411.1 446.4 424.3 465.5Z"/>
-              <path class="cvm-b" data-n="Trapiche" data-px="63.55" data-py="48.84" d="M421.4 306.2 438.5 308.9 456.7 321.1 470.9 341.6 495.4 348.8 513.5 361.0 518.0 374.5 502.5 381.7 482.1 372.3 453.8 364.1 436.1 355.2 420.6 354.7 397.6 324.5 402.9 301.8Z"/>
-              <path class="cvm-b" data-n="Ulango" data-px="59.22" data-py="24.98" d="M429.5 63.5 436.2 81.3 429.3 88.5 431.2 100.0 418.3 102.9 350.4 133.5 277.1 159.9 272.6 126.3 298.2 89.3 307.5 103.5 320.8 110.5 328.3 100.0 343.1 95.1 344.5 86.0 367.6 77.2 366.8 66.2 389.8 58.3 415.6 66.3Z"/>
-              <path class="cvm-b" data-n="Wawa" data-px="36.33" data-py="66.41" d="M225.0 526.7 205.4 540.0 120.1 555.7 129.5 543.4 140.4 515.1 145.0 488.4 180.1 477.3 185.8 467.0Z"/>
+              <g data-city="tanauan" data-label="Tanauan City" data-cx="316.3" data-cy="332.2">
+                <path class="cvm-b" data-n="Altura Bata" data-px="36.93" data-py="31.73" data-x="180.2" data-y="156.3" style="--w:0.408" d="M211.3 148.7 184.8 180.5 133.6 153.5 161.6 138.1 187.8 137.0Z"/>
+                <path class="cvm-b" data-n="Altura Matanda" data-px="37.57" data-py="27.61" data-x="186.2" data-y="113.9" style="--w:0.324" d="M227.7 138.1 211.3 148.7 187.8 137.0 161.6 138.1 164.8 94.6 184.1 85.9 218.0 106.3 227.6 124.3Z"/>
+                <path class="cvm-b" data-n="Altura-South" data-px="44.50" data-py="31.10" data-x="251.9" data-y="149.8" style="--w:0.485" d="M272.6 126.3 277.1 159.9 218.3 182.4 184.8 180.5 211.3 148.7 227.7 138.1 230.5 139.9 258.6 125.5Z"/>
+                <path class="cvm-b" data-n="Ambulong" data-px="26.89" data-py="51.32" data-x="85.0" data-y="357.8" style="--w:0.381" d="M120.9 350.0 93.4 401.0 85.5 387.7 54.5 377.0 56.7 362.6 49.4 354.5 29.1 347.2 41.6 324.2 45.7 308.4 57.3 302.1Z"/>
+                <path class="cvm-b" data-n="Banadero" data-px="31.90" data-py="54.06" data-x="132.5" data-y="386.0" style="--w:0.490" d="M174.6 389.4 106.9 438.3 110.4 423.8 93.4 401.0 120.9 350.0 131.8 337.3 161.6 360.3 155.3 370.9Z"/>
+                <path class="cvm-b" data-n="Bagbag" data-px="47.02" data-py="73.41" data-x="275.8" data-y="584.9" style="--w:0.319" d="M329.4 595.2 319.2 605.8 305.8 606.8 284.0 630.7 267.1 633.1 250.4 616.0 241.8 601.4 232.8 570.7 235.8 543.1 256.7 525.1 321.9 573.1Z"/>
+                <path class="cvm-b" data-n="Bagumbayan" data-px="67.75" data-py="59.64" data-x="472.4" data-y="443.3" style="--w:0.490" d="M516.5 400.4 521.6 411.9 500.9 426.0 510.0 448.0 480.3 469.1 445.7 468.3 424.3 465.5 411.1 446.4 397.9 450.4 392.8 441.9 460.5 418.7 477.2 416.7 481.0 404.1 509.4 398.3Z"/>
+                <path class="cvm-b" data-n="Balele" data-px="43.54" data-py="64.13" data-x="242.8" data-y="489.5" style="--w:0.538" d="M328.3 466.0 311.2 471.5 256.7 525.1 235.8 543.1 185.8 467.0 211.7 455.3 226.3 457.9 233.9 449.2 260.8 441.6 270.6 432.9 303.4 420.2Z"/>
+                <path class="cvm-b" data-n="Banjo East" data-px="70.69" data-py="67.27" data-x="500.3" data-y="521.8" style="--w:0.297" d="M534.6 536.8 525.3 533.8 492.4 556.2 479.9 550.5 475.5 522.7 459.1 505.8 526.3 492.1 528.9 524.0Z"/>
+                <path class="cvm-b" data-n="Banjo Laurel (Banjo West)" data-px="59.88" data-py="70.37" data-x="397.8" data-y="553.7" style="--w:0.372" d="M479.9 550.5 419.3 579.3 406.7 586.6 360.1 588.5 351.8 594.1 329.4 595.2 370.0 526.4 459.1 505.8 475.5 522.7Z"/>
+                <path class="cvm-b" data-n="Bilog-bilog" data-px="39.94" data-py="41.07" data-x="208.7" data-y="252.4" style="--w:0.644" d="M218.3 182.4 234.6 214.0 278.8 271.7 178.7 312.3 147.6 257.5 141.1 241.8 146.1 233.7 169.9 231.9 162.0 197.0 184.8 180.5Z"/>
+                <path class="cvm-b" data-n="Boot" data-px="38.92" data-py="76.55" data-x="199.0" data-y="617.2" style="--w:0.180" d="M235.8 543.1 232.8 570.7 241.8 601.4 250.4 616.0 267.1 633.1 249.8 642.4 239.5 652.3 217.9 659.5 190.0 665.4 167.0 675.5 153.5 661.2 145.9 641.3 156.5 602.9 145.2 585.5 127.4 572.9 120.1 555.7 205.4 540.0 225.0 526.7Z"/>
+                <path class="cvm-b" data-n="Cale" data-px="45.65" data-py="35.85" data-x="262.9" data-y="198.7" style="--w:0.617" d="M298.7 212.1 350.6 271.0 316.3 278.5 278.8 271.7 234.6 214.0 218.3 182.4 277.1 159.9 287.9 171.8Z"/>
+                <path class="cvm-b" data-n="Darasa" data-px="77.14" data-py="62.11" data-x="561.4" data-y="468.7" style="--w:0.253" d="M544.6 424.9 551.4 427.4 595.0 416.7 597.9 449.9 608.2 459.0 605.6 477.4 574.9 522.0 534.6 536.8 528.9 524.0 526.3 492.1 510.0 448.0 500.9 426.0 521.6 411.9 526.5 427.1Z"/>
+                <path class="cvm-b" data-n="Pagaspas" data-px="65.17" data-py="43.86" data-x="447.9" data-y="281.1" style="--w:0.624" d="M530.6 335.3 523.2 349.5 513.5 361.0 495.4 348.8 470.9 341.6 456.7 321.1 438.5 308.9 421.4 306.2 416.9 255.2 465.3 208.8 469.3 201.3 487.3 211.7 500.7 227.1 474.6 267.5 479.5 295.0 492.8 304.9 505.2 303.9 517.8 326.6Z"/>
+                <path class="cvm-b" data-n="Gonzales" data-px="34.83" data-py="59.82" data-x="160.3" data-y="445.2" style="--w:0.487" d="M211.7 455.3 185.8 467.0 180.1 477.3 145.0 488.4 135.1 467.0 120.3 457.1 106.9 438.3 174.6 389.4 168.3 400.8 169.5 413.4 200.4 427.2Z"/>
+                <path class="cvm-b" data-n="Hidalgo" data-px="70.74" data-py="63.01" data-x="500.8" data-y="478.0" style="--w:0.374" d="M526.3 492.1 459.1 505.8 445.7 468.3 480.3 469.1 510.0 448.0Z"/>
+                <path class="cvm-b" data-n="Janopol" data-px="41.35" data-py="55.51" data-x="222.1" data-y="400.9" style="--w:0.690" d="M291.6 424.9 270.6 432.9 260.8 441.6 233.9 449.2 226.3 457.9 211.7 455.3 200.4 427.2 169.5 413.4 168.3 400.8 174.6 389.4 252.7 341.7 245.7 370.7 265.6 413.5Z"/>
+                <path class="cvm-b" data-n="Janopol Oriental" data-px="48.58" data-py="54.25" data-x="290.6" data-y="387.9" style="--w:0.837" d="M342.5 404.3 291.6 424.9 265.6 413.5 245.7 370.7 252.7 341.7 286.6 323.2Z"/>
+                <path class="cvm-b" data-n="Laurel" data-px="52.65" data-py="21.97" data-x="329.2" data-y="55.9" style="--w:0.264" d="M429.5 63.5 415.6 66.3 389.8 58.3 366.8 66.2 367.6 77.2 344.5 86.0 343.1 95.1 328.3 100.0 320.8 110.5 307.5 103.5 298.2 89.3 268.9 69.7 320.9 16.6 358.4 29.2 434.6 58.1Z"/>
+                <path class="cvm-b" data-n="Luyos" data-px="32.55" data-py="34.37" data-x="138.6" data-y="183.5" style="--w:0.383" d="M184.8 180.5 162.0 197.0 169.9 231.9 104.7 190.5 95.7 174.8 133.6 153.5Z"/>
+                <path class="cvm-b" data-n="Mabini" data-px="52.06" data-py="67.09" data-x="323.6" data-y="520.0" style="--w:0.500" d="M370.0 526.4 329.4 595.2 321.9 573.1 256.7 525.1 311.2 471.5 328.3 466.0 365.7 494.1Z"/>
+                <path class="cvm-b" data-n="Malaking Pulo" data-px="44.01" data-py="25.85" data-x="247.3" data-y="95.8" style="--w:0.345" d="M268.9 69.7 298.2 89.3 272.6 126.3 258.6 125.5 230.5 139.9 227.7 138.1 227.6 124.3 218.0 106.3 184.1 85.9 164.8 94.6 154.7 53.9 229.9 51.6 245.7 62.9Z"/>
+                <path class="cvm-b" data-n="Maria Paz" data-px="29.70" data-py="79.48" data-x="111.6" data-y="647.4" style="--w:0.000" d="M167.0 675.5 90.8 685.3 79.7 688.4 63.4 679.1 56.2 666.1 71.5 650.2 79.0 631.8 102.5 604.1 104.6 582.0 111.6 563.9 120.1 555.7 127.4 572.9 145.2 585.5 156.5 602.9 145.9 641.3 153.5 661.2Z"/>
+                <path class="cvm-b" data-n="Maugat" data-px="30.26" data-py="45.74" data-x="116.9" data-y="300.4" style="--w:0.463" d="M178.7 312.3 148.1 320.8 131.8 337.3 120.9 350.0 57.3 302.1 84.6 269.3 147.6 257.5Z"/>
+                <path class="cvm-b" data-n="Montaña (Ik-ik)" data-px="28.34" data-py="31.02" data-x="98.7" data-y="149.0" style="--w:0.243" d="M161.6 138.1 95.7 174.8 104.7 190.5 86.6 199.7 81.6 164.3 71.6 137.8 158.4 99.7 164.8 94.6Z"/>
+                <path class="cvm-b" data-n="Natatas" data-px="55.03" data-py="58.25" data-x="351.8" data-y="429.0" style="--w:0.726" d="M424.4 430.8 328.3 466.0 303.4 420.2 342.5 404.3 414.7 383.1 421.4 385.4 420.5 403.1Z"/>
+                <path class="cvm-b" data-n="Pantay Matanda" data-px="59.58" data-py="37.55" data-x="394.9" data-y="216.2" style="--w:0.627" d="M469.3 201.3 465.3 208.8 416.9 255.2 350.6 271.0 298.7 212.1 311.3 205.0 322.1 219.2 350.1 196.3 346.5 192.0 376.6 177.6 386.6 166.7 422.4 163.4 438.7 177.4 457.1 200.3Z"/>
+                <path class="cvm-b" data-n="Pantay Bata" data-px="51.86" data-py="33.62" data-x="321.7" data-y="175.7" style="--w:0.583" d="M422.4 163.4 386.6 166.7 376.6 177.6 346.5 192.0 350.1 196.3 322.1 219.2 311.3 205.0 298.7 212.1 287.9 171.8 277.1 159.9 350.4 133.5 418.3 102.9 431.2 100.0 435.2 110.7 425.7 133.8 434.9 145.7 434.2 155.7Z"/>
+                <path class="cvm-b" data-n="Poblacion Barangay 1" data-px="76.71" data-py="52.60" data-x="557.4" data-y="370.9" style="--w:0.350" d="M575.1 374.4 549.6 382.8 545.4 346.5 555.4 349.7 560.7 362.1Z"/>
+                <path class="cvm-b" data-n="Poblacion Barangay 2" data-px="76.75" data-py="54.19" data-x="557.7" data-y="387.3" style="--w:0.341" d="M575.1 383.9 552.2 399.3 549.6 382.8 575.1 374.4Z"/>
+                <path class="cvm-b" data-n="Poblacion Barangay 3" data-px="78.06" data-py="56.06" data-x="570.2" data-y="406.5" style="--w:0.296" d="M595.0 416.7 551.4 427.4 544.6 424.9 542.4 403.7 552.2 399.3 575.1 383.9 584.9 388.8 585.4 400.6Z"/>
+                <path class="cvm-b" data-n="Poblacion Barangay 4" data-px="74.52" data-py="50.67" data-x="536.6" data-y="351.1" style="--w:0.412" d="M545.4 346.5 549.6 382.8 539.9 386.5 533.1 360.8 523.2 349.5 530.6 335.3Z"/>
+                <path class="cvm-b" data-n="Poblacion Barangay 5" data-px="75.42" data-py="54.51" data-x="545.1" data-y="390.6" style="--w:0.372" d="M552.2 399.3 542.4 403.7 538.6 387.0 549.6 382.8Z"/>
+                <path class="cvm-b" data-n="Poblacion Barangay 6" data-px="73.29" data-py="52.11" data-x="524.9" data-y="365.9" style="--w:0.438" d="M539.9 386.5 538.6 387.0 502.5 381.7 518.0 374.5 513.5 361.0 523.2 349.5 533.1 360.8Z"/>
+                <path class="cvm-b" data-n="Poblacion Barangay 7" data-px="73.71" data-py="55.29" data-x="528.9" data-y="398.6" style="--w:0.407" d="M538.6 387.0 542.4 403.7 544.6 424.9 526.5 427.1 521.6 411.9 516.5 400.4 502.5 381.7Z"/>
+                <path class="cvm-b" data-n="Sala" data-px="57.73" data-py="44.96" data-x="377.4" data-y="292.4" style="--w:0.806" d="M421.4 306.2 402.9 301.8 397.6 324.5 372.0 319.6 342.1 324.1 329.5 309.2 328.4 300.4 316.3 278.5 416.9 255.2Z"/>
+                <path class="cvm-b" data-n="Sambat" data-px="65.38" data-py="54.72" data-x="449.9" data-y="392.7" style="--w:0.610" d="M502.5 381.7 516.5 400.4 509.4 398.3 481.0 404.1 477.2 416.7 460.5 418.7 424.4 430.8 420.5 403.1 421.4 385.4 414.7 383.1 420.6 354.7 436.1 355.2 453.8 364.1 482.1 372.3Z"/>
+                <path class="cvm-b" data-n="San Jose" data-px="30.12" data-py="39.10" data-x="115.6" data-y="232.1" style="--w:0.403" d="M169.9 231.9 146.1 233.7 141.1 241.8 147.6 257.5 84.6 269.3 87.7 252.8 88.9 214.1 86.6 199.7 104.7 190.5Z"/>
+                <path class="cvm-b" data-n="Santol (Doña Jacoba Garcia)" data-px="45.28" data-py="19.74" data-x="259.3" data-y="33.0" style="--w:0.190" d="M320.9 16.6 268.9 69.7 245.7 62.9 229.9 51.6 154.7 53.9 151.4 9.2 196.7 4.8 266.9 0.0 303.7 2.5 304.5 10.2Z"/>
+                <path class="cvm-b" data-n="Santor" data-px="55.87" data-py="51.50" data-x="359.8" data-y="359.6" style="--w:0.863" d="M397.6 324.5 420.6 354.7 414.7 383.1 342.5 404.3 286.6 323.2 342.1 324.1 372.0 319.6Z"/>
+                <path class="cvm-b" data-n="Sulpoc" data-px="26.78" data-py="26.35" data-x="83.9" data-y="101.0" style="--w:0.128" d="M30.6 9.1 47.3 23.6 70.3 32.7 87.4 55.9 107.7 90.3 112.6 90.7 154.7 53.9 164.8 94.6 158.4 99.7 71.6 137.8 40.8 64.9 0.0 12.6 10.5 7.2Z"/>
+                <path class="cvm-b" data-n="Suplang" data-px="30.31" data-py="20.81" data-x="117.4" data-y="44.0" style="--w:0.068" d="M151.4 9.2 154.7 53.9 112.6 90.7 107.7 90.3 87.4 55.9 70.3 32.7 47.3 23.6 30.6 9.1 84.7 15.1Z"/>
+                <path class="cvm-b" data-n="Talaga" data-px="37.87" data-py="49.81" data-x="189.1" data-y="342.2" style="--w:0.660" d="M316.3 278.5 328.4 300.4 329.5 309.2 342.1 324.1 286.6 323.2 252.7 341.7 174.6 389.4 155.3 370.9 161.6 360.3 131.8 337.3 148.1 320.8 178.7 312.3 278.8 271.7Z"/>
+                <path class="cvm-b" data-n="Tinurik" data-px="59.83" data-py="63.68" data-x="397.3" data-y="484.9" style="--w:0.540" d="M445.7 468.3 459.1 505.8 370.0 526.4 365.7 494.1 328.3 466.0 392.8 441.9 397.9 450.4 411.1 446.4 424.3 465.5Z"/>
+                <path class="cvm-b" data-n="Trapiche" data-px="63.55" data-py="48.84" data-x="432.6" data-y="332.3" style="--w:0.691" d="M421.4 306.2 438.5 308.9 456.7 321.1 470.9 341.6 495.4 348.8 513.5 361.0 518.0 374.5 502.5 381.7 482.1 372.3 453.8 364.1 436.1 355.2 420.6 354.7 397.6 324.5 402.9 301.8Z"/>
+                <path class="cvm-b" data-n="Ulango" data-px="59.22" data-py="24.98" data-x="391.5" data-y="86.9" style="--w:0.317" d="M429.5 63.5 436.2 81.3 429.3 88.5 431.2 100.0 418.3 102.9 350.4 133.5 277.1 159.9 272.6 126.3 298.2 89.3 307.5 103.5 320.8 110.5 328.3 100.0 343.1 95.1 344.5 86.0 367.6 77.2 366.8 66.2 389.8 58.3 415.6 66.3Z"/>
+                <path class="cvm-b" data-n="Wawa" data-px="36.33" data-py="66.41" data-x="174.5" data-y="513.0" style="--w:0.389" d="M225.0 526.7 205.4 540.0 120.1 555.7 129.5 543.4 140.4 515.1 145.0 488.4 180.1 477.3 185.8 467.0Z"/>
+              </g>
+              <g data-city="malvar" data-label="Malvar" data-cx="542.0" data-cy="634.4">
+                <path class="cvm-b" data-n="Bagong Pook" data-px="71.75" data-py="43.69" data-x="679.2" data-y="605.5" style="--w:0.272" d="M693.7 683.2 686.9 667.1 684.2 657.8 676.3 653.9 672.8 638.3 668.8 634.7 659.1 617.6 654.3 614.3 644.8 610.0 634.7 596.1 651.7 591.9 691.2 574.9 703.8 578.1 707.0 584.4 706.8 591.9 702.4 599.4 706.1 608.6 707.3 620.5 704.3 628.3 707.3 634.7 707.0 651.0 718.7 653.9 725.3 660.5 727.2 667.9 720.0 671.5 706.2 672.1Z"/>
+                <path class="cvm-b" data-n="Bilucao (San Isidro Western)" data-px="29.04" data-py="48.18" data-x="349.7" data-y="640.2" style="--w:0.000" d="M386.1 668.0 384.9 670.9 378.2 668.6 370.0 672.1 360.1 673.3 358.6 680.6 348.6 685.0 331.0 688.0 322.6 685.2 316.4 679.1 313.6 655.6 314.9 635.2 297.2 625.3 295.6 616.4 305.8 606.8 319.2 605.8 327.7 609.9 341.1 605.5 354.1 604.5 368.7 606.0 374.8 603.1 383.6 615.1 383.3 623.6 387.6 632.1 388.6 640.7 385.2 658.3Z"/>
+                <path class="cvm-b" data-n="Bulihan" data-px="49.26" data-py="46.38" data-x="505.7" data-y="626.3" style="--w:0.806" d="M545.8 640.0 559.5 676.9 525.9 686.0 530.1 678.3 526.6 666.8 511.8 663.8 505.9 660.9 497.3 661.7 483.3 678.0 474.6 683.0 469.2 681.0 465.1 672.8 455.4 666.0 445.3 668.7 438.3 666.4 432.7 669.6 425.8 667.6 421.1 670.8 413.7 670.6 399.5 665.9 405.2 659.0 415.9 652.7 435.5 653.2 450.9 637.4 455.2 627.0 455.5 617.6 448.9 609.1 449.5 599.6 468.4 595.9 477.5 601.8 536.3 574.6 536.1 604.2Z"/>
+                <path class="cvm-b" data-n="San Gregorio" data-px="37.82" data-py="41.99" data-x="417.4" data-y="592.3" style="--w:0.317" d="M449.5 599.6 448.9 609.1 441.4 611.4 419.1 602.6 401.4 603.3 388.3 601.6 374.8 603.1 368.7 606.0 354.1 604.5 341.1 605.5 327.7 609.9 319.2 605.8 324.9 598.1 336.6 594.1 351.8 594.1 360.1 588.5 368.3 586.9 392.3 585.8 399.6 587.8 406.7 586.6 419.3 579.3 431.2 590.4Z"/>
+                <path class="cvm-b" data-n="Luta Del Norte" data-px="61.74" data-py="45.69" data-x="602.0" data-y="620.9" style="--w:0.681" d="M654.3 614.3 642.6 617.0 611.8 626.0 608.0 629.8 595.3 633.5 549.6 650.6 545.8 640.0 552.0 633.9 568.8 623.0 580.9 618.9 602.5 609.4 638.1 601.3 644.8 610.0Z"/>
+                <path class="cvm-b" data-n="Luta Del Sur" data-px="67.14" data-py="47.18" data-x="643.7" data-y="632.5" style="--w:0.472" d="M672.8 638.3 664.8 643.3 620.7 653.8 610.4 658.3 559.5 676.9 549.6 650.6 595.3 633.5 608.0 629.8 611.8 626.0 642.6 617.0 654.3 614.3 659.1 617.6 668.8 634.7Z"/>
+                <path class="cvm-b" data-n="Poblacion" data-px="63.25" data-py="40.35" data-x="613.6" data-y="579.7" style="--w:0.532" d="M691.2 574.9 651.7 591.9 634.7 596.1 638.1 601.3 602.5 609.4 580.9 618.9 568.8 623.0 552.0 633.9 545.8 640.0 536.1 604.2 536.3 574.6 563.3 563.0 571.1 571.5 588.1 565.3 596.6 558.4 647.0 536.2 669.8 531.2 672.2 540.7 668.1 550.0 677.4 568.3Z"/>
+                <path class="cvm-b" data-n="San Andres" data-px="55.19" data-py="68.28" data-x="551.4" data-y="795.5" style="--w:0.161" d="M593.7 824.0 587.6 827.1 570.6 832.1 564.7 838.2 564.3 852.8 562.2 861.6 544.7 870.8 535.0 870.0 537.1 860.8 531.1 853.4 527.9 840.9 521.3 835.9 521.4 824.9 519.0 820.3 518.6 809.4 515.6 805.3 505.3 799.9 510.5 794.4 509.3 787.0 501.1 778.2 501.4 768.8 520.7 765.7 567.1 749.2 574.7 767.2 584.1 773.8 583.7 780.4 587.7 783.8 587.7 793.6 592.7 802.3 595.1 815.8Z"/>
+                <path class="cvm-b" data-n="San Fernando" data-px="64.96" data-py="53.37" data-x="626.8" data-y="680.3" style="--w:0.499" d="M686.9 667.1 680.6 671.6 676.2 682.3 663.8 694.2 648.5 701.3 616.0 712.2 607.4 717.1 557.7 730.6 555.4 722.4 547.3 719.6 545.3 712.4 537.8 706.4 540.7 701.4 533.9 691.8 525.9 686.0 559.5 676.9 610.4 658.3 620.7 653.8 664.8 643.3 672.8 638.3 676.3 653.9 684.2 657.8Z"/>
+                <path class="cvm-b" data-n="San Isidro East" data-px="37.42" data-py="46.55" data-x="414.3" data-y="627.6" style="--w:0.335" d="M448.9 609.1 455.5 617.6 455.2 627.0 450.9 637.4 435.5 653.2 415.9 652.7 405.2 659.0 399.5 665.9 386.1 668.0 385.2 658.3 388.6 640.7 387.6 632.1 383.3 623.6 383.6 615.1 374.8 603.1 388.3 601.6 401.4 603.3 419.1 602.6 441.4 611.4Z"/>
+                <path class="cvm-b" data-n="San Juan" data-px="48.62" data-py="56.57" data-x="500.8" data-y="705.0" style="--w:0.575" d="M525.9 686.0 533.9 691.8 540.7 701.4 537.8 706.4 545.3 712.4 547.3 719.6 555.4 722.4 557.7 730.6 554.9 738.1 567.1 749.2 520.7 765.7 501.4 768.8 491.5 762.3 493.2 748.8 491.2 739.5 482.8 730.7 469.4 725.3 463.5 712.2 438.2 704.6 427.8 699.0 426.1 689.4 418.0 684.3 407.7 675.0 402.3 678.3 391.5 675.8 384.9 670.9 386.1 668.0 399.5 665.9 413.7 670.6 421.1 670.8 425.8 667.6 432.7 669.6 438.3 666.4 445.3 668.7 455.4 666.0 465.1 672.8 469.2 681.0 474.6 683.0 483.3 678.0 497.3 661.7 505.9 660.9 511.8 663.8 526.6 666.8 530.1 678.3Z"/>
+                <path class="cvm-b" data-n="San Pedro II (Western)" data-px="45.59" data-py="39.90" data-x="477.4" data-y="576.2" style="--w:0.548" d="M492.4 556.2 506.9 588.5 477.5 601.8 468.4 595.9 449.5 599.6 431.2 590.4 419.3 579.3 479.9 550.5Z"/>
+                <path class="cvm-b" data-n="San Pedro I (Eastern)" data-px="51.54" data-py="37.71" data-x="523.3" data-y="559.3" style="--w:0.598" d="M563.3 563.0 536.3 574.6 506.9 588.5 492.4 556.2 500.2 552.0 525.3 533.8 528.1 539.6 542.5 533.2 558.1 527.8Z"/>
+                <path class="cvm-b" data-n="San Pioquinto" data-px="62.76" data-py="32.85" data-x="609.9" data-y="521.7" style="--w:0.317" d="M669.8 531.2 647.0 536.2 596.6 558.4 588.1 565.3 571.1 571.5 563.3 563.0 558.1 527.8 574.9 522.0 581.7 511.3 592.9 497.6 599.4 483.9 605.6 477.4 608.2 459.0 597.9 449.9 597.0 437.8 607.9 442.0 623.6 458.9 619.0 466.4 617.9 475.9 627.8 487.6 635.6 508.6 646.0 513.3 650.7 521.6 662.7 525.7Z"/>
+                <path class="cvm-b" data-n="Santiago" data-px="63.49" data-py="62.73" data-x="615.5" data-y="752.6" style="--w:0.277" d="M693.7 683.2 682.8 689.2 676.3 695.4 677.0 699.9 684.6 709.5 685.3 720.4 691.8 728.0 691.6 734.9 680.5 754.1 663.5 766.5 641.6 779.4 635.2 786.8 625.6 793.7 613.7 806.2 608.3 816.3 593.7 824.0 595.1 815.8 592.7 802.3 587.7 793.6 587.7 783.8 583.7 780.4 584.1 773.8 574.7 767.2 567.1 749.2 554.9 738.1 557.7 730.6 607.4 717.1 616.0 712.2 648.5 701.3 663.8 694.2 676.2 682.3 680.6 671.6 686.9 667.1Z"/>
+              </g>
+              <g data-city="santo" data-label="Santo Tomas City" data-cx="694.7" data-cy="417.9">
+                <path class="cvm-b" data-n="Barangay I (Pob.)" data-px="27.53" data-py="29.47" data-x="508.0" data-y="237.2" style="--w:0.457" d="M522.6 240.6 508.8 249.8 506.7 246.8 494.9 256.2 496.2 258.2 486.7 263.3 479.2 262.3 487.3 252.0 487.3 246.5 491.0 244.2 492.4 238.9 498.6 233.7 500.6 229.6 499.5 225.2 508.6 221.0Z"/>
+                <path class="cvm-b" data-n="Barangay II (Pob.)" data-px="28.89" data-py="30.66" data-x="520.6" data-y="251.8" style="--w:0.497" d="M535.0 257.3 531.7 258.5 515.6 260.6 511.7 263.0 502.8 250.1 506.7 246.8 508.8 249.8 522.6 240.6Z"/>
+                <path class="cvm-b" data-n="Barangay III (Pob.)" data-px="25.11" data-py="32.39" data-x="485.5" data-y="272.9" style="--w:0.468" d="M511.7 263.0 504.5 268.1 499.2 274.3 477.6 291.2 476.7 284.0 474.3 280.4 476.1 272.3 474.6 267.5 479.2 262.3 486.7 263.3 496.2 258.2 494.9 256.2 502.8 250.1Z"/>
+                <path class="cvm-b" data-n="Barangay IV (Pob.)" data-px="27.94" data-py="32.93" data-x="511.8" data-y="279.4" style="--w:0.521" d="M537.3 268.2 519.6 290.7 499.4 305.5 492.8 304.9 489.6 302.6 486.7 297.6 479.5 295.0 477.6 291.2 499.2 274.3 504.5 268.1 515.6 260.6 531.7 258.5 533.8 268.3Z"/>
+                <path class="cvm-b" data-n="San Agustin" data-px="63.87" data-py="49.48" data-x="845.7" data-y="481.4" style="--w:0.658" d="M867.0 502.0 798.3 490.3 797.8 488.4 864.1 451.3 862.8 489.2Z"/>
+                <path class="cvm-b" data-n="San Antonio" data-px="52.30" data-py="22.20" data-x="738.2" data-y="148.5" style="--w:0.430" d="M795.5 162.0 577.5 241.8 561.4 248.9 535.0 257.3 508.6 221.0 700.0 133.9 740.2 109.6 779.8 134.3Z"/>
+                <path class="cvm-b" data-n="San Bartolome" data-px="38.26" data-py="30.87" data-x="607.7" data-y="254.3" style="--w:0.613" d="M810.6 189.4 618.6 274.5 605.5 277.6 586.0 278.6 570.3 275.9 565.3 273.5 560.9 274.6 544.2 268.2 533.8 268.3 531.7 258.5 561.4 248.9 577.5 241.8 795.5 162.0Z"/>
+                <path class="cvm-b" data-n="San Felix" data-px="59.51" data-py="41.41" data-x="805.2" data-y="382.9" style="--w:0.758" d="M860.0 368.9 824.8 399.7 786.2 427.1 771.8 439.2 733.6 453.0 729.0 452.3 725.8 449.8 749.5 409.7 764.4 396.8 783.3 366.8 850.4 326.6Z"/>
+                <path class="cvm-b" data-n="San Fernando" data-px="65.38" data-py="64.64" data-x="859.7" data-y="666.3" style="--w:0.377" d="M898.1 701.9 885.8 711.1 867.6 731.6 833.7 679.8 831.3 670.7 825.3 623.7 834.8 614.7 878.8 581.9 877.7 620.4 882.8 645.1 889.5 665.0 892.2 690.2Z"/>
+                <path class="cvm-b" data-n="San Francisco" data-px="52.98" data-py="61.29" data-x="744.5" data-y="625.4" style="--w:0.554" d="M782.9 651.7 759.7 660.7 749.8 663.0 744.4 663.2 727.2 667.9 725.3 660.5 721.7 658.7 718.7 653.9 715.3 654.3 707.0 651.0 708.1 642.0 707.3 634.7 704.3 628.3 707.3 620.5 707.7 615.9 706.1 608.6 703.6 605.3 702.4 599.4 706.8 591.9 707.0 584.4 703.8 578.1 697.0 575.1 733.0 558.7 740.5 556.8 744.3 553.9 749.2 561.8 755.1 566.0 758.7 566.8 768.7 572.3 772.2 579.9 770.2 582.5 773.4 593.2 780.9 597.2 779.1 605.7 781.8 618.8 785.5 626.0 785.5 630.2 782.7 640.8 783.9 645.9Z"/>
+                <path class="cvm-b" data-n="San Isidro Norte" data-px="49.25" data-py="47.91" data-x="709.8" data-y="462.2" style="--w:0.902" d="M668.7 425.5 674.1 430.3 679.5 429.3 680.4 425.2 684.8 424.5 688.4 426.8 691.1 431.5 698.7 434.6 705.2 435.0 709.8 437.7 713.5 442.8 725.3 448.6 729.0 452.3 733.6 453.0 731.3 463.2 729.7 465.3 739.8 475.6 737.1 476.3 708.5 493.7 705.5 483.6 701.0 479.5 695.8 477.9 685.5 465.8 688.9 459.6 684.9 454.9 674.3 451.3 675.6 448.0 673.6 443.8 664.1 443.5 657.2 433.2 649.8 433.6 647.9 430.5 647.6 424.8 636.4 420.0 628.0 412.1 627.0 407.7 621.7 394.8 628.6 397.8 630.6 401.7 640.7 409.5 646.7 407.9 648.6 410.6 645.7 413.8 650.0 416.3 653.0 415.5 659.0 422.0Z"/>
+                <path class="cvm-b" data-n="San Isidro Sur" data-px="50.22" data-py="53.23" data-x="718.8" data-y="527.1" style="--w:0.766" d="M752.0 509.3 751.6 511.4 755.2 517.6 758.6 518.4 760.3 521.9 758.5 525.8 757.7 534.7 762.9 544.4 761.5 547.8 744.3 553.9 740.5 556.8 733.0 558.7 697.0 575.1 690.6 574.7 677.4 568.3 674.4 560.6 668.1 550.0 669.9 547.6 668.6 543.4 672.2 540.7 672.1 535.9 669.2 526.6 666.3 522.5 657.5 523.9 660.8 519.1 708.5 493.7 737.1 476.3 739.8 475.6 745.0 478.4 752.9 484.6 755.0 489.5 755.9 495.7 753.9 506.7Z"/>
+                <path class="cvm-b" data-n="San Joaquin" data-px="61.29" data-py="55.26" data-x="821.7" data-y="551.9" style="--w:0.614" d="M867.0 502.0 878.8 539.1 879.5 553.5 878.8 581.9 834.8 614.7 820.9 627.9 817.2 628.8 811.6 633.4 801.4 640.0 791.9 644.9 782.9 651.7 783.9 645.9 782.7 640.8 785.5 630.2 785.5 626.0 781.8 618.8 779.1 605.7 780.9 597.2 773.4 593.2 770.2 582.5 772.2 579.9 768.7 572.3 758.7 566.8 755.1 566.0 749.2 561.8 744.3 553.9 761.5 547.8 762.9 544.4 757.7 534.7 758.5 525.8 760.3 521.9 758.6 518.4 755.2 517.6 751.6 511.4 752.0 509.3 787.4 495.9 798.3 490.3Z"/>
+                <path class="cvm-b" data-n="San Jose" data-px="63.61" data-py="43.10" data-x="843.3" data-y="403.5" style="--w:0.688" d="M860.0 410.9 783.4 457.5 771.8 439.2 786.2 427.1 824.8 399.7 860.0 368.9Z"/>
+                <path class="cvm-b" data-n="San Juan" data-px="63.67" data-py="46.25" data-x="843.8" data-y="441.9" style="--w:0.684" d="M864.1 451.3 797.8 488.4 793.6 477.3 783.4 457.5 860.0 410.9 864.5 440.5Z"/>
+                <path class="cvm-b" data-n="San Luis" data-px="55.82" data-py="65.84" data-x="770.9" data-y="680.9" style="--w:0.428" d="M832.4 763.1 826.8 768.1 814.6 773.7 809.3 780.2 805.7 777.7 801.8 778.5 796.2 776.7 789.9 771.5 782.9 753.8 780.9 746.5 774.9 744.3 768.9 736.1 770.0 730.8 769.3 718.4 765.5 710.3 757.2 706.6 757.9 700.7 755.7 694.3 752.3 693.4 750.9 689.7 750.6 681.1 747.3 671.2 747.6 667.1 744.4 663.2 749.8 663.0 759.7 660.7 782.9 651.7 783.9 659.0 786.7 667.4 792.9 679.7 797.4 686.6 797.6 689.5 793.6 692.9 797.3 699.0 798.2 703.4 803.4 714.2 803.6 720.6 807.7 730.8 813.0 737.0 815.2 741.5 818.6 744.3 830.7 759.8Z"/>
+                <path class="cvm-b" data-n="San Miguel" data-px="46.61" data-py="33.12" data-x="685.3" data-y="281.8" style="--w:0.715" d="M819.0 208.2 804.5 227.2 794.3 233.2 771.1 244.0 740.5 268.4 738.1 274.2 733.5 277.9 728.9 289.5 714.3 299.2 706.6 308.5 697.1 315.6 675.6 316.5 666.0 320.0 663.5 323.7 656.5 320.6 652.8 324.8 643.5 325.3 638.9 330.4 630.7 333.0 624.8 330.1 620.0 331.3 617.9 337.1 612.4 341.1 613.2 344.5 607.3 348.2 602.8 355.9 597.9 358.6 593.4 346.3 569.2 301.8 541.5 268.0 544.2 268.2 560.9 274.6 565.3 273.5 570.3 275.9 586.0 278.6 605.5 277.6 618.6 274.5 810.6 189.4Z"/>
+                <path class="cvm-b" data-n="San Pablo" data-px="50.21" data-py="43.75" data-x="718.8" data-y="411.4" style="--w:0.948" d="M783.3 366.8 764.4 396.8 749.5 409.7 725.8 449.8 725.3 448.6 713.5 442.8 709.8 437.7 705.2 435.0 698.7 434.6 691.1 431.5 688.4 426.8 684.8 424.5 680.4 425.2 679.5 429.3 674.1 430.3 668.7 425.5 676.8 419.2 708.8 385.1 756.8 341.6Z"/>
+                <path class="cvm-b" data-n="San Pedro" data-px="44.67" data-py="42.24" data-x="667.3" data-y="393.0" style="--w:0.923" d="M756.8 341.6 708.8 385.1 676.8 419.2 668.7 425.5 659.0 422.0 653.0 415.5 650.0 416.3 645.7 413.8 648.6 410.6 646.7 407.9 640.7 409.5 630.6 401.7 628.6 397.8 621.7 394.8 657.4 369.3 688.8 359.3 742.6 329.0Z"/>
+                <path class="cvm-b" data-n="San Rafael" data-px="22.67" data-py="23.33" data-x="462.8" data-y="162.3" style="--w:0.279" d="M685.5 104.9 452.1 193.2 446.9 185.4 438.7 177.4 433.3 174.8 428.2 169.8 423.4 167.0 422.2 160.5 426.5 160.3 434.2 155.7 436.2 150.7 434.9 145.7 431.2 142.2 480.9 133.9 610.3 82.3 614.2 79.9 628.9 92.0 660.5 89.2 676.6 104.9Z"/>
+                <path class="cvm-b" data-n="San Roque" data-px="30.95" data-py="35.34" data-x="539.8" data-y="308.8" style="--w:0.604" d="M597.9 358.6 593.9 358.2 587.3 369.0 580.7 374.9 573.7 373.5 567.6 362.7 561.3 366.5 560.7 362.1 557.0 357.9 555.4 349.7 550.9 349.5 548.1 347.1 542.8 346.0 537.7 340.9 536.0 337.3 526.8 333.4 525.1 331.2 517.8 326.6 514.8 322.2 512.7 314.3 509.2 307.5 505.2 303.9 499.4 305.5 519.6 290.7 537.3 268.2 541.5 268.0 569.2 301.8 593.4 346.3Z"/>
+                <path class="cvm-b" data-n="San Vicente" data-px="45.97" data-py="37.80" data-x="679.4" data-y="338.9" style="--w:0.832" d="M830.1 232.2 804.8 256.0 800.7 268.2 795.4 275.6 776.5 287.4 762.6 300.3 742.6 329.0 688.8 359.3 657.4 369.3 621.7 394.8 618.8 391.6 613.9 389.8 607.7 384.1 604.7 383.1 599.0 384.4 594.8 388.1 578.8 379.3 580.7 374.9 587.3 369.0 593.9 358.2 597.9 358.6 602.8 355.9 607.3 348.2 613.2 344.5 612.4 341.1 617.9 337.1 620.0 331.3 624.8 330.1 630.7 333.0 638.9 330.4 643.5 325.3 652.8 324.8 656.5 320.6 663.5 323.7 666.0 320.0 675.6 316.5 697.1 315.6 706.6 308.5 714.3 299.2 728.9 289.5 733.5 277.9 738.1 274.2 740.5 268.4 771.1 244.0 794.3 233.2 804.5 227.2 819.0 208.2 825.9 221.4Z"/>
+                <path class="cvm-b" data-n="Santa Ana" data-px="54.94" data-py="48.16" data-x="762.7" data-y="465.3" style="--w:0.827" d="M783.4 457.5 793.6 477.3 798.3 490.3 787.4 495.9 752.0 509.3 753.9 506.7 755.9 495.7 755.0 489.5 752.9 484.6 745.0 478.4 739.8 475.6 729.7 465.3 731.3 463.2 733.6 453.0 771.8 439.2Z"/>
+                <path class="cvm-b" data-n="Santa Anastacia" data-px="23.65" data-py="18.72" data-x="472.0" data-y="106.1" style="--w:0.199" d="M614.2 79.9 610.3 82.3 480.9 133.9 431.2 142.2 428.6 140.4 425.7 133.8 429.2 122.9 432.1 120.3 435.2 110.7 434.2 103.7 429.6 96.8 429.3 88.5 436.2 81.3 435.8 75.1 430.2 71.0 429.9 62.1 434.6 58.1 439.9 47.7 445.3 54.1 448.2 60.6 449.0 65.6 451.7 66.3 453.5 71.7 462.7 75.0 465.2 77.8 470.6 75.1 475.4 75.1 479.4 71.4 480.3 65.1 489.0 63.6 492.4 64.7 497.2 62.9 501.8 67.2 507.7 63.8 512.9 67.3 520.4 68.3 529.6 67.6 536.3 71.9 542.8 73.3 546.4 72.0 555.7 72.7 561.7 75.4 568.2 73.2 576.0 72.8 579.5 74.8 582.0 79.7 586.4 81.7 592.7 80.6 593.5 82.7 604.5 83.2 606.1 81.1Z"/>
+                <path class="cvm-b" data-n="Santa Clara" data-px="62.18" data-py="68.93" data-x="830.0" data-y="718.6" style="--w:0.311" d="M867.6 731.6 851.7 748.1 843.5 755.3 832.4 763.1 830.7 759.8 818.6 744.3 815.2 741.5 813.0 737.0 807.7 730.8 803.6 720.6 803.4 714.2 798.2 703.4 797.3 699.0 793.6 692.9 797.6 689.5 797.4 686.6 792.9 679.7 786.7 667.4 783.9 659.0 782.9 651.7 791.9 644.9 801.4 640.0 811.6 633.4 817.2 628.8 820.9 627.9 825.3 623.7 829.1 656.6 831.3 670.7 833.7 679.8Z"/>
+                <path class="cvm-b" data-n="Santa Cruz" data-px="69.85" data-py="79.67" data-x="901.2" data-y="849.7" style="--w:0.000" d="M806.0 862.8 834.9 854.9 834.0 846.7 830.2 840.8 829.2 836.6 825.3 830.9 821.5 830.1 819.4 826.3 813.3 821.4 814.6 818.6 811.1 814.0 809.7 807.5 812.9 799.8 814.7 790.6 809.3 780.2 814.6 773.7 826.8 768.1 851.7 748.1 878.6 719.6 885.8 711.1 898.1 701.9 906.0 719.1 933.0 766.5 942.1 790.8 958.2 816.3 973.3 833.3 988.3 852.8 998.9 870.0 1011.4 882.3 981.4 901.8 977.7 908.2 966.9 920.5 955.2 921.1 940.7 926.6 933.9 927.7 915.7 925.0 906.4 924.8 898.6 920.2 889.1 919.3 880.7 917.3 867.7 908.6 860.9 905.1 855.7 898.4 851.7 895.7 834.0 889.2 831.6 890.8 826.8 889.9 821.6 884.9 807.7 867.4Z"/>
+                <path class="cvm-b" data-n="Santa Elena" data-px="59.53" data-py="35.57" data-x="805.4" data-y="311.7" style="--w:0.679" d="M850.4 326.6 783.3 366.8 742.6 329.0 762.6 300.3 776.5 287.4 795.4 275.6 800.7 268.2 804.8 256.0 830.1 232.2 837.4 248.5Z"/>
+                <path class="cvm-b" data-n="Santa Maria" data-px="43.89" data-py="49.62" data-x="660.0" data-y="483.1" style="--w:0.846" d="M621.7 394.8 627.0 407.7 628.0 412.1 636.4 420.0 647.6 424.8 647.9 430.5 649.8 433.6 657.2 433.2 664.1 443.5 673.6 443.8 675.6 448.0 674.3 451.3 684.9 454.9 688.9 459.6 685.5 465.8 695.8 477.9 701.0 479.5 705.5 483.6 708.5 493.7 660.8 519.1 657.5 523.9 650.7 521.6 646.0 513.3 635.6 508.6 630.9 494.7 627.5 490.6 627.8 487.6 617.9 475.9 619.0 466.4 623.6 458.9 619.1 456.0 616.5 451.9 612.2 450.5 612.0 446.6 607.9 442.0 602.8 439.1 597.0 437.8 593.7 423.2 596.0 419.9 593.1 411.8 588.8 410.2 591.0 406.3 585.4 400.6 587.3 396.5 584.6 394.2 584.9 388.8 578.3 385.3 575.0 381.8 578.8 379.3 594.8 388.1 599.0 384.4 604.7 383.1 607.7 384.1 613.9 389.8 618.8 391.6Z"/>
+                <path class="cvm-b" data-n="Santiago" data-px="27.44" data-py="26.18" data-x="507.2" data-y="197.1" style="--w:0.395" d="M740.2 109.6 700.0 133.9 499.5 225.2 491.4 217.0 487.3 211.7 478.4 205.1 466.1 200.0 457.1 200.3 452.1 193.2 685.5 104.9 708.2 101.7Z"/>
+                <path class="cvm-b" data-n="Santa Teresita" data-px="60.39" data-py="79.12" data-x="813.3" data-y="843.0" style="--w:0.078" d="M809.3 780.2 814.7 790.6 812.9 799.8 809.7 807.5 811.1 814.0 814.6 818.6 813.3 821.4 819.4 826.3 821.5 830.1 825.3 830.9 829.2 836.6 830.2 840.8 834.0 846.7 834.9 854.9 806.0 862.8 806.9 857.5 802.7 857.5 796.5 851.6 796.1 845.2 798.0 842.1 792.9 837.7 792.0 830.0 788.7 828.5 789.4 824.3 793.1 819.4 785.8 804.7 781.6 801.8 781.5 794.6 780.3 791.9 780.5 783.9 777.4 781.6 776.9 776.0 770.5 768.5 771.9 766.0 768.5 761.1 765.2 759.1 760.5 746.2 760.5 741.8 756.2 734.5 754.3 728.2 751.1 722.7 744.5 717.0 744.5 709.6 738.8 701.4 741.1 697.8 736.0 695.3 734.6 692.2 737.1 687.0 736.8 680.5 731.9 679.0 726.9 673.7 727.2 667.9 744.4 663.2 747.6 667.1 747.3 671.2 750.6 681.1 750.9 689.7 752.3 693.4 755.7 694.3 757.9 700.7 757.2 706.6 765.5 710.3 769.3 718.4 770.0 730.8 768.9 736.1 774.9 744.3 780.9 746.5 782.9 753.8 789.9 771.5 796.2 776.7 801.8 778.5 805.7 777.7Z"/>
+              </g>
             </g>
-            <use href="#cvm-tanauan-e" class="cvm-edge"/>
+
+            <!-- Above the cells: a city border must always win over the
+                 barangay hairlines it crosses. -->
+            <g class="cvm-edges">
+              <use href="#cvm-tanauan-e" class="cvm-edge-halo"/>
+              <use href="#cvm-malvar-e" class="cvm-edge-halo"/>
+              <use href="#cvm-santo-e" class="cvm-edge-halo"/>
+              <use href="#cvm-tanauan-e" class="cvm-edge" data-city="tanauan"/>
+              <use href="#cvm-malvar-e" class="cvm-edge" data-city="malvar"/>
+              <use href="#cvm-santo-e" class="cvm-edge" data-city="santo"/>
+            </g>
           </svg>
           <span class="cvm-pin" aria-hidden="true"><span class="cvm-pin-label"></span></span>
         </div>
       </div>
 
-      <div class="cvz-copy">
-        <span class="coverage-status">Launch city</span>
-        <h3 class="coverage-name">Tanauan City</h3>
-        <p class="cvz-lede">The largest of the three, and the one the other two lean on — 48 barangays running from the Taal lakeshore inland.</p>
-        <p class="cvz-hint"><span class="cvz-count">48</span> barangays &middot; point at the map to find yours</p>
-      </div>
-    </div>
+      <div class="cvu-find">
+        <!-- counted out of the DOM at runtime; the 93 here is the no-JS value -->
+        <p class="cvu-count"><b id="cvuNum">93</b> barangays covered</p>
 
-    <div class="cvz cvz--flip reveal">
-      <div class="cvz-map">
-        <div class="cvm-frame" style="width:81.38%">
-          <svg class="cvm" viewBox="125.6 267.8 771.6 772.9"
-               role="img" aria-labelledby="cvmT-malvar cvmD-malvar">
-            <title id="cvmT-malvar">Map of Malvar, Batangas</title>
-            <desc id="cvmD-malvar">The 15 barangays of Malvar are shaded as one service area: Bagong Pook, Bilucao (San Isidro Western), Bulihan, San Gregorio, Luta Del Norte, Luta Del Sur, Poblacion, San Andres, San Fernando, San Isidro East, San Juan, San Pedro II (Western), San Pedro I (Eastern), San Pioquinto, Santiago. Neighbouring Tanauan and Santo Tomas and the surrounding Batangas and Laguna municipalities are shown in grey for context.</desc>
-            <g class="cvm-back" mask="url(#cvm-m-malvar)">
-              <use href="#cvm-ctx" class="cvm-ctx"/>
-              <use href="#cvm-tanauan-e" class="cvm-sib"/>
-              <use href="#cvm-santo-e" class="cvm-sib"/>
-            </g>
-            <g class="cvm-cells">
-              <path class="cvm-b" data-n="Bagong Pook" data-px="71.75" data-py="43.69" d="M693.7 683.2 686.9 667.1 684.2 657.8 676.3 653.9 672.8 638.3 668.8 634.7 659.1 617.6 654.3 614.3 644.8 610.0 634.7 596.1 651.7 591.9 691.2 574.9 703.8 578.1 707.0 584.4 706.8 591.9 702.4 599.4 706.1 608.6 707.3 620.5 704.3 628.3 707.3 634.7 707.0 651.0 718.7 653.9 725.3 660.5 727.2 667.9 720.0 671.5 706.2 672.1Z"/>
-              <path class="cvm-b" data-n="Bilucao (San Isidro Western)" data-px="29.04" data-py="48.18" d="M386.1 668.0 384.9 670.9 378.2 668.6 370.0 672.1 360.1 673.3 358.6 680.6 348.6 685.0 331.0 688.0 322.6 685.2 316.4 679.1 313.6 655.6 314.9 635.2 297.2 625.3 295.6 616.4 305.8 606.8 319.2 605.8 327.7 609.9 341.1 605.5 354.1 604.5 368.7 606.0 374.8 603.1 383.6 615.1 383.3 623.6 387.6 632.1 388.6 640.7 385.2 658.3Z"/>
-              <path class="cvm-b" data-n="Bulihan" data-px="49.26" data-py="46.38" d="M545.8 640.0 559.5 676.9 525.9 686.0 530.1 678.3 526.6 666.8 511.8 663.8 505.9 660.9 497.3 661.7 483.3 678.0 474.6 683.0 469.2 681.0 465.1 672.8 455.4 666.0 445.3 668.7 438.3 666.4 432.7 669.6 425.8 667.6 421.1 670.8 413.7 670.6 399.5 665.9 405.2 659.0 415.9 652.7 435.5 653.2 450.9 637.4 455.2 627.0 455.5 617.6 448.9 609.1 449.5 599.6 468.4 595.9 477.5 601.8 536.3 574.6 536.1 604.2Z"/>
-              <path class="cvm-b" data-n="San Gregorio" data-px="37.82" data-py="41.99" d="M449.5 599.6 448.9 609.1 441.4 611.4 419.1 602.6 401.4 603.3 388.3 601.6 374.8 603.1 368.7 606.0 354.1 604.5 341.1 605.5 327.7 609.9 319.2 605.8 324.9 598.1 336.6 594.1 351.8 594.1 360.1 588.5 368.3 586.9 392.3 585.8 399.6 587.8 406.7 586.6 419.3 579.3 431.2 590.4Z"/>
-              <path class="cvm-b" data-n="Luta Del Norte" data-px="61.74" data-py="45.69" d="M654.3 614.3 642.6 617.0 611.8 626.0 608.0 629.8 595.3 633.5 549.6 650.6 545.8 640.0 552.0 633.9 568.8 623.0 580.9 618.9 602.5 609.4 638.1 601.3 644.8 610.0Z"/>
-              <path class="cvm-b" data-n="Luta Del Sur" data-px="67.14" data-py="47.18" d="M672.8 638.3 664.8 643.3 620.7 653.8 610.4 658.3 559.5 676.9 549.6 650.6 595.3 633.5 608.0 629.8 611.8 626.0 642.6 617.0 654.3 614.3 659.1 617.6 668.8 634.7Z"/>
-              <path class="cvm-b" data-n="Poblacion" data-px="63.25" data-py="40.35" d="M691.2 574.9 651.7 591.9 634.7 596.1 638.1 601.3 602.5 609.4 580.9 618.9 568.8 623.0 552.0 633.9 545.8 640.0 536.1 604.2 536.3 574.6 563.3 563.0 571.1 571.5 588.1 565.3 596.6 558.4 647.0 536.2 669.8 531.2 672.2 540.7 668.1 550.0 677.4 568.3Z"/>
-              <path class="cvm-b" data-n="San Andres" data-px="55.19" data-py="68.28" d="M593.7 824.0 587.6 827.1 570.6 832.1 564.7 838.2 564.3 852.8 562.2 861.6 544.7 870.8 535.0 870.0 537.1 860.8 531.1 853.4 527.9 840.9 521.3 835.9 521.4 824.9 519.0 820.3 518.6 809.4 515.6 805.3 505.3 799.9 510.5 794.4 509.3 787.0 501.1 778.2 501.4 768.8 520.7 765.7 567.1 749.2 574.7 767.2 584.1 773.8 583.7 780.4 587.7 783.8 587.7 793.6 592.7 802.3 595.1 815.8Z"/>
-              <path class="cvm-b" data-n="San Fernando" data-px="64.96" data-py="53.37" d="M686.9 667.1 680.6 671.6 676.2 682.3 663.8 694.2 648.5 701.3 616.0 712.2 607.4 717.1 557.7 730.6 555.4 722.4 547.3 719.6 545.3 712.4 537.8 706.4 540.7 701.4 533.9 691.8 525.9 686.0 559.5 676.9 610.4 658.3 620.7 653.8 664.8 643.3 672.8 638.3 676.3 653.9 684.2 657.8Z"/>
-              <path class="cvm-b" data-n="San Isidro East" data-px="37.42" data-py="46.55" d="M448.9 609.1 455.5 617.6 455.2 627.0 450.9 637.4 435.5 653.2 415.9 652.7 405.2 659.0 399.5 665.9 386.1 668.0 385.2 658.3 388.6 640.7 387.6 632.1 383.3 623.6 383.6 615.1 374.8 603.1 388.3 601.6 401.4 603.3 419.1 602.6 441.4 611.4Z"/>
-              <path class="cvm-b" data-n="San Juan" data-px="48.62" data-py="56.57" d="M525.9 686.0 533.9 691.8 540.7 701.4 537.8 706.4 545.3 712.4 547.3 719.6 555.4 722.4 557.7 730.6 554.9 738.1 567.1 749.2 520.7 765.7 501.4 768.8 491.5 762.3 493.2 748.8 491.2 739.5 482.8 730.7 469.4 725.3 463.5 712.2 438.2 704.6 427.8 699.0 426.1 689.4 418.0 684.3 407.7 675.0 402.3 678.3 391.5 675.8 384.9 670.9 386.1 668.0 399.5 665.9 413.7 670.6 421.1 670.8 425.8 667.6 432.7 669.6 438.3 666.4 445.3 668.7 455.4 666.0 465.1 672.8 469.2 681.0 474.6 683.0 483.3 678.0 497.3 661.7 505.9 660.9 511.8 663.8 526.6 666.8 530.1 678.3Z"/>
-              <path class="cvm-b" data-n="San Pedro II (Western)" data-px="45.59" data-py="39.90" d="M492.4 556.2 506.9 588.5 477.5 601.8 468.4 595.9 449.5 599.6 431.2 590.4 419.3 579.3 479.9 550.5Z"/>
-              <path class="cvm-b" data-n="San Pedro I (Eastern)" data-px="51.54" data-py="37.71" d="M563.3 563.0 536.3 574.6 506.9 588.5 492.4 556.2 500.2 552.0 525.3 533.8 528.1 539.6 542.5 533.2 558.1 527.8Z"/>
-              <path class="cvm-b" data-n="San Pioquinto" data-px="62.76" data-py="32.85" d="M669.8 531.2 647.0 536.2 596.6 558.4 588.1 565.3 571.1 571.5 563.3 563.0 558.1 527.8 574.9 522.0 581.7 511.3 592.9 497.6 599.4 483.9 605.6 477.4 608.2 459.0 597.9 449.9 597.0 437.8 607.9 442.0 623.6 458.9 619.0 466.4 617.9 475.9 627.8 487.6 635.6 508.6 646.0 513.3 650.7 521.6 662.7 525.7Z"/>
-              <path class="cvm-b" data-n="Santiago" data-px="63.49" data-py="62.73" d="M693.7 683.2 682.8 689.2 676.3 695.4 677.0 699.9 684.6 709.5 685.3 720.4 691.8 728.0 691.6 734.9 680.5 754.1 663.5 766.5 641.6 779.4 635.2 786.8 625.6 793.7 613.7 806.2 608.3 816.3 593.7 824.0 595.1 815.8 592.7 802.3 587.7 793.6 587.7 783.8 583.7 780.4 584.1 773.8 574.7 767.2 567.1 749.2 554.9 738.1 557.7 730.6 607.4 717.1 616.0 712.2 648.5 701.3 663.8 694.2 676.2 682.3 680.6 671.6 686.9 667.1Z"/>
-            </g>
-            <use href="#cvm-malvar-e" class="cvm-edge"/>
-          </svg>
-          <span class="cvm-pin" aria-hidden="true"><span class="cvm-pin-label"></span></span>
+        <!-- Enhancement: with JS off the map and the copy still render, and
+             every barangay name is in the map <desc> above. -->
+        <div class="cvu-search">
+          <label class="cvu-label" for="cvuInput">Find your barangay</label>
+          <input class="cvu-input" id="cvuInput" type="text" placeholder="Type your barangay"
+                 autocomplete="off" autocapitalize="words" spellcheck="false"
+                 role="combobox" aria-expanded="false" aria-controls="cvuList"
+                 aria-autocomplete="list" aria-describedby="cvuHint"/>
+          <ul class="cvu-list" id="cvuList" role="listbox" aria-label="Matching barangays" hidden></ul>
+        </div>
+        <p class="cvu-card-note" id="cvuHint">Across Tanauan City, Malvar and Santo Tomas City.</p>
+        <p class="cvu-verdict" id="cvuVerdict" role="status" aria-live="polite"></p>
+        <button type="button" class="cvu-reset" id="cvuReset" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" aria-hidden="true"><polyline points="9 14 4 14 4 19"/><polyline points="15 10 20 10 20 5"/><line x1="4" y1="14" x2="10" y2="20"/><line x1="20" y1="10" x2="14" y2="4"/></svg>
+          See the whole area
+        </button>
+      </div>
+
+      <div class="cvu-cards">
+        <div class="cvu-card" data-city="tanauan">
+          <div class="cvu-card-top">
+            <h3 class="coverage-name">Tanauan City</h3>
+            <span class="cvu-count-b">48 barangays</span>
+          </div>
+          <p class="cvu-card-note">The largest of the three, running from the Taal lakeshore inland.</p>
+        </div>
+        <div class="cvu-card" data-city="malvar">
+          <div class="cvu-card-top">
+            <h3 class="coverage-name">Malvar</h3>
+            <span class="cvu-count-b">15 barangays</span>
+          </div>
+          <p class="cvu-card-note">The smallest of the three, and the hinge — the only one that borders both of the others.</p>
+        </div>
+        <div class="cvu-card" data-city="santo">
+          <div class="cvu-card-top">
+            <h3 class="coverage-name">Santo Tomas City</h3>
+            <span class="cvu-count-b">30 barangays</span>
+          </div>
+          <p class="cvu-card-note">Stretched north along the Laguna provincial line, at the top of the service area.</p>
         </div>
       </div>
-
-      <div class="cvz-copy">
-        <span class="coverage-status">Launch city</span>
-        <h3 class="coverage-name">Malvar</h3>
-        <p class="cvz-lede">The most compact of the three, and the only one that shares a border with both of the others.</p>
-        <p class="cvz-hint"><span class="cvz-count">15</span> barangays &middot; point at the map to find yours</p>
-      </div>
     </div>
 
-    <div class="cvz reveal">
-      <div class="cvz-map">
-        <div class="cvm-frame" style="width:98.0%">
-          <svg class="cvm" viewBox="252.2 -122.3 929.2 1220.0"
-               role="img" aria-labelledby="cvmT-santo cvmD-santo">
-            <title id="cvmT-santo">Map of Santo Tomas City, Batangas</title>
-            <desc id="cvmD-santo">The 30 barangays of Santo Tomas City are shaded as one service area: Barangay I (Pob.), Barangay II (Pob.), Barangay III (Pob.), Barangay IV (Pob.), San Agustin, San Antonio, San Bartolome, San Felix, San Fernando, San Francisco, San Isidro Norte, San Isidro Sur, San Joaquin, San Jose, San Juan, San Luis, San Miguel, San Pablo, San Pedro, San Rafael, San Roque, San Vicente, Santa Ana, Santa Anastacia, Santa Clara, Santa Cruz, Santa Elena, Santa Maria, Santiago, Santa Teresita. Neighbouring Tanauan and Malvar and the surrounding Batangas and Laguna municipalities are shown in grey for context.</desc>
-            <g class="cvm-back" mask="url(#cvm-m-santo)">
-              <use href="#cvm-ctx" class="cvm-ctx"/>
-              <use href="#cvm-tanauan-e" class="cvm-sib"/>
-              <use href="#cvm-malvar-e" class="cvm-sib"/>
-            </g>
-            <g class="cvm-cells">
-              <path class="cvm-b" data-n="Barangay I (Pob.)" data-px="27.53" data-py="29.47" d="M522.6 240.6 508.8 249.8 506.7 246.8 494.9 256.2 496.2 258.2 486.7 263.3 479.2 262.3 487.3 252.0 487.3 246.5 491.0 244.2 492.4 238.9 498.6 233.7 500.6 229.6 499.5 225.2 508.6 221.0Z"/>
-              <path class="cvm-b" data-n="Barangay II (Pob.)" data-px="28.89" data-py="30.66" d="M535.0 257.3 531.7 258.5 515.6 260.6 511.7 263.0 502.8 250.1 506.7 246.8 508.8 249.8 522.6 240.6Z"/>
-              <path class="cvm-b" data-n="Barangay III (Pob.)" data-px="25.11" data-py="32.39" d="M511.7 263.0 504.5 268.1 499.2 274.3 477.6 291.2 476.7 284.0 474.3 280.4 476.1 272.3 474.6 267.5 479.2 262.3 486.7 263.3 496.2 258.2 494.9 256.2 502.8 250.1Z"/>
-              <path class="cvm-b" data-n="Barangay IV (Pob.)" data-px="27.94" data-py="32.93" d="M537.3 268.2 519.6 290.7 499.4 305.5 492.8 304.9 489.6 302.6 486.7 297.6 479.5 295.0 477.6 291.2 499.2 274.3 504.5 268.1 515.6 260.6 531.7 258.5 533.8 268.3Z"/>
-              <path class="cvm-b" data-n="San Agustin" data-px="63.87" data-py="49.48" d="M867.0 502.0 798.3 490.3 797.8 488.4 864.1 451.3 862.8 489.2Z"/>
-              <path class="cvm-b" data-n="San Antonio" data-px="52.30" data-py="22.20" d="M795.5 162.0 577.5 241.8 561.4 248.9 535.0 257.3 508.6 221.0 700.0 133.9 740.2 109.6 779.8 134.3Z"/>
-              <path class="cvm-b" data-n="San Bartolome" data-px="38.26" data-py="30.87" d="M810.6 189.4 618.6 274.5 605.5 277.6 586.0 278.6 570.3 275.9 565.3 273.5 560.9 274.6 544.2 268.2 533.8 268.3 531.7 258.5 561.4 248.9 577.5 241.8 795.5 162.0Z"/>
-              <path class="cvm-b" data-n="San Felix" data-px="59.51" data-py="41.41" d="M860.0 368.9 824.8 399.7 786.2 427.1 771.8 439.2 733.6 453.0 729.0 452.3 725.8 449.8 749.5 409.7 764.4 396.8 783.3 366.8 850.4 326.6Z"/>
-              <path class="cvm-b" data-n="San Fernando" data-px="65.38" data-py="64.64" d="M898.1 701.9 885.8 711.1 867.6 731.6 833.7 679.8 831.3 670.7 825.3 623.7 834.8 614.7 878.8 581.9 877.7 620.4 882.8 645.1 889.5 665.0 892.2 690.2Z"/>
-              <path class="cvm-b" data-n="San Francisco" data-px="52.98" data-py="61.29" d="M782.9 651.7 759.7 660.7 749.8 663.0 744.4 663.2 727.2 667.9 725.3 660.5 721.7 658.7 718.7 653.9 715.3 654.3 707.0 651.0 708.1 642.0 707.3 634.7 704.3 628.3 707.3 620.5 707.7 615.9 706.1 608.6 703.6 605.3 702.4 599.4 706.8 591.9 707.0 584.4 703.8 578.1 697.0 575.1 733.0 558.7 740.5 556.8 744.3 553.9 749.2 561.8 755.1 566.0 758.7 566.8 768.7 572.3 772.2 579.9 770.2 582.5 773.4 593.2 780.9 597.2 779.1 605.7 781.8 618.8 785.5 626.0 785.5 630.2 782.7 640.8 783.9 645.9Z"/>
-              <path class="cvm-b" data-n="San Isidro Norte" data-px="49.25" data-py="47.91" d="M668.7 425.5 674.1 430.3 679.5 429.3 680.4 425.2 684.8 424.5 688.4 426.8 691.1 431.5 698.7 434.6 705.2 435.0 709.8 437.7 713.5 442.8 725.3 448.6 729.0 452.3 733.6 453.0 731.3 463.2 729.7 465.3 739.8 475.6 737.1 476.3 708.5 493.7 705.5 483.6 701.0 479.5 695.8 477.9 685.5 465.8 688.9 459.6 684.9 454.9 674.3 451.3 675.6 448.0 673.6 443.8 664.1 443.5 657.2 433.2 649.8 433.6 647.9 430.5 647.6 424.8 636.4 420.0 628.0 412.1 627.0 407.7 621.7 394.8 628.6 397.8 630.6 401.7 640.7 409.5 646.7 407.9 648.6 410.6 645.7 413.8 650.0 416.3 653.0 415.5 659.0 422.0Z"/>
-              <path class="cvm-b" data-n="San Isidro Sur" data-px="50.22" data-py="53.23" d="M752.0 509.3 751.6 511.4 755.2 517.6 758.6 518.4 760.3 521.9 758.5 525.8 757.7 534.7 762.9 544.4 761.5 547.8 744.3 553.9 740.5 556.8 733.0 558.7 697.0 575.1 690.6 574.7 677.4 568.3 674.4 560.6 668.1 550.0 669.9 547.6 668.6 543.4 672.2 540.7 672.1 535.9 669.2 526.6 666.3 522.5 657.5 523.9 660.8 519.1 708.5 493.7 737.1 476.3 739.8 475.6 745.0 478.4 752.9 484.6 755.0 489.5 755.9 495.7 753.9 506.7Z"/>
-              <path class="cvm-b" data-n="San Joaquin" data-px="61.29" data-py="55.26" d="M867.0 502.0 878.8 539.1 879.5 553.5 878.8 581.9 834.8 614.7 820.9 627.9 817.2 628.8 811.6 633.4 801.4 640.0 791.9 644.9 782.9 651.7 783.9 645.9 782.7 640.8 785.5 630.2 785.5 626.0 781.8 618.8 779.1 605.7 780.9 597.2 773.4 593.2 770.2 582.5 772.2 579.9 768.7 572.3 758.7 566.8 755.1 566.0 749.2 561.8 744.3 553.9 761.5 547.8 762.9 544.4 757.7 534.7 758.5 525.8 760.3 521.9 758.6 518.4 755.2 517.6 751.6 511.4 752.0 509.3 787.4 495.9 798.3 490.3Z"/>
-              <path class="cvm-b" data-n="San Jose" data-px="63.61" data-py="43.10" d="M860.0 410.9 783.4 457.5 771.8 439.2 786.2 427.1 824.8 399.7 860.0 368.9Z"/>
-              <path class="cvm-b" data-n="San Juan" data-px="63.67" data-py="46.25" d="M864.1 451.3 797.8 488.4 793.6 477.3 783.4 457.5 860.0 410.9 864.5 440.5Z"/>
-              <path class="cvm-b" data-n="San Luis" data-px="55.82" data-py="65.84" d="M832.4 763.1 826.8 768.1 814.6 773.7 809.3 780.2 805.7 777.7 801.8 778.5 796.2 776.7 789.9 771.5 782.9 753.8 780.9 746.5 774.9 744.3 768.9 736.1 770.0 730.8 769.3 718.4 765.5 710.3 757.2 706.6 757.9 700.7 755.7 694.3 752.3 693.4 750.9 689.7 750.6 681.1 747.3 671.2 747.6 667.1 744.4 663.2 749.8 663.0 759.7 660.7 782.9 651.7 783.9 659.0 786.7 667.4 792.9 679.7 797.4 686.6 797.6 689.5 793.6 692.9 797.3 699.0 798.2 703.4 803.4 714.2 803.6 720.6 807.7 730.8 813.0 737.0 815.2 741.5 818.6 744.3 830.7 759.8Z"/>
-              <path class="cvm-b" data-n="San Miguel" data-px="46.61" data-py="33.12" d="M819.0 208.2 804.5 227.2 794.3 233.2 771.1 244.0 740.5 268.4 738.1 274.2 733.5 277.9 728.9 289.5 714.3 299.2 706.6 308.5 697.1 315.6 675.6 316.5 666.0 320.0 663.5 323.7 656.5 320.6 652.8 324.8 643.5 325.3 638.9 330.4 630.7 333.0 624.8 330.1 620.0 331.3 617.9 337.1 612.4 341.1 613.2 344.5 607.3 348.2 602.8 355.9 597.9 358.6 593.4 346.3 569.2 301.8 541.5 268.0 544.2 268.2 560.9 274.6 565.3 273.5 570.3 275.9 586.0 278.6 605.5 277.6 618.6 274.5 810.6 189.4Z"/>
-              <path class="cvm-b" data-n="San Pablo" data-px="50.21" data-py="43.75" d="M783.3 366.8 764.4 396.8 749.5 409.7 725.8 449.8 725.3 448.6 713.5 442.8 709.8 437.7 705.2 435.0 698.7 434.6 691.1 431.5 688.4 426.8 684.8 424.5 680.4 425.2 679.5 429.3 674.1 430.3 668.7 425.5 676.8 419.2 708.8 385.1 756.8 341.6Z"/>
-              <path class="cvm-b" data-n="San Pedro" data-px="44.67" data-py="42.24" d="M756.8 341.6 708.8 385.1 676.8 419.2 668.7 425.5 659.0 422.0 653.0 415.5 650.0 416.3 645.7 413.8 648.6 410.6 646.7 407.9 640.7 409.5 630.6 401.7 628.6 397.8 621.7 394.8 657.4 369.3 688.8 359.3 742.6 329.0Z"/>
-              <path class="cvm-b" data-n="San Rafael" data-px="22.67" data-py="23.33" d="M685.5 104.9 452.1 193.2 446.9 185.4 438.7 177.4 433.3 174.8 428.2 169.8 423.4 167.0 422.2 160.5 426.5 160.3 434.2 155.7 436.2 150.7 434.9 145.7 431.2 142.2 480.9 133.9 610.3 82.3 614.2 79.9 628.9 92.0 660.5 89.2 676.6 104.9Z"/>
-              <path class="cvm-b" data-n="San Roque" data-px="30.95" data-py="35.34" d="M597.9 358.6 593.9 358.2 587.3 369.0 580.7 374.9 573.7 373.5 567.6 362.7 561.3 366.5 560.7 362.1 557.0 357.9 555.4 349.7 550.9 349.5 548.1 347.1 542.8 346.0 537.7 340.9 536.0 337.3 526.8 333.4 525.1 331.2 517.8 326.6 514.8 322.2 512.7 314.3 509.2 307.5 505.2 303.9 499.4 305.5 519.6 290.7 537.3 268.2 541.5 268.0 569.2 301.8 593.4 346.3Z"/>
-              <path class="cvm-b" data-n="San Vicente" data-px="45.97" data-py="37.80" d="M830.1 232.2 804.8 256.0 800.7 268.2 795.4 275.6 776.5 287.4 762.6 300.3 742.6 329.0 688.8 359.3 657.4 369.3 621.7 394.8 618.8 391.6 613.9 389.8 607.7 384.1 604.7 383.1 599.0 384.4 594.8 388.1 578.8 379.3 580.7 374.9 587.3 369.0 593.9 358.2 597.9 358.6 602.8 355.9 607.3 348.2 613.2 344.5 612.4 341.1 617.9 337.1 620.0 331.3 624.8 330.1 630.7 333.0 638.9 330.4 643.5 325.3 652.8 324.8 656.5 320.6 663.5 323.7 666.0 320.0 675.6 316.5 697.1 315.6 706.6 308.5 714.3 299.2 728.9 289.5 733.5 277.9 738.1 274.2 740.5 268.4 771.1 244.0 794.3 233.2 804.5 227.2 819.0 208.2 825.9 221.4Z"/>
-              <path class="cvm-b" data-n="Santa Ana" data-px="54.94" data-py="48.16" d="M783.4 457.5 793.6 477.3 798.3 490.3 787.4 495.9 752.0 509.3 753.9 506.7 755.9 495.7 755.0 489.5 752.9 484.6 745.0 478.4 739.8 475.6 729.7 465.3 731.3 463.2 733.6 453.0 771.8 439.2Z"/>
-              <path class="cvm-b" data-n="Santa Anastacia" data-px="23.65" data-py="18.72" d="M614.2 79.9 610.3 82.3 480.9 133.9 431.2 142.2 428.6 140.4 425.7 133.8 429.2 122.9 432.1 120.3 435.2 110.7 434.2 103.7 429.6 96.8 429.3 88.5 436.2 81.3 435.8 75.1 430.2 71.0 429.9 62.1 434.6 58.1 439.9 47.7 445.3 54.1 448.2 60.6 449.0 65.6 451.7 66.3 453.5 71.7 462.7 75.0 465.2 77.8 470.6 75.1 475.4 75.1 479.4 71.4 480.3 65.1 489.0 63.6 492.4 64.7 497.2 62.9 501.8 67.2 507.7 63.8 512.9 67.3 520.4 68.3 529.6 67.6 536.3 71.9 542.8 73.3 546.4 72.0 555.7 72.7 561.7 75.4 568.2 73.2 576.0 72.8 579.5 74.8 582.0 79.7 586.4 81.7 592.7 80.6 593.5 82.7 604.5 83.2 606.1 81.1Z"/>
-              <path class="cvm-b" data-n="Santa Clara" data-px="62.18" data-py="68.93" d="M867.6 731.6 851.7 748.1 843.5 755.3 832.4 763.1 830.7 759.8 818.6 744.3 815.2 741.5 813.0 737.0 807.7 730.8 803.6 720.6 803.4 714.2 798.2 703.4 797.3 699.0 793.6 692.9 797.6 689.5 797.4 686.6 792.9 679.7 786.7 667.4 783.9 659.0 782.9 651.7 791.9 644.9 801.4 640.0 811.6 633.4 817.2 628.8 820.9 627.9 825.3 623.7 829.1 656.6 831.3 670.7 833.7 679.8Z"/>
-              <path class="cvm-b" data-n="Santa Cruz" data-px="69.85" data-py="79.67" d="M806.0 862.8 834.9 854.9 834.0 846.7 830.2 840.8 829.2 836.6 825.3 830.9 821.5 830.1 819.4 826.3 813.3 821.4 814.6 818.6 811.1 814.0 809.7 807.5 812.9 799.8 814.7 790.6 809.3 780.2 814.6 773.7 826.8 768.1 851.7 748.1 878.6 719.6 885.8 711.1 898.1 701.9 906.0 719.1 933.0 766.5 942.1 790.8 958.2 816.3 973.3 833.3 988.3 852.8 998.9 870.0 1011.4 882.3 981.4 901.8 977.7 908.2 966.9 920.5 955.2 921.1 940.7 926.6 933.9 927.7 915.7 925.0 906.4 924.8 898.6 920.2 889.1 919.3 880.7 917.3 867.7 908.6 860.9 905.1 855.7 898.4 851.7 895.7 834.0 889.2 831.6 890.8 826.8 889.9 821.6 884.9 807.7 867.4Z"/>
-              <path class="cvm-b" data-n="Santa Elena" data-px="59.53" data-py="35.57" d="M850.4 326.6 783.3 366.8 742.6 329.0 762.6 300.3 776.5 287.4 795.4 275.6 800.7 268.2 804.8 256.0 830.1 232.2 837.4 248.5Z"/>
-              <path class="cvm-b" data-n="Santa Maria" data-px="43.89" data-py="49.62" d="M621.7 394.8 627.0 407.7 628.0 412.1 636.4 420.0 647.6 424.8 647.9 430.5 649.8 433.6 657.2 433.2 664.1 443.5 673.6 443.8 675.6 448.0 674.3 451.3 684.9 454.9 688.9 459.6 685.5 465.8 695.8 477.9 701.0 479.5 705.5 483.6 708.5 493.7 660.8 519.1 657.5 523.9 650.7 521.6 646.0 513.3 635.6 508.6 630.9 494.7 627.5 490.6 627.8 487.6 617.9 475.9 619.0 466.4 623.6 458.9 619.1 456.0 616.5 451.9 612.2 450.5 612.0 446.6 607.9 442.0 602.8 439.1 597.0 437.8 593.7 423.2 596.0 419.9 593.1 411.8 588.8 410.2 591.0 406.3 585.4 400.6 587.3 396.5 584.6 394.2 584.9 388.8 578.3 385.3 575.0 381.8 578.8 379.3 594.8 388.1 599.0 384.4 604.7 383.1 607.7 384.1 613.9 389.8 618.8 391.6Z"/>
-              <path class="cvm-b" data-n="Santiago" data-px="27.44" data-py="26.18" d="M740.2 109.6 700.0 133.9 499.5 225.2 491.4 217.0 487.3 211.7 478.4 205.1 466.1 200.0 457.1 200.3 452.1 193.2 685.5 104.9 708.2 101.7Z"/>
-              <path class="cvm-b" data-n="Santa Teresita" data-px="60.39" data-py="79.12" d="M809.3 780.2 814.7 790.6 812.9 799.8 809.7 807.5 811.1 814.0 814.6 818.6 813.3 821.4 819.4 826.3 821.5 830.1 825.3 830.9 829.2 836.6 830.2 840.8 834.0 846.7 834.9 854.9 806.0 862.8 806.9 857.5 802.7 857.5 796.5 851.6 796.1 845.2 798.0 842.1 792.9 837.7 792.0 830.0 788.7 828.5 789.4 824.3 793.1 819.4 785.8 804.7 781.6 801.8 781.5 794.6 780.3 791.9 780.5 783.9 777.4 781.6 776.9 776.0 770.5 768.5 771.9 766.0 768.5 761.1 765.2 759.1 760.5 746.2 760.5 741.8 756.2 734.5 754.3 728.2 751.1 722.7 744.5 717.0 744.5 709.6 738.8 701.4 741.1 697.8 736.0 695.3 734.6 692.2 737.1 687.0 736.8 680.5 731.9 679.0 726.9 673.7 727.2 667.9 744.4 663.2 747.6 667.1 747.3 671.2 750.6 681.1 750.9 689.7 752.3 693.4 755.7 694.3 757.9 700.7 757.2 706.6 765.5 710.3 769.3 718.4 770.0 730.8 768.9 736.1 774.9 744.3 780.9 746.5 782.9 753.8 789.9 771.5 796.2 776.7 801.8 778.5 805.7 777.7Z"/>
-            </g>
-            <use href="#cvm-santo-e" class="cvm-edge"/>
-          </svg>
-          <span class="cvm-pin" aria-hidden="true"><span class="cvm-pin-label"></span></span>
-        </div>
-      </div>
-
-      <div class="cvz-copy">
-        <span class="coverage-status">Launch city</span>
-        <h3 class="coverage-name">Santo Tomas City</h3>
-        <p class="cvz-lede">Thirty barangays stretched north along the Laguna provincial line, at the top of our service area.</p>
-        <p class="cvz-hint"><span class="cvz-count">30</span> barangays &middot; point at the map to find yours</p>
-      </div>
-    </div>
-
-    <div class="reveal" style="text-align:center; margin-top: clamp(3rem, 6vw, 5.5rem);">
+    <!-- margin was tuned for the three stacked bands; the chip now follows
+         a single block and no longer needs that much air above it -->
+    <div class="reveal" style="text-align:center; margin-top: clamp(1.25rem, 2.5vw, 2rem);">
       <div style="display:inline-flex;align-items:center;gap:8px;background:var(--brand-light);color:var(--brand-ink);font-size:var(--t-ui);font-weight:600;padding:8px 20px;border-radius:100px;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         More cities coming soon
@@ -1820,7 +2089,7 @@ footer {
      Three static customer-app screens reproduced in pure HTML/CSS
      from papafix-customer-ui-guide.pdf — booking, confirm, payment.
      3-up on desktop; horizontally swipeable (scroll-snap) on mobile. -->
-<section id="app" style="scroll-margin-top:90px;">
+<section id="app" class="sx" data-hide-nav data-fit style="scroll-margin-top:90px;">
   <div class="container">
     <div class="app-header reveal">
       <div class="section-eyebrow">The App</div>
@@ -2305,6 +2574,28 @@ footer {
       <div class="section-eyebrow">Launching Soon</div>
       <h2 class="cta-h">Your aircon,<br/><span>sorted.</span></h2>
       <p class="cta-sub">Tanauan, Malvar, and Santo Tomas go first, and if you're on the waitlist you'll hear from us the day the app goes live on Google Play.</p>
+
+      <!-- The page's second conversion point. #cta used to offer only an
+           anchor back up to the hero, which asks someone already convinced
+           by #app and #how to scroll the whole page back to act. Same
+           endpoint, same handler: the WAITLIST FORM script binds every
+           form[data-waitlist], so the timeout and error handling are not
+           duplicated here. -->
+      <div class="cta-signup">
+        <p class="cta-signup-lead">Get an email the day we launch in your city.</p>
+        <form id="ctaForm" class="wl-form" data-waitlist>
+          <label for="ctaEmail" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;">Your email address</label>
+          <input id="ctaEmail" type="email" name="email" placeholder="Your email address" required autocomplete="email" inputmode="email" />
+          <!-- Spam honeypot: Web3Forms drops any submission where botcheck is set. -->
+          <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;"/>
+          <button type="submit">Notify Me</button>
+        </form>
+        <p id="ctaMsg" class="wl-msg" role="status" aria-live="polite" style="display:none;"></p>
+        <!-- Data Privacy Act expects notice where the data is collected — that
+             means at this form too, not only at the hero's. -->
+        <p class="wl-fineprint">We'll only email you about the launch — nothing else. See our <a href="/privacy" class="privacy-link">Privacy Policy</a>.</p>
+      </div>
+
       <a href="#waitlist" class="btn-google-play">
         <svg viewBox="0 0 24 24" fill="currentColor" style="width:24px;height:24px;flex-shrink:0;"><path d="M3.18 23.76A2 2 0 0 1 2 22V2a2 2 0 0 1 1.18-1.76l11.33 11.76L3.18 23.76zM22.46 12l-3.03 1.71-3.39-3.51 3.39-3.51 3.04 1.71A2 2 0 0 1 22.46 12zM3.69.54L17.2 7.72 14.01 11 3.69.54zM3.69 23.46l10.32-10.46 3.19 3.28L3.69 23.46z"/></svg>
         <div class="btn-google-play-text"><small>Coming soon on</small><span>Google Play</span></div>
@@ -2483,6 +2774,112 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
 
 document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => observer.observe(el));
+
+/* Zoom the opening sections out until they fit the screen — the way
+   pressing F11 hands you the page at a smaller scale rather than a
+   scrollbar. Only the three that are meant to hold one screen each.
+
+   zoom, not transform: scale. zoom takes the layout with it, so the
+   section genuinely becomes one screen tall; a transform would shrink
+   the picture while leaving the over-tall box behind it, and the page
+   would still scroll past empty space.
+
+   Floored at 0.8: past that, shrinking body copy to fit is worse than
+   letting the section scroll, and it is a real accessibility cost for
+   anyone who already needs large text. Below 900px the layout is a
+   single stacked column and zooming it out helps nobody, so it is off
+   there and those sections simply scroll. */
+(function () {
+  var MIN_ZOOM = 0.8;
+  var MIN_WIDTH = 900;
+  var secs = Array.prototype.slice.call(document.querySelectorAll('[data-fit]'));
+  if (!secs.length || !('zoom' in document.documentElement.style)) return;
+
+  function fit() {
+    var wide = window.innerWidth >= MIN_WIDTH;
+    secs.forEach(function (s) {
+      // every element child, not just the first: #app keeps its header in
+      // a .container and the phone row as a sibling beside it
+      var kids = Array.prototype.slice.call(s.children);
+      kids.forEach(function (k) { k.style.zoom = ''; });   // measure unzoomed
+      if (!wide || !kids.length) return;
+      var cs = getComputedStyle(s);
+      var pt = parseFloat(cs.paddingTop), pb = parseFloat(cs.paddingBottom);
+      var room = window.innerHeight - pt - pb;
+      // the section box itself, so content that overflows a min-height of
+      // one screen is measured whatever shape the children are in
+      var need = s.getBoundingClientRect().height - pt - pb;
+      if (need <= room + 0.5) return;   // already fits; leave it alone
+      var z = room / need;
+      if (z < MIN_ZOOM) return;
+      kids.forEach(function (k) { k.style.zoom = z.toFixed(4); });
+    });
+  }
+
+  fit();
+  // web fonts land after first paint and change every measurement
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  var t = null;
+  window.addEventListener('resize', function () {
+    clearTimeout(t); t = setTimeout(fit, 150);
+  });
+}());
+
+/* The opening sections open out to fill the screen as you reach them,
+   and close again as you leave — so moving between them reads as one
+   panel handing over to the next rather than a hard cut. Two-way on
+   purpose: a section you are not in should not still be full bleed.
+
+   Their own observer at a much higher threshold than the shared .reveal
+   one above: that fires at 12% for a 30px fade, which on a full-screen
+   panel would finish the expansion before the section was anywhere near
+   filling the view.
+
+   The same threshold decides the nav. #coverage and #app carry
+   data-hide-nav; #hero does not, because the hero is where people land
+   and the nav has to be there. */
+(function () {
+  var secs = Array.prototype.slice.call(document.querySelectorAll('.sx'));
+  if (!secs.length) return;
+  var nav  = document.querySelector('nav');
+  var menu = document.getElementById('mobileMenu');
+
+  // which nav-hiding sections currently hold the view. A list, not a
+  // counter: the observer reports non-intersecting elements on its first
+  // run too, and a counter would go negative and never recover.
+  var holding = [];
+  function hold(el, on) {
+    var i = holding.indexOf(el);
+    if (on && i < 0) holding.push(el);
+    else if (!on && i > -1) holding.splice(i, 1);
+  }
+  function syncNav() {
+    if (!nav) return;
+    // never strand an open mobile menu behind a hamburger that has faded out
+    var menuOpen = !!(menu && menu.classList.contains('open'));
+    nav.classList.toggle('is-away', holding.length > 0 && !menuOpen);
+  }
+
+  if (!('IntersectionObserver' in window)) {
+    secs.forEach(function (s) { s.classList.add('in-view'); });
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      e.target.classList.toggle('in-view', e.isIntersecting);
+      if (e.target.hasAttribute('data-hide-nav')) hold(e.target, e.isIntersecting);
+    });
+    syncNav();
+  }, { threshold: 0.45 });
+  secs.forEach(function (s) { io.observe(s); });
+
+  // Opening the menu has to hand the nav straight back, and closing it
+  // has to take it away again — both happen without any scrolling, so
+  // the observer above will not fire.
+  if (menu && window.MutationObserver) {
+    new MutationObserver(syncNav).observe(menu, { attributes: true, attributeFilter: ['class'] });
+  }
+}());
 document.querySelectorAll('.bento').forEach((el, i) => {
   el.style.transitionDelay = (i % 4) * 0.07 + 's';
   observer.observe(el);
@@ -2676,85 +3073,474 @@ window.addEventListener('scroll', () => {
   update();
 }());
 
-/* ═══ COVERAGE MAPS ═════════════════════════════════════════════
-   Each map walks its own barangays on a loop: the cell lights and a
-   pin names it. Pointing at the map hands the pin over to you and
-   parks the loop until you leave.
-   The loop only runs while its row is on screen, and never under
-   prefers-reduced-motion — there it settles on one barangay and stays.
-   Enhancement only: every name is in the map's <desc>, so nothing is
-   gated behind the motion. */
+/* ═══ COVERAGE MAP ══════════════════════════════════════════════
+   One canvas, 93 barangays, and the search that reads them.
+
+   Four things share this block because they share the same state:
+     · the ambient pin-walk (the idle state, unchanged in spirit)
+     · the coverage bloom, once per page load
+     · the barangay search, built from the DOM
+     · the camera, which animates the viewBox on selection
+
+   Enhancement only. With JS off the map renders finished, the counter
+   reads 93, and every barangay name is in the map's <desc> — only the
+   search is gated behind the script. Under prefers-reduced-motion every
+   animation here resolves instantly to its end state and the search
+   behaves identically.
+
+   Note on coordinates: data-px/data-py are percentages of each locality's
+   ORIGINAL viewBox and are meaningless on the merged canvas, so they are
+   kept as provenance and the pin rides on data-x/data-y — the same
+   anchors re-projected into the shared user space. The pin is HTML, not
+   SVG, so it must be re-projected through the live viewBox on every
+   camera frame; that is what pinAt() is for. */
 (function () {
   var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var STEP = 2400;   // dwell on each barangay
-  var LIFT = 220;    // pin fade-out before it moves
+  var STEP   = 2400;   // dwell on each barangay
+  var LIFT   = 220;    // pin fade-out before it moves
+  var RESUME = 12000;  // quiet time before the walk picks itself back up
 
-  Array.prototype.forEach.call(document.querySelectorAll('.cvz'), function (row) {
-    var svg = row.querySelector('.cvm');
-    var pin = row.querySelector('.cvm-pin');
-    if (!svg || !pin) return;
-    var label = pin.querySelector('.cvm-pin-label');
-    var cells = Array.prototype.slice.call(svg.querySelectorAll('.cvm-b'));
-    if (!cells.length) return;
+  var wrap = document.querySelector('.cvu');
+  if (!wrap) return;
+  var svg   = wrap.querySelector('.cvm');
+  var pin   = wrap.querySelector('.cvm-pin');
+  var cellG = wrap.querySelector('.cvm-cells');
+  var edgeG = wrap.querySelector('.cvm-edges');
+  if (!svg || !pin || !cellG) return;
 
-    var i = 0, timer = null, hop = null, lit = null, held = false;
+  var label = pin.querySelector('.cvm-pin-label');
+  var cells = Array.prototype.slice.call(cellG.querySelectorAll('.cvm-b'));
+  if (!cells.length) return;
+  var groups = Array.prototype.slice.call(cellG.querySelectorAll('g[data-city]'));
+  var cards  = Array.prototype.slice.call(wrap.querySelectorAll('.cvu-card'));
 
-    // Put the pin down on a barangay: light the cell, name it, move there.
-    function place(el) {
-      if (lit) lit.classList.remove('is-hot');
-      lit = el;
-      el.classList.add('is-hot');
-      label.textContent = el.getAttribute('data-n');
-      pin.style.left = el.getAttribute('data-px') + '%';
-      pin.style.top  = el.getAttribute('data-py') + '%';
-      pin.classList.add('is-on');
-    }
+  var input   = document.getElementById('cvuInput');
+  var list    = document.getElementById('cvuList');
+  var verdict = document.getElementById('cvuVerdict');
+  var reset   = document.getElementById('cvuReset');
+  var num     = document.getElementById('cvuNum');
 
-    // Loop moves lift the pin first and reposition it while it is
-    // invisible; pointer moves cut straight there.
-    function show(el, quick) {
-      if (el === lit) return;
-      clearTimeout(hop);
-      pin.classList.toggle('is-quick', !!quick);
-      if (quick || !pin.classList.contains('is-on')) { place(el); return; }
-      pin.classList.remove('is-on');
-      hop = setTimeout(function () { place(el); }, LIFT);
-    }
-    function step() { show(cells[i]); i = (i + 1) % cells.length; }
-    function start() {
-      if (REDUCED || held || timer) return;
-      step();
-      timer = setInterval(step, STEP);
-    }
-    function stop() { clearInterval(timer); timer = null; clearTimeout(hop); }
+  /* ── camera ──────────────────────────────────────────────────
+     viewBox is not interpolable by CSS transition in any reliable
+     cross-browser way, so it is lerped by hand on rAF. */
+  var HOME = svg.getAttribute('viewBox').split(/[\s,]+/).map(Number);
+  var AR   = HOME[2] / HOME[3];
+  var view = HOME.slice();
+  var camRAF = null;
 
-    // Idle rows cost nothing; three intervals ticking off screen would.
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) { e.isIntersecting ? start() : stop(); });
-      }, { threshold: 0.25 }).observe(row);
-    } else { start(); }
+  function pinAt(el) {
+    var x = parseFloat(el.getAttribute('data-x'));
+    var y = parseFloat(el.getAttribute('data-y'));
+    pin.style.left = ((x - view[0]) / view[2] * 100).toFixed(3) + '%';
+    pin.style.top  = ((y - view[1]) / view[3] * 100).toFixed(3) + '%';
+  }
+  function setView(v) {
+    view = v;
+    svg.setAttribute('viewBox', v[0].toFixed(2) + ' ' + v[1].toFixed(2) + ' ' +
+                                v[2].toFixed(2) + ' ' + v[3].toFixed(2));
+    if (lit) pinAt(lit);
+  }
 
-    if (REDUCED) show(cells[0]);
+  // A cell's frame: padded, floored so a two-street poblacion barangay
+  // does not zoom to a featureless field of orange, forced to the canvas
+  // aspect ratio so nothing letterboxes, then held inside the map.
+  function frameOf(el) {
+    var b;
+    try { b = el.getBBox(); } catch (e) { return HOME.slice(); }
+    if (!b || !b.width) return HOME.slice();
+    var pad = Math.max(b.width, b.height) * 0.85 + 20;
+    var w = b.width + pad * 2, h = b.height + pad * 2;
+    var MIN = HOME[2] * 0.3;
+    if (w < MIN) w = MIN;
+    if (h < MIN / AR) h = MIN / AR;
+    if (w / h < AR) w = h * AR; else h = w / AR;
+    var x = b.x + b.width / 2 - w / 2;
+    var y = b.y + b.height / 2 - h / 2;
+    x = w <= HOME[2] ? Math.max(HOME[0], Math.min(x, HOME[0] + HOME[2] - w)) : HOME[0] + (HOME[2] - w) / 2;
+    y = h <= HOME[3] ? Math.max(HOME[1], Math.min(y, HOME[1] + HOME[3] - h)) : HOME[1] + (HOME[3] - h) / 2;
+    return [x, y, w, h];
+  }
 
-    svg.addEventListener('pointermove', function (e) {
-      var el = e.target;
-      if (!el || !el.classList || !el.classList.contains('cvm-b')) return;
-      held = true; stop(); show(el, true);
+  function flyTo(target) {
+    if (camRAF) { cancelAnimationFrame(camRAF); camRAF = null; }
+    if (REDUCED) { setView(target); return; }   // jump-cut, never a lerp
+    var from = view.slice(), t0 = null, DUR = 500;
+    camRAF = requestAnimationFrame(function frame(ts) {
+      if (t0 === null) t0 = ts;
+      var p = Math.min(1, (ts - t0) / DUR);
+      var e = 1 - Math.pow(1 - p, 3);          // ease-out cubic
+      setView([from[0] + (target[0] - from[0]) * e,
+               from[1] + (target[1] - from[1]) * e,
+               from[2] + (target[2] - from[2]) * e,
+               from[3] + (target[3] - from[3]) * e]);
+      camRAF = p < 1 ? requestAnimationFrame(frame) : null;
     });
-    svg.addEventListener('pointerdown', function (e) {
-      var el = e.target;
-      if (el && el.classList && el.classList.contains('cvm-b')) {
-        held = true; stop(); show(el, true);
+  }
+
+  /* ── the pin walk ────────────────────────────────────────────
+     The pin never travels: it fades, moves while invisible, settles. */
+  var i = 0, timer = null, hop = null, lit = null, held = false;
+  var idle = null, onScreen = false, ready = false, bloomed = false;
+
+  function place(el) {
+    if (lit) lit.classList.remove('is-hot');
+    lit = el;
+    el.classList.add('is-hot');
+    label.textContent = el.getAttribute('data-n');
+    pinAt(el);
+    pin.classList.add('is-on');
+  }
+  function show(el, quick) {
+    if (el === lit) { pin.classList.add('is-on'); return; }
+    clearTimeout(hop);
+    pin.classList.toggle('is-quick', !!quick);
+    if (quick || !pin.classList.contains('is-on')) { place(el); return; }
+    pin.classList.remove('is-on');
+    hop = setTimeout(function () { place(el); }, LIFT);
+  }
+  function step() { show(cells[i]); i = (i + 1) % cells.length; }
+  function start() {
+    if (REDUCED || held || timer || !ready || !onScreen) return;
+    step();
+    timer = setInterval(step, STEP);
+  }
+  function stop() { clearInterval(timer); timer = null; clearTimeout(hop); }
+
+  // Any interaction parks the walk. It comes back only once the visitor
+  // has stopped and cleared the field — resuming under a stated answer
+  // would pull the map out from under it.
+  function park() {
+    held = true; stop();
+    clearTimeout(idle);
+    idle = setTimeout(unpark, RESUME);
+  }
+  function unpark() {
+    clearTimeout(idle);
+    if (input && input.value.trim()) return;
+    held = false;
+    toOverview();
+    i = (cells.indexOf(lit) + 1) % cells.length;
+    start();
+  }
+
+  /* ── coverage bloom ──────────────────────────────────────────
+     Outlines draw themselves in, then the cells fill outward from each
+     locality's centroid. Three simultaneous spreads, so it reads as
+     coverage spreading rather than a map fading in. Once per load. */
+  var LEAD = 380, SPREAD = 730;   // whole sequence lands under 1.2s
+
+  function bloom() {
+    if (REDUCED) { if (num) num.textContent = cells.length; ready = true; return; }
+
+    // <use> is not an SVGGeometryElement — measure the path it points at
+    if (edgeG) {
+      Array.prototype.forEach.call(edgeG.querySelectorAll('use'), function (u) {
+        var ref = document.getElementById((u.getAttribute('href') || '').slice(1));
+        if (!ref || !ref.getTotalLength) return;
+        try { u.style.setProperty('--len', Math.ceil(ref.getTotalLength())); } catch (e) {}
+      });
+      edgeG.classList.add('is-arming');
+    }
+
+    groups.forEach(function (g) {
+      var cx = parseFloat(g.getAttribute('data-cx'));
+      var cy = parseFloat(g.getAttribute('data-cy'));
+      var gc = Array.prototype.slice.call(g.querySelectorAll('.cvm-b'));
+      gc.sort(function (a, b) { return dist(a, cx, cy) - dist(b, cx, cy); });
+      var last = gc.length - 1 || 1;
+      gc.forEach(function (el, k) {
+        el.style.transitionDelay = Math.round(LEAD + (k / last) * SPREAD) + 'ms';
+      });
+    });
+    cellG.classList.add('is-bloom');
+
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        if (edgeG) edgeG.classList.add('is-drawn');
+        cellG.classList.add('is-bloomed');
+      });
+    });
+
+    // The counter is the same figure, counted out of the DOM, so it can
+    // never disagree with the map. It lands as the last cell fills.
+    if (num) {
+      var total = cells.length, t0 = null;
+      num.textContent = '0';
+      requestAnimationFrame(function tick(ts) {
+        if (t0 === null) t0 = ts;
+        var p = (ts - t0 - LEAD) / SPREAD;
+        p = p < 0 ? 0 : p > 1 ? 1 : p;
+        num.textContent = Math.round(p * total);
+        if (p < 1) requestAnimationFrame(tick);
+      });
+    }
+
+    // Drop the stagger once it has played, or every later hover inherits it.
+    setTimeout(function () {
+      cells.forEach(function (el) { el.style.transitionDelay = ''; });
+      ready = true;
+      start();
+    }, LEAD + SPREAD + 420);
+  }
+  function dist(el, cx, cy) {
+    var dx = parseFloat(el.getAttribute('data-x')) - cx;
+    var dy = parseFloat(el.getAttribute('data-y')) - cy;
+    return dx * dx + dy * dy;
+  }
+
+  /* ── search index, built from the cells themselves ───────────
+     No second list of names to drift out of step with the SVG. */
+  function fold(s) {
+    s = String(s);
+    if (s.normalize) s = s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    return s.toLowerCase();
+  }
+  function compact(s) { return fold(s).replace(/[^a-z0-9]+/g, ''); }
+
+  var INDEX = cells.map(function (el) {
+    var g = el.parentNode;
+    var name = el.getAttribute('data-n');
+    var f = fold(name);
+    // "Banjo Laurel (Banjo West)" has to answer to all three of
+    // itself, "Banjo Laurel" and "Banjo West"
+    var bare  = f.replace(/\s*\([^)]*\)\s*/g, ' ').trim();
+    var alias = (f.match(/\(([^)]*)\)/) || [])[1] || '';
+    var forms = [f, bare, alias].filter(Boolean);
+    return {
+      el: el, name: name, group: g,
+      city: g.getAttribute('data-label'),
+      cityKey: g.getAttribute('data-city'),
+      keys: forms.map(compact).filter(Boolean),
+      tokens: forms.join(' ').split(/[^a-z0-9]+/).filter(Boolean)
+    };
+  });
+
+  function search(q) {
+    var cq = compact(q);
+    if (!cq) return [];
+    var qt = fold(q).split(/[^a-z0-9]+/).filter(Boolean);
+    var hits = [];
+    INDEX.forEach(function (it) {
+      var r = -1, k;
+      for (k = 0; k < it.keys.length; k++) {
+        if (it.keys[k].indexOf(cq) === 0) { r = 0; break; }   // prefix
+      }
+      if (r < 0 && qt.length && qt.every(function (t) {       // word starts
+        return it.tokens.some(function (n) { return n.indexOf(t) === 0; });
+      })) r = 1;
+      if (r < 0) for (k = 0; k < it.keys.length; k++) {
+        if (it.keys[k].indexOf(cq) > -1) { r = 2; break; }    // anywhere
+      }
+      if (r >= 0) hits.push({ r: r, it: it });
+    });
+    hits.sort(function (a, b) { return a.r - b.r || (a.it.name < b.it.name ? -1 : 1); });
+    return hits.slice(0, 6).map(function (h) { return h.it; });
+  }
+
+  /* ── the combobox ────────────────────────────────────────────── */
+  var results = [], active = -1;
+
+  function openList() {
+    if (!list.children.length) return;
+    list.hidden = false;
+    input.setAttribute('aria-expanded', 'true');
+  }
+  function closeList() {
+    list.hidden = true;
+    input.setAttribute('aria-expanded', 'false');
+    input.removeAttribute('aria-activedescendant');
+    active = -1;
+  }
+  function setActive(n) {
+    active = n;
+    Array.prototype.forEach.call(list.children, function (li, k) {
+      var on = k === n;
+      li.classList.toggle('is-active', on);
+      li.setAttribute('aria-selected', on ? 'true' : 'false');
+      if (on && li.scrollIntoView) li.scrollIntoView({ block: 'nearest' });
+    });
+    if (n >= 0) input.setAttribute('aria-activedescendant', list.children[n].id);
+    else input.removeAttribute('aria-activedescendant');
+  }
+  function renderList(items) {
+    list.innerHTML = '';
+    items.forEach(function (it, k) {
+      var li = document.createElement('li');
+      li.className = 'cvu-opt';
+      li.id = 'cvu-opt-' + k;
+      li.setAttribute('role', 'option');
+      li.setAttribute('aria-selected', 'false');
+      var n = document.createElement('span');
+      n.textContent = it.name;
+      // San Jose, San Juan, San Fernando and Santiago each exist twice
+      // across the three localities — an option is never just a name
+      var c = document.createElement('span');
+      c.className = 'cvu-opt-city';
+      c.textContent = it.city;
+      li.appendChild(n); li.appendChild(c);
+      li.addEventListener('pointerdown', function (e) { e.preventDefault(); choose(it); });
+      list.appendChild(li);
+    });
+    active = -1;
+  }
+
+  function flag(kind, text) {
+    var s = document.createElement('span');
+    s.className = 'cvu-flag ' + kind;
+    s.textContent = text;
+    return s;
+  }
+  function say(nodes) {
+    verdict.innerHTML = '';
+    nodes.forEach(function (n) {
+      verdict.appendChild(typeof n === 'string' ? document.createTextNode(n) : n);
+    });
+  }
+
+  function emphasise(key) {
+    groups.forEach(function (g) { g.classList.toggle('is-city', g.getAttribute('data-city') === key); });
+    cards.forEach(function (c) { c.classList.toggle('is-city', c.getAttribute('data-city') === key); });
+  }
+
+  // The answer lands first; the camera is decoration that follows it.
+  function choose(it) {
+    input.value = it.name;
+    closeList();
+    park();
+    show(it.el, true);
+    var b = document.createElement('b');
+    b.textContent = it.name;
+    say([flag('is-yes', 'Covered'), b, ' — ' + it.city + '.']);
+    cellG.classList.remove('is-lifting');
+    cellG.classList.add('is-focused');
+    emphasise(it.cityKey);
+    reset.hidden = false;
+    flyTo(frameOf(it.el));
+  }
+
+  // Never a dead end: an out-of-area visitor is demand data for city #4.
+  function noMatch(q) {
+    cellG.classList.remove('is-focused', 'is-lifting');
+    emphasise(null);
+    var b = document.createElement('b');
+    b.textContent = q;
+    var tell = document.createElement('button');
+    tell.type = 'button';
+    tell.className = 'cvu-tell';
+    tell.textContent = 'Tell us where you are';
+    tell.addEventListener('click', toWaitlist);
+    say([flag('is-no', 'Not yet'), b, ' is not in our first three cities yet. ', tell]);
+  }
+
+  function toWaitlist() {
+    var t = document.getElementById('waitlist');
+    var e = document.getElementById('waitlistEmail');
+    if (t && t.scrollIntoView) t.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth', block: 'center' });
+    if (e) setTimeout(function () { e.focus(); }, REDUCED ? 0 : 420);
+  }
+
+  function toOverview() {
+    cellG.classList.remove('is-focused', 'is-lifting');
+    emphasise(null);
+    reset.hidden = true;
+    flyTo(HOME.slice());
+  }
+
+  if (input && list && verdict && reset) {
+    input.addEventListener('input', function () {
+      park();
+      var q = input.value.trim();
+      if (!q) { closeList(); say([]); toOverview(); return; }
+      results = search(q);
+      if (results.length) { renderList(results); openList(); }
+      else { closeList(); if (q.length >= 2) noMatch(q); }
+    });
+
+    input.addEventListener('keydown', function (e) {
+      var k = e.key, n = list.children.length;
+      if (k === 'ArrowDown' || k === 'Down') {
+        if (n) { openList(); setActive((active + 1) % n); e.preventDefault(); }
+      } else if (k === 'ArrowUp' || k === 'Up') {
+        if (n) { openList(); setActive((active - 1 + n) % n); e.preventDefault(); }
+      } else if (k === 'Enter') {
+        e.preventDefault();
+        if (!list.hidden && active >= 0) choose(results[active]);
+        else if (results.length) choose(results[0]);
+        else if (input.value.trim()) noMatch(input.value.trim());
+      } else if (k === 'Escape' || k === 'Esc') {
+        // first Escape closes the list, a second one flies back out —
+        // the zoom must never be somewhere you can get stuck
+        if (!list.hidden) closeList();
+        else toOverview();
       }
     });
-    svg.addEventListener('pointerleave', function () {
-      held = false;
-      // pick up the walk from wherever the pointer left it
-      i = (cells.indexOf(lit) + 1) % cells.length;
-      start();
+
+    input.addEventListener('blur', function () { setTimeout(closeList, 120); });
+    reset.addEventListener('click', function () { toOverview(); input.focus(); });
+
+    // Escape works from anywhere while the camera is in, not just the field
+    document.addEventListener('keydown', function (e) {
+      if ((e.key === 'Escape' || e.key === 'Esc') && cellG.classList.contains('is-focused')) toOverview();
+    });
+  }
+
+  // Hovering a card lifts that whole locality — the reason the cells are
+  // grouped by city in the first place.
+  cards.forEach(function (card) {
+    var key = card.getAttribute('data-city');
+    card.addEventListener('pointerenter', function () {
+      if (cellG.classList.contains('is-focused')) return;
+      cellG.classList.add('is-lifting');
+      emphasise(key);
+    });
+    card.addEventListener('pointerleave', function () {
+      if (cellG.classList.contains('is-focused')) return;
+      cellG.classList.remove('is-lifting');
+      emphasise(null);
     });
   });
+
+  /* ── pointer on the map ──────────────────────────────────────── */
+  function cellOf(e) {
+    var el = e.target;
+    return el && el.classList && el.classList.contains('cvm-b') ? el : null;
+  }
+  svg.addEventListener('pointermove', function (e) {
+    var el = cellOf(e);
+    if (!el) return;
+    park(); show(el, true);
+  });
+  svg.addEventListener('pointerdown', function (e) {
+    var el = cellOf(e);
+    if (!el) return;
+    park(); show(el, true);
+    for (var k = 0; k < INDEX.length; k++) if (INDEX[k].el === el) { choose(INDEX[k]); return; }
+  });
+  svg.addEventListener('pointerleave', function () {
+    if ((input && input.value.trim()) || cellG.classList.contains('is-focused')) return;
+    held = false;
+    i = (cells.indexOf(lit) + 1) % cells.length;
+    start();
+  });
+
+  /* ── gating: nothing ticks or blooms off screen ──────────────── */
+  if (REDUCED) {
+    // the equivalent static resting state: everything at its end value
+    ready = true;
+    if (num) num.textContent = cells.length;
+    show(cells[0]);
+  } else if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        onScreen = e.isIntersecting;
+        if (!onScreen) { stop(); return; }
+        if (!bloomed) { bloomed = true; bloom(); }
+        start();
+      });
+    }, { threshold: 0.25 }).observe(wrap);
+  } else {
+    onScreen = true; bloomed = true; bloom();
+  }
 }());
 
 /* ═══ APP MOCKUP ANIMATIONS ═════════════════════════════════════
@@ -2797,26 +3583,33 @@ window.addEventListener('scroll', () => {
    the string "true"), never from res.ok alone — a 200 does not by itself
    mean the signup was accepted. */
 (function () {
-  var form = document.getElementById('waitlistForm');
-  var msg  = document.getElementById('waitlistMsg');
-  if (!form || !msg) return;
-
   var ENDPOINT   = 'https://api.web3forms.com/submit';
   var ACCESS_KEY = '0c3a60c6-04fb-4729-bac1-ddbc15bfa236';
   var TIMEOUT_MS = 15000;
+
+  // There are two signup points now — the hero and #cta — and there must
+  // not be two copies of the timeout handling. bind() is the original
+  // single-form logic with `form` and `msg` closed over per form instead
+  // of read once from the document; nothing about the request, the abort
+  // or the success test changed.
+  function bind(form, msg) {
 
   function show(text, ok) {
     // Presentation only — the fetch and timeout logic below is untouched.
     // Was an inline colour: success --brand (2.89:1, failed AA) and error
     // --brand-deep, two oranges that read as the same message.
-    msg.className = ok ? 'is-ok' : 'is-error';
+    msg.className = 'wl-msg ' + (ok ? 'is-ok' : 'is-error');
     msg.textContent = text;
     msg.style.display = 'block';
   }
 
+  // Was hard-coded to 'Notify Me'; read off the button so a second form
+  // is free to label its own submit differently.
+  var idleLabel = (form.querySelector('button[type="submit"]') || {}).textContent || 'Notify Me';
+
   function reset(btn) {
     btn.disabled = false;
-    btn.textContent = 'Notify Me';
+    btn.textContent = idleLabel;
   }
 
   form.addEventListener('submit', function (e) {
@@ -2867,6 +3660,16 @@ window.addEventListener('scroll', () => {
         ? 'That took too long — our signup service is not responding. Please email us at customersupport_papafix@nambuilders.com and we\'ll add you.'
         : 'Something went wrong — please try again, or email us at customersupport_papafix@nambuilders.com.', false);
     });
+  });
+
+  }  // end bind()
+
+  // Every signup point on the page, hero and #cta alike. Each carries its
+  // own .wl-msg beside it, so one form succeeding never writes its
+  // confirmation into the other's status line.
+  Array.prototype.forEach.call(document.querySelectorAll('form[data-waitlist]'), function (form) {
+    var msg = form.parentNode.querySelector('.wl-msg');
+    if (msg) bind(form, msg);
   });
 }());
 </script>
