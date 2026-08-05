@@ -666,6 +666,18 @@ nav.is-away { opacity: 0; visibility: hidden; pointer-events: none; }
   /* arrive already open */
   .sx::before { inset: 0; border-radius: 0; box-shadow: none; transition: none; }
 }
+/* Phones arrive open too. The panel is driven by an observer at a 0.45
+   threshold — the section has to fill nearly half the view — which only
+   ever holds because the fit script zooms these three down to one screen
+   each, and that is off below 900px. Stacked into a single column they
+   run two to three screens tall, 45% is unreachable, and the inset
+   rounded card stops being a stage in an animation and becomes the
+   permanent state: a white panel floating on off-white margins.
+   899, not 900, to cut exactly where the fit script does (it treats
+   >= 900 as wide) and where .cvu stops being two columns. */
+@media (max-width: 899px) {
+  .sx::before { inset: 0; border-radius: 0; box-shadow: none; transition: none; }
+}
 .app-header { text-align: center; }
 .app-header .section-sub { margin: 1rem auto 0; }
 .app-row { display: flex; gap: 2.75rem; margin-top: 2.5rem; align-items: flex-start; overflow-x: auto; scrollbar-width: none; padding: .5rem 5vw 1rem; }
@@ -1705,6 +1717,24 @@ footer {
 }
 
 /* ─── MOBILE ─────────────────────────────────────────────────── */
+/* The opening three carry no scroll entrance on a phone. The panel is
+   already handled above; these are the rest of the motion inside them —
+   the fade-ups and the staggered title words. All three were authored
+   against a section that holds exactly one screen, where they read as
+   one thing arriving; stacked to three screens on a phone they fire in
+   isolation, halfway down a section you are already reading. The
+   sections below the fold keep theirs — they were always a stack.
+   ID selectors, so no !important is needed to beat .reveal.in-view. */
+@media (max-width: 899px) {
+  #hero .reveal, #hero .reveal-left, #hero .reveal-right,
+  #coverage .reveal, #coverage .reveal-left, #coverage .reveal-right,
+  #app .reveal, #app .reveal-left, #app .reveal-right {
+    opacity: 1; transform: none; transition: none;
+  }
+  #hero .section-title .tw,
+  #coverage .section-title .tw,
+  #app .section-title .tw { opacity: 1; transform: none; transition: none; }
+}
 @media (max-width: 900px) {
   .bento-1,.bento-2,.bento-3,.bento-4,.bento-5,.bento-6,.bento-7,.bento-8 { grid-column: span 12; }
   .bento-8 { grid-template-columns: 1fr; gap: 2rem; }
